@@ -76,11 +76,14 @@
 }
 
 @layer components {
-  .nav__link {
+  .admin__container {
+  }
+
+  .nav-admin__link {
     @apply cursor-pointer capitalize;
   }
 
-  .nav__link-mobile {
+  .nav-admin__link-mobile {
     @apply cursor-pointer py-1.5 w-full hover:bg-gray-200 px-5 capitalize;
   }
 }

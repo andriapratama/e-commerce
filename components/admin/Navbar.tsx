@@ -47,7 +47,7 @@ const Navbar = () => {
       <h1>Logo</h1>
       <ul className="md:flex gap-5 text hidden text-base">
         {menus.map((menu) => (
-          <li className="nav__link" key={menu.name}>
+          <li className="nav-admin__link" key={menu.name}>
             <Link href={menu.link}>{menu.name}</Link>
           </li>
         ))}
@@ -64,7 +64,7 @@ const Navbar = () => {
           </DialogHeader>
           <ul>
             {menus.map((menu) => (
-              <li className="nav__link-mobile" key={menu.name}>
+              <li className="nav-admin__link-mobile" key={menu.name}>
                 <Link href={menu.link}>{menu.name}</Link>
               </li>
             ))}
@@ -74,12 +74,12 @@ const Navbar = () => {
             <DialogTitle>Akun</DialogTitle>
           </DialogHeader>
           <ul>
-            <li className="nav__link-mobile !bg-transparent !cursor-default">
+            <li className="nav-admin__link-mobile !bg-transparent !cursor-default">
               Cindy
             </li>
-            <li className="nav__link-mobile">Edit Profile</li>
-            <li className="nav__link-mobile">Ganti Password</li>
-            <li className="nav__link-mobile">Keluar</li>
+            <li className="nav-admin__link-mobile">Edit Profile</li>
+            <li className="nav-admin__link-mobile">Ganti Password</li>
+            <li className="nav-admin__link-mobile">Keluar</li>
           </ul>
         </DialogContent>
       </Dialog>
