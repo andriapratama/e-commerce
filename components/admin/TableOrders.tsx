@@ -20,6 +20,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ConvertIDR } from "@/utils/ConvertIDR";
+import Link from "next/link";
+import { useState } from "react";
 
 interface Orders {
   noInvoice: string;
@@ -90,7 +92,7 @@ const data: Orders[] = [
     date: "2023-10-6",
   },
   {
-    noInvoice: "20231005005",
+    noInvoice: "20231005006",
     name: "Carmella",
     phone: "082738729832",
     item: 5,
@@ -101,7 +103,7 @@ const data: Orders[] = [
     date: "2023-10-6",
   },
   {
-    noInvoice: "20231005005",
+    noInvoice: "20231005007",
     name: "Carmella",
     phone: "082738729832",
     item: 5,
@@ -112,7 +114,7 @@ const data: Orders[] = [
     date: "2023-10-6",
   },
   {
-    noInvoice: "20231005005",
+    noInvoice: "20231005008",
     name: "Carmella",
     phone: "082738729832",
     item: 5,
@@ -123,7 +125,7 @@ const data: Orders[] = [
     date: "2023-10-6",
   },
   {
-    noInvoice: "20231005005",
+    noInvoice: "20231005009",
     name: "Carmella",
     phone: "082738729832",
     item: 5,
@@ -136,10 +138,16 @@ const data: Orders[] = [
 ];
 
 const TableOrders = () => {
+  const [search, setSearch] = useState<string>("");
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        <Input placeholder="Cari no invoice..." value="" className="max-w-sm" />
+        <Input
+          placeholder="Cari no invoice..."
+          value={search}
+          className="max-w-sm"
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </div>
       <div className="rounded-md border">
         <Table>
@@ -158,42 +166,46 @@ const TableOrders = () => {
           </TableHeader>
           <TableBody>
             {data ? (
-              data.map((value: Orders) => (
-                <TableRow key={value.noInvoice}>
-                  <TableCell>{value.noInvoice}</TableCell>
+              data.map((order: Orders) => (
+                <TableRow key={order.noInvoice}>
+                  <TableCell>{order.noInvoice}</TableCell>
                   <TableCell className="block">
-                    {value.name} <br />
-                    {value.email}
+                    {order.name} <br />
+                    {order.email}
                   </TableCell>
-                  <TableCell>{value.phone}</TableCell>
-                  <TableCell>{value.item}</TableCell>
-                  <TableCell>{ConvertIDR(value.totalPrice)}</TableCell>
+                  <TableCell>{order.phone}</TableCell>
+                  <TableCell>{order.item}</TableCell>
+                  <TableCell>{ConvertIDR(order.totalPrice)}</TableCell>
                   <TableCell className="text-center capitalize">
-                    {value.payment}
+                    {order.payment}
                   </TableCell>
                   <TableCell className="text-center">
                     <div
                       className={`px-4 py-2 rounded-full flex justify-center items-center capitalize text-white ${
-                        value.status === "baru"
+                        order.status === "baru"
                           ? "bg-sky-400"
-                          : value.status === "belum dibayar"
+                          : order.status === "belum dibayar"
                           ? "bg-yellow-400"
-                          : value.status === "selesai"
+                          : order.status === "selesai"
                           ? "bg-green-400"
                           : "bg-red-400"
                       }`}
                     >
-                      {value.status}
+                      {order.status}
                     </div>
                   </TableCell>
-                  <TableCell>{value.date}</TableCell>
+                  <TableCell>{order.date}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <MoreHorizontal className="h-4 w-4 cursor-pointer" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Detail</DropdownMenuItem>
+                        <Link href={`/admin/orders/${order.noInvoice}`}>
+                          <DropdownMenuItem className="cursor-pointer">
+                            Detail
+                          </DropdownMenuItem>
+                        </Link>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
