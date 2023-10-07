@@ -7,12 +7,21 @@ interface TitleProps {
   link?: string;
   onClick?: () => void;
   nameBtn?: string;
+  noInvoice?: string;
 }
 
-const Title: React.FC<TitleProps> = ({ title, link, onClick, nameBtn }) => {
+const Title: React.FC<TitleProps> = ({
+  title,
+  link,
+  onClick,
+  nameBtn,
+  noInvoice,
+}) => {
   return (
     <div className="w-full mt-5 pb-3 border-b-2 border-slate-300 flex justify-between mb-5">
-      <h1 className="font-semibold text-3xl">{title}</h1>
+      <h1 className="font-semibold text-3xl">
+        {title} {noInvoice}
+      </h1>
       {link ? (
         <Link
           className="px-4 py-2 bg-black text-white text-sm font-medium rounded-md flex items-center"
