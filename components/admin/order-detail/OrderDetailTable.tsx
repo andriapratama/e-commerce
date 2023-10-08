@@ -28,14 +28,14 @@ const _data: OrderDetailTableProps[] = [
   },
   {
     image: "wine.webp",
-    name: "Carbenet Suvignon",
+    name: "Carbenet Suvignon 1",
     price: 1000000,
     quantity: 2,
     subTotal: 2000000,
   },
   {
     image: "wine.webp",
-    name: "Carbenet Suvignon",
+    name: "Carbenet Suvignon 2",
     price: 1000000,
     quantity: 2,
     subTotal: 2000000,

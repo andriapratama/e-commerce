@@ -76,6 +76,11 @@
 }
 
 @layer components {
+  .\[appearance\:textfield\] {
+    -webkit-appearance: textfield !important;
+    appearance: textfield !important;
+  }
+
   .admin__container {
     @apply w-full xl:flex xl:justify-center pb-10;
   }

@@ -1,9 +1,14 @@
+"use client";
+
 import OderDetailInfo from "@/components/admin/order-detail/OderDetailInfo";
 import OrderDetailCard from "@/components/admin/order-detail/OrderDetailCard";
 import OrderDetailTable from "@/components/admin/order-detail/OrderDetailTable";
 import Title from "@/components/admin/Title";
 import { Button } from "@/components/ui/button";
 import React from "react";
+
+import OrderDetailInputShipping from "@/components/admin/order-detail/OrderDetailInputShipping";
+import OrderDetailChangePayment from "@/components/admin/order-detail/OrderDetailChangePayment";
 
 const OrderDetail = () => {
   return (
@@ -44,9 +49,9 @@ const OrderDetail = () => {
           <OderDetailInfo name="Status Pembayaran" status="Belum Dibayar" />
 
           <div className="w-full gap-3 flex justify-end mt-5 pr-20">
-            <Button>Ubah Status Pembayaran</Button>
-            <Button>Masukkan Harga Pengiriman</Button>
-            <Button>Lihat Invoice</Button>
+            <OrderDetailChangePayment />
+            <OrderDetailInputShipping />
+            <Button className="rounded-full">Lihat Invoice</Button>
           </div>
         </div>
       </div>
