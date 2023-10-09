@@ -96,4 +96,8 @@
   .nav-admin__link-mobile {
     @apply cursor-pointer py-1.5 w-full hover:bg-gray-200 px-5 capitalize;
   }
+
+  .admin__card {
+    @apply bg-white rounded-md p-5 shadow-md;
+  }
 }
