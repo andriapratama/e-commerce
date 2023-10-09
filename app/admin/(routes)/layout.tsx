@@ -9,7 +9,7 @@ export default function AdminLayout({
     <html lang="en">
       <body>
         <AdminNavbar />
-        <div className="pt-12">{children}</div>
+        <div className="pt-12 bg-gray-100">{children}</div>
       </body>
     </html>
   );

@@ -137,7 +137,7 @@ const data: Orders[] = [
   },
 ];
 
-const TableOrders = () => {
+const OrderTable = () => {
   const [search, setSearch] = useState<string>("");
   return (
     <div className="w-full">
@@ -150,7 +150,7 @@ const TableOrders = () => {
         />
       </div>
       <div className="rounded-md border">
-        <Table>
+        <Table className="bg-white rounded-md">
           <TableHeader>
             <TableRow>
               <TableHead>No Invoice</TableHead>
@@ -235,4 +235,4 @@ const TableOrders = () => {
   );
 };
 
-export default TableOrders;
+export default OrderTable;
