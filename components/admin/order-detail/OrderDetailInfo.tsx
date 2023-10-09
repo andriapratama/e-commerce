@@ -7,13 +7,13 @@ interface OrderDetailInfoProps {
   status?: string;
 }
 
-const OderDetailInfo: React.FC<OrderDetailInfoProps> = ({
+const OrderDetailInfo: React.FC<OrderDetailInfoProps> = ({
   name,
   value,
   status,
 }) => {
   return (
-    <div className="w-full flex justify-end pr-20">
+    <div className="w-full flex justify-end mb-3">
       <span className="font-semibold text-gray-800 text-right">{name}</span>
       <span className="text-gray-500 text-right w-[280px]">
         {value === 0 ? "Rp. 0,00" : value ? ConvertIDR(value) : null}
@@ -23,4 +23,4 @@ const OderDetailInfo: React.FC<OrderDetailInfoProps> = ({
   );
 };
 
-export default OderDetailInfo;
+export default OrderDetailInfo;

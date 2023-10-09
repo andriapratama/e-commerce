@@ -10,7 +10,7 @@ const OrderDetailCard: React.FC<OrderDetailCardProps> = ({
   title,
 }) => {
   return (
-    <div className="w-full sm:w-[45%] lg:w-[24%] border border-slate-300 rounded-md">
+    <div className="w-full sm:w-[45%] lg:w-[24%] border border-slate-300 rounded-md bg-white">
       <div className="flex justify-center items-center bg-gray-200 w-full h-10">
         <span className="font-medium md:text-sm capitalize text-gray-800">
           {title}:

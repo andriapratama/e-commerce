@@ -1,6 +1,6 @@
 "use client";
 
-import OderDetailInfo from "@/components/admin/order-detail/OderDetailInfo";
+import OrderDetailInfo from "@/components/admin/order-detail/OrderDetailInfo";
 import OrderDetailCard from "@/components/admin/order-detail/OrderDetailCard";
 import OrderDetailTable from "@/components/admin/order-detail/OrderDetailTable";
 import Title from "@/components/admin/Title";
@@ -40,18 +40,20 @@ const OrderDetail = () => {
             <div>Tunai</div>
           </OrderDetailCard>
 
-          <OrderDetailTable />
+          <div className="bg-white rounded-md shadow-md w-full p-7 mt-10">
+            <OrderDetailTable />
 
-          <OderDetailInfo name="Tax" value={0} />
-          <OderDetailInfo name="Shipping" value={40000} />
-          <OderDetailInfo name="Dicount" value={0} />
-          <OderDetailInfo name="Total" value={3000000} />
-          <OderDetailInfo name="Status Pembayaran" status="Belum Dibayar" />
+            <OrderDetailInfo name="Tax" value={0} />
+            <OrderDetailInfo name="Shipping" value={40000} />
+            <OrderDetailInfo name="Dicount" value={0} />
+            <OrderDetailInfo name="Total" value={3000000} />
+            <OrderDetailInfo name="Status Pembayaran" status="Belum Dibayar" />
 
-          <div className="w-full gap-3 flex justify-end mt-5 pr-20">
-            <OrderDetailChangePayment />
-            <OrderDetailInputShipping />
-            <Button className="rounded-full">Lihat Invoice</Button>
+            <div className="w-full gap-3 flex justify-end mt-5">
+              <OrderDetailChangePayment />
+              <OrderDetailInputShipping />
+              <Button className="rounded-full">Lihat Invoice</Button>
+            </div>
           </div>
         </div>
       </div>

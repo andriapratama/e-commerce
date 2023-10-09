@@ -45,12 +45,12 @@ const _data: OrderDetailTableProps[] = [
 const OrderDetailTable = () => {
   return (
     <>
-      <div className="w-full h-10 flex justify-center items-center bg-gray-200 mt-10">
+      <div className="w-full h-10 flex justify-center items-center bg-gray-200">
         <span className="font-medium md:text-sm text-gray-800">
           Detail Produk
         </span>
       </div>
-      <Table>
+      <Table className="bg-white rounded-md mb-5">
         <TableHeader>
           <TableRow>
             <TableHead>#</TableHead>
