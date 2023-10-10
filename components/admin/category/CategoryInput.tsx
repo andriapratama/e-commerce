@@ -15,7 +15,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
 const formSchema = z.object({
@@ -27,7 +26,11 @@ const formSchema = z.object({
   }),
 });
 
-const CategoryInput = () => {
+interface CategoryInputProps {
+  showCategories: () => void;
+}
+
+const CategoryInput: React.FC<CategoryInputProps> = ({ showCategories }) => {
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -61,7 +64,9 @@ const CategoryInput = () => {
       setName("");
       setSlug("");
 
-      toast.success("Kategori berhasil buat!");
+      toast.success("Kategori berhasil dibuat!");
+
+      showCategories();
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {

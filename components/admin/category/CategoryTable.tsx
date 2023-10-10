@@ -15,20 +15,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
+import { CategoriesDataType, EditCategoryType } from "@/types/admin/Categories";
+import { Dispatch, SetStateAction } from "react";
 
 interface OrderDetailTableProps {
-  data: {
-    id: string;
-    name: string;
-  }[];
-  editValue: string;
-  setEditValue: (editValue: string) => void;
+  categories: CategoriesDataType[];
+  setEditCategory: Dispatch<SetStateAction<EditCategoryType>>;
 }
 
 const CategoryTable: React.FC<OrderDetailTableProps> = ({
-  data,
-  editValue,
-  setEditValue,
+  categories,
+  setEditCategory,
 }) => {
   return (
     <div className="admin__card w-full">
@@ -37,14 +34,16 @@ const CategoryTable: React.FC<OrderDetailTableProps> = ({
           <TableRow>
             <TableHead>#</TableHead>
             <TableHead>Kategori</TableHead>
+            <TableHead>Slug</TableHead>
             <TableHead>Aksi</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((value, index) => (
-            <TableRow key={value.name}>
+          {categories.map((category, index) => (
+            <TableRow key={category.name}>
               <TableCell>{index + 1}</TableCell>
-              <TableCell>{value.name}</TableCell>
+              <TableCell>{category.name}</TableCell>
+              <TableCell>{category.slug}</TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -53,7 +52,13 @@ const CategoryTable: React.FC<OrderDetailTableProps> = ({
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
                       className="cursor-pointer"
-                      onClick={() => setEditValue(value.name)}
+                      onClick={() =>
+                        setEditCategory({
+                          id: category.id,
+                          name: category.name,
+                          slug: category.slug,
+                        })
+                      }
                     >
                       Edit
                     </DropdownMenuItem>

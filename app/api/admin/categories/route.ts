@@ -78,3 +78,24 @@ export const POST = async (req: Request) => {
     return new NextResponse("Server error", { status: 500 });
   }
 };
+
+export const GET = async (req: Request) => {
+  try {
+    const categories = await prismadb.category.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return NextResponse.json(
+      {
+        message: "Successfully get all categories data",
+        data: categories,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.log("[CATEGORY_GET]", error);
+    return new NextResponse("Server error", { status: 500 });
+  }
+};
