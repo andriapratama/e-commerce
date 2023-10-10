@@ -82,7 +82,7 @@
   }
 
   .admin__container {
-    @apply w-full xl:flex xl:justify-center pb-10;
+    @apply w-full xl:flex xl:justify-center min-h-[calc(100vh-48px)];
   }
 
   .admin__container-body {
