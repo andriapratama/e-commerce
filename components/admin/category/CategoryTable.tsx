@@ -29,7 +29,7 @@ const CategoryTable: React.FC<OrderDetailTableProps> = ({
 }) => {
   return (
     <div className="admin__card w-full">
-      <Table>
+      <Table className="h-full">
         <TableHeader>
           <TableRow>
             <TableHead>#</TableHead>
@@ -38,36 +38,49 @@ const CategoryTable: React.FC<OrderDetailTableProps> = ({
             <TableHead>Aksi</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {categories.map((category, index) => (
-            <TableRow key={category.name}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>{category.name}</TableCell>
-              <TableCell>{category.slug}</TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <MoreHorizontal className="h-4 w-4 cursor-pointer" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      className="cursor-pointer"
-                      onClick={() =>
-                        setEditCategory({
-                          id: category.id,
-                          name: category.name,
-                          slug: category.slug,
-                        })
-                      }
-                    >
-                      Edit
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+        {categories ? (
+          <TableBody>
+            {categories.map((category, index) => (
+              <TableRow key={category.name}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{category.name}</TableCell>
+                <TableCell>{category.slug}</TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <MoreHorizontal className="h-4 w-4 cursor-pointer" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        className="cursor-pointer"
+                        onClick={() =>
+                          setEditCategory({
+                            id: category.id,
+                            name: category.name,
+                            slug: category.slug,
+                          })
+                        }
+                      >
+                        Edit
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        ) : (
+          <TableBody>
+            <TableRow>
+              <TableCell
+                colSpan={4}
+                className="text-center font-semibold text-lg text-gray-700"
+              >
+                Data kosong
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
+          </TableBody>
+        )}
       </Table>
     </div>
   );

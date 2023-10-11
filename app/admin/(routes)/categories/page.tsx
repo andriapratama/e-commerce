@@ -7,6 +7,7 @@ import CategoryTable from "@/components/admin/category/CategoryTable";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { CategoriesDataType, EditCategoryType } from "@/types/admin/Categories";
+import { ToastContainer } from "react-toastify";
 
 const Categories = () => {
   const [categories, setCategories] = useState<CategoriesDataType[]>([]);
@@ -31,6 +32,7 @@ const Categories = () => {
   return (
     <section className="admin__container">
       <div className="admin__container-body">
+        <ToastContainer />
         <Title title="Kategori" />
         <div className="flex justify-between md:flex-nowrap flex-wrap gap-3 w-full">
           {editCategory.id ? (
