@@ -86,7 +86,7 @@
   }
 
   .admin__container-body {
-    @apply w-full px-3 md:px-5 xl:px-10 2xl:max-w-[1536px];
+    @apply w-full px-3 md:px-5 xl:px-10 2xl:max-w-[1536px] pb-5;
   }
 
   .nav-admin__link {
