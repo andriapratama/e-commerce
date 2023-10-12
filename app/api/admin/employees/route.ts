@@ -78,6 +78,9 @@ export const GET = async (req: Request) => {
         username: true,
         role: true,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return NextResponse.json(
