@@ -32,7 +32,11 @@ const formSchema = z.object({
   role: z.string().min(1, { message: "Pilih role pegawai" }),
 });
 
-const EmployeeAdd = () => {
+interface EmployeeAddProps {
+  ShowEmployees: () => void;
+}
+
+const EmployeeAdd: React.FC<EmployeeAddProps> = ({ ShowEmployees }) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -59,6 +63,8 @@ const EmployeeAdd = () => {
       form.reset();
 
       toast.success("Data karyawan berhasil disimpan!");
+
+      ShowEmployees();
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {
@@ -71,9 +77,7 @@ const EmployeeAdd = () => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="md:w-2/3 w-full admin__card h-full"
       >
-        <h2 className="text-xl text-gray-700 font-medium mb-5">
-          Tambah Kategori
-        </h2>
+        <h2 className="admin__form-title">Tambah Pegawai</h2>
         <FormField
           control={form.control}
           name="name"

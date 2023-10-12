@@ -68,3 +68,27 @@ export const POST = async (req: Request) => {
     return new NextResponse("Server error", { status: 500 });
   }
 };
+
+export const GET = async (req: Request) => {
+  try {
+    const employees = await prismadb.employee.findMany({
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        role: true,
+      },
+    });
+
+    return NextResponse.json(
+      {
+        message: "Successfully get all employees data",
+        data: employees,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.log("[CATEGORY_GET]", error);
+    return new NextResponse("Server error", { status: 500 });
+  }
+};
