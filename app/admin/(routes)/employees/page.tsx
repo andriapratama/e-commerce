@@ -2,6 +2,7 @@
 
 import Title from "@/components/admin/Title";
 import EmployeeAdd from "@/components/admin/employee/EmployeeAdd";
+import EmployeeEdit from "@/components/admin/employee/EmployeeEdit";
 import EmployeeTable from "@/components/admin/employee/EmployeeTable";
 import { EmployeeDataType } from "@/types/admin/Employees";
 import axios from "axios";
@@ -10,6 +11,12 @@ import { ToastContainer } from "react-toastify";
 
 const Employees = () => {
   const [employees, setEmployees] = useState<EmployeeDataType[]>([]);
+  const [editEmployee, setEditEmployee] = useState({
+    id: "",
+    name: "",
+    username: "",
+    role: "",
+  });
 
   const showEmployees = async () => {
     try {
@@ -31,8 +38,19 @@ const Employees = () => {
         <Title title="Pegawai" />
 
         <div className="flex justify-between md:flex-nowrap flex-wrap gap-3 w-full">
-          <EmployeeAdd ShowEmployees={showEmployees} />
-          <EmployeeTable employees={employees} />
+          {editEmployee.name ? (
+            <EmployeeEdit
+              editEmployee={editEmployee}
+              setEditEmployee={setEditEmployee}
+              ShowEmployees={showEmployees}
+            />
+          ) : (
+            <EmployeeAdd ShowEmployees={showEmployees} />
+          )}
+          <EmployeeTable
+            employees={employees}
+            setEditEmployee={setEditEmployee}
+          />
         </div>
       </div>
     </section>

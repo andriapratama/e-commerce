@@ -15,13 +15,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import { EmployeeDataType } from "@/types/admin/Employees";
+import { EditEmployeeType, EmployeeDataType } from "@/types/admin/Employees";
+import { Dispatch, SetStateAction } from "react";
 
 interface EmployeeTableProps {
   employees: EmployeeDataType[];
+  setEditEmployee: Dispatch<SetStateAction<EditEmployeeType>>;
 }
 
-const EmployeeTable: React.FC<EmployeeTableProps> = ({ employees }) => {
+const EmployeeTable: React.FC<EmployeeTableProps> = ({
+  employees,
+  setEditEmployee,
+}) => {
   return (
     <div className="admin__card w-full">
       <Table className="h-full">
@@ -39,16 +44,26 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({ employees }) => {
             {employees.map((employee, index) => (
               <TableRow key={employee.id}>
                 <TableCell>{index + 1}</TableCell>
-                <TableCell>{employee.name}</TableCell>
+                <TableCell className="capitalize">{employee.name}</TableCell>
                 <TableCell>{employee.username}</TableCell>
-                <TableCell>{employee.role}</TableCell>
+                <TableCell className="capitalize">{employee.role}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <MoreHorizontal className="h-4 w-4 cursor-pointer" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem className="cursor-pointer">
+                      <DropdownMenuItem
+                        className="cursor-pointer"
+                        onClick={() =>
+                          setEditEmployee({
+                            id: employee.id,
+                            name: employee.name,
+                            username: employee.username,
+                            role: employee.role,
+                          })
+                        }
+                      >
                         Edit
                       </DropdownMenuItem>
                     </DropdownMenuContent>
