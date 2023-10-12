@@ -100,4 +100,8 @@
   .admin__card {
     @apply bg-white rounded-md p-5 shadow-md;
   }
+
+  .admin__form-title {
+    @apply text-xl text-gray-700 font-medium mb-5;
+  }
 }
