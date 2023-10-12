@@ -18,12 +18,12 @@ import { MoreHorizontal } from "lucide-react";
 import { CategoriesDataType, EditCategoryType } from "@/types/admin/Categories";
 import { Dispatch, SetStateAction } from "react";
 
-interface OrderDetailTableProps {
+interface CategoryTableProps {
   categories: CategoriesDataType[];
   setEditCategory: Dispatch<SetStateAction<EditCategoryType>>;
 }
 
-const CategoryTable: React.FC<OrderDetailTableProps> = ({
+const CategoryTable: React.FC<CategoryTableProps> = ({
   categories,
   setEditCategory,
 }) => {
