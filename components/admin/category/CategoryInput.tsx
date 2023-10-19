@@ -17,6 +17,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import ButtonLoading from "@/components/ButtonLoading";
+import { handleSetSlug } from "@/utils/HandleSetSlug";
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -36,15 +37,6 @@ const CategoryInput: React.FC<CategoryInputProps> = ({ showCategories }) => {
   const [slug, setSlug] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSetSlug = (value: string) => {
-    if (value.match(" ")) {
-      const replaceValue = value.replace(" ", "-");
-      setSlug(replaceValue);
-    } else {
-      setSlug(value);
-    }
-  };
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     values: {
@@ -58,8 +50,8 @@ const CategoryInput: React.FC<CategoryInputProps> = ({ showCategories }) => {
       setLoading(true);
 
       await axios.post("/api/admin/categories", {
-        name: values.name,
-        slug: values.slug,
+        name: values.name.toLowerCase(),
+        slug: values.slug.toLowerCase(),
       });
 
       setName("");
@@ -97,7 +89,7 @@ const CategoryInput: React.FC<CategoryInputProps> = ({ showCategories }) => {
                   value={name}
                   onChange={(e) => {
                     setName(e.target.value);
-                    handleSetSlug(e.target.value);
+                    handleSetSlug(e.target.value, setSlug);
                   }}
                 />
               </FormControl>
@@ -117,7 +109,7 @@ const CategoryInput: React.FC<CategoryInputProps> = ({ showCategories }) => {
                   placeholder="Masukkan slug kategori"
                   {...field}
                   value={slug}
-                  onChange={(e) => handleSetSlug(e.target.value)}
+                  onChange={(e) => handleSetSlug(e.target.value, setSlug)}
                 />
               </FormControl>
               <FormMessage />

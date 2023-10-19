@@ -18,6 +18,7 @@ import { EditCategoryType } from "@/types/admin/Categories";
 import { toast } from "react-toastify";
 import axios from "axios";
 import ButtonLoading from "@/components/ButtonLoading";
+import { handleSetSlug } from "@/utils/HandleSetSlug";
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -48,15 +49,6 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({
     setSlug(editCategory.slug);
   }, [editCategory]);
 
-  const handleSetSlug = (value: string) => {
-    if (value.match(" ")) {
-      const replaceValue = value.replace(" ", "-");
-      setSlug(replaceValue);
-    } else {
-      setSlug(value);
-    }
-  };
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     values: {
@@ -70,8 +62,8 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({
       setLoading(true);
 
       await axios.patch(`/api/admin/categories/${editCategory.id}`, {
-        name: values.name,
-        slug: values.slug,
+        name: values.name.toLowerCase(),
+        slug: values.slug.toLowerCase(),
       });
 
       toast.success("Kategori berhasil diubah!");
@@ -115,7 +107,7 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({
                   value={name}
                   onChange={(e) => {
                     setName(e.target.value);
-                    handleSetSlug(e.target.value);
+                    handleSetSlug(e.target.value, setSlug);
                   }}
                 />
               </FormControl>
@@ -135,7 +127,7 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({
                   placeholder="Masukkan slug kategori"
                   {...field}
                   value={slug}
-                  onChange={(e) => handleSetSlug(e.target.value)}
+                  onChange={(e) => handleSetSlug(e.target.value, setSlug)}
                 />
               </FormControl>
               <FormMessage />

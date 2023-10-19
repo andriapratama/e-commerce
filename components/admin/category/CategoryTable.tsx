@@ -38,12 +38,12 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
             <TableHead>Aksi</TableHead>
           </TableRow>
         </TableHeader>
-        {categories ? (
+        {categories.length > 0 ? (
           <TableBody>
             {categories.map((category, index) => (
               <TableRow key={category.name}>
                 <TableCell>{index + 1}</TableCell>
-                <TableCell>{category.name}</TableCell>
+                <TableCell className="capitalize">{category.name}</TableCell>
                 <TableCell>{category.slug}</TableCell>
                 <TableCell>
                   <DropdownMenu>
