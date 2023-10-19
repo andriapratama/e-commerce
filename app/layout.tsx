@@ -1,6 +1,7 @@
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import type { Metadata } from "next";
+import Provider from "@/components/Provider";
 
 export const metadata: Metadata = {
   title: "e-Commerce",
@@ -10,11 +11,13 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode | React.ReactNode[];
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Provider>{children}</Provider>
+      </body>
     </html>
   );
 }
