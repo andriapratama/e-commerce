@@ -46,7 +46,7 @@ const Product = () => {
         <Title
           title="Produk"
           nameBtn="Tambah Produk"
-          link="/admin/products/1"
+          link="/admin/products/add"
         />
         <ProductTable data={_data} />
       </div>

@@ -12,32 +12,136 @@ datasource db {
 }
 
 model Category {
-  id  String @id @default(uuid())
-  name  String @unique
-  slug  String @unique
+  id        String @id @default(uuid())
+  name      String @unique
+  slug      String @unique
+
+  products  Product[] @relation("CategoryToProduct")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Employee {
-  id  String @id @default(uuid())
-  name  String
-  username String @unique
-  password String
-  role  String
+  id        String @id @default(uuid())
+  name      String
+  username  String @unique
+  password  String
+  role      String
+
+  productFinanceLog ProductFinanceLog[] @relation("EmployeeToProductFinanceLog")
+  productStockLog ProductStockLog[] @relation("EmployeeToProductStockLog")
+  productSaleLog ProductSaleLog[] @relation("EmployeeToProductSaleLog")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model User {
-  id  String @id @default(uuid())
-  firstName String
-  lastName String
-  email String @unique
-  password String
-  role String
-  addres String @db.Text
-  phone String
+  id        String @id @default(uuid())
+  firstName  String
+  lastName  String
+  email     String @unique
+  password  String
+  role      String
+  addres    String @db.Text
+  phone     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id            String @id @default(uuid())
+  name          String @unique
+  slug          String @unique
+  totalStock    Int @db.SmallInt
+  minimumStock  Int @db.SmallInt
+  price         Int
+  cost          Int
+  netFill       Int @db.SmallInt
+  status        String
+  linkGojek     String?
+  description   String? @db.Text
+  image         String
+  sale          Sale @default(false)
+  salePrice     Int @default(0)
+
+  categoryId    String
+  category      Category @relation("CategoryToProduct", fields: [categoryId], references: [id])
+
+  productFinanceLog   ProductFinanceLog[] @relation("ProductToProductFinanceLog")
+  productStockLog     ProductStockLog[] @relation("ProductToProductStockLog")
+  productSaleLog     ProductSaleLog[] @relation("ProductToProductSaleLog")
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([categoryId])
+}
+
+enum Sale {
+  true
+  false
+}
+
+model ProductFinanceLog {
+  id      String @id @default(uuid())
+  price   Int
+  cost    Int
+  note    String?
+
+  productId   String
+  product     Product @relation("ProductToProductFinanceLog", fields: [productId], references: [id])
+  employeeId  String
+  employee    Employee @relation("EmployeeToProductFinanceLog", fields: [employeeId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([productId])
+  @@index([employeeId])
+}
+
+model ProductStockLog {
+  id          String @id @default(uuid())
+  stock       Int
+  status      Status
+  note        String?
+
+  order       String?
+  productId   String
+  product     Product @relation("ProductToProductStockLog", fields: [productId], references: [id])
+  employeeId  String?
+  employee    Employee? @relation("EmployeeToProductStockLog", fields: [employeeId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([productId])
+  @@index([employeeId])
+}
+
+enum Status {
+  first
+  updated
+  decrease
+  increase
+}
+
+model ProductSaleLog {
+  id          String @id @default(uuid())
+  sale        Sale
+  salePrice   Int
+  note        String?
+
+  productId   String
+  product     Product @relation("ProductToProductSaleLog", fields: [productId], references: [id])
+  employeeId  String
+  employee    Employee @relation("EmployeeToProductSaleLog", fields: [employeeId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([productId])
+  @@index([employeeId])
 }

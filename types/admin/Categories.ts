@@ -1,5 +1,4 @@
 export interface CategoriesDataType {
-  id: string;
   name: string;
   slug: string;
 }
