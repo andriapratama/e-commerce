@@ -1,4 +1,5 @@
 "use client";
+
 import { Menu } from "lucide-react";
 import React from "react";
 import Link from "next/link";
@@ -15,8 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { signOut, useSession } from "next-auth/react";
-import { SessionType } from "@/types/SessionType";
+import { signOut } from "next-auth/react";
 
 interface MenuType {
   name: string;
