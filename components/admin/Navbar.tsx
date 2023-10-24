@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOut, useSession } from "next-auth/react";
+import { SessionType } from "@/types/SessionType";
 
 interface MenuType {
   name: string;
@@ -56,12 +57,12 @@ const menus: MenuType[] = [
   },
 ];
 
-const Navbar = () => {
-  const { data: session } = useSession();
+interface NavbarProps {
+  name: string | null | undefined;
+  role: string | null | undefined;
+}
 
-  const name = session?.user.name;
-  const role = session?.user.role;
-
+const Navbar: React.FC<NavbarProps> = ({ name, role }) => {
   const checkRole = (menu: MenuType) => {
     if (role) {
       const isRole = menu.role.includes(role);
