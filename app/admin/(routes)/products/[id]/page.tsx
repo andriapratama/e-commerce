@@ -2,17 +2,13 @@ import Title from "@/components/admin/Title";
 import React from "react";
 import Image from "next/image";
 import axios from "axios";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import ProductDetailData from "@/components/admin/product-detail/ProductDetailData";
 import ProductDetailFinanceLog from "@/components/admin/product-detail/ProductDetailFinanceLog";
 import ProductDetailStockLog from "@/components/admin/product-detail/ProductDetailStockLog";
 import ProductDetailSaleLog from "@/components/admin/product-detail/ProductDetailSaleLog";
+import ProductEditButton from "@/components/admin/product-edit/ProductEditButton";
+import { ToastContainer } from "react-toastify";
 
 const ProductDetail = async ({ params }: { params: { id: string } }) => {
   const api = `${process.env.WEB_URL}/api/admin/products/${params.id}`;
@@ -33,9 +29,16 @@ const ProductDetail = async ({ params }: { params: { id: string } }) => {
 
   const saleList = saleLog.data.data;
 
+  const categoryRes = await axios.get(
+    `${process.env.WEB_URL}/api/admin/categories`
+  );
+
+  const categories = categoryRes.data.data;
+
   return (
     <section className="admin__container">
       <div className="admin__container-body">
+        <ToastContainer />
         <Title title="Detail Produk" />
 
         <div className="w-full flex justify-center mb-5">
@@ -55,28 +58,11 @@ const ProductDetail = async ({ params }: { params: { id: string } }) => {
 
             <div className="w-full bg-white border rounded-md shadow-md p-5 h-max">
               <div className="w-full flex justify-end mb-3">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button size="sm">Edit</Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem className="cursor-pointer">
-                      Data Produk
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer">
-                      Harga Jual & Harga Pokok
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer">
-                      Total Stok
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer">
-                      Status Sale
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer">
-                      Ganti Gambar
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <ProductEditButton
+                  product={product}
+                  categories={categories}
+                  paramsSlug={params.id}
+                />
               </div>
 
               <ProductDetailData product={product} />

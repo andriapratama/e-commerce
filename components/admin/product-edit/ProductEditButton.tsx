@@ -1,0 +1,66 @@
+"use client";
+
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import ProductEditData from "./ProductEditData";
+import { ProductType } from "@/types/ProductType";
+import { CategoriesDataType } from "@/types/admin/Categories";
+
+interface ProductEditButtonProps {
+  product: ProductType;
+  categories: CategoriesDataType[];
+  paramsSlug: string;
+}
+
+const ProductEditButton: React.FC<ProductEditButtonProps> = ({
+  product,
+  categories,
+  paramsSlug,
+}) => {
+  const [isOpenEditData, setIsOpenEditData] = useState<boolean>(false);
+  return (
+    <React.Fragment>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button size="sm">Edit</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => setIsOpenEditData(true)}
+          >
+            Data Produk
+          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
+            Harga Jual & Harga Pokok
+          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
+            Total Stok
+          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
+            Status Sale
+          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
+            Ganti Gambar
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <ProductEditData
+        isOpen={isOpenEditData}
+        setIsOpen={setIsOpenEditData}
+        product={product}
+        categories={categories}
+        paramsSlug={paramsSlug}
+      />
+    </React.Fragment>
+  );
+};
+
+export default ProductEditButton;
