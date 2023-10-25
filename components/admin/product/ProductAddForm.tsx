@@ -33,6 +33,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { CategoriesDataType } from "@/types/admin/Categories";
 import BackButton from "./BackButton";
 import { useRouter } from "next/navigation";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
 
 const MAX_FILE_SIZE = 500000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -108,17 +109,6 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const router = useRouter();
-
-  const handleSetNumber = (
-    value: string,
-    setValue: (value: string) => void
-  ) => {
-    if (value.match(/[a-zA-Z!@#$&()\\-`.+,/\"]/g)) {
-      return null;
-    }
-
-    setValue(value);
-  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
