@@ -11,6 +11,7 @@ import {
 import ProductEditData from "./ProductEditData";
 import { ProductType } from "@/types/ProductType";
 import { CategoriesDataType } from "@/types/admin/Categories";
+import ProductEditFinance from "./ProductEditFinance";
 
 interface ProductEditButtonProps {
   product: ProductType;
@@ -24,6 +25,7 @@ const ProductEditButton: React.FC<ProductEditButtonProps> = ({
   paramsSlug,
 }) => {
   const [isOpenEditData, setIsOpenEditData] = useState<boolean>(false);
+  const [isOpenEditFinance, setIsOpenEditFinance] = useState<boolean>(false);
   return (
     <React.Fragment>
       <DropdownMenu>
@@ -37,7 +39,10 @@ const ProductEditButton: React.FC<ProductEditButtonProps> = ({
           >
             Data Produk
           </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer">
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => setIsOpenEditFinance(true)}
+          >
             Harga Jual & Harga Pokok
           </DropdownMenuItem>
           <DropdownMenuItem className="cursor-pointer">
@@ -58,6 +63,13 @@ const ProductEditButton: React.FC<ProductEditButtonProps> = ({
         product={product}
         categories={categories}
         paramsSlug={paramsSlug}
+      />
+
+      <ProductEditFinance
+        isOpen={isOpenEditFinance}
+        setIsOpen={setIsOpenEditFinance}
+        paramsSlug={paramsSlug}
+        product={product}
       />
     </React.Fragment>
   );
