@@ -175,13 +175,11 @@ const ProductEditFinance: React.FC<ProductEditFinanceProps> = ({
                 name="note"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel className="text-gray-700">
-                      Deskripsi Produk
-                    </FormLabel>
+                    <FormLabel className="text-gray-700">Catatan</FormLabel>
                     <FormControl>
                       <Textarea
                         className="mb-3 resize-none"
-                        placeholder="Isi deskripsi produk"
+                        placeholder="Catatan perubahan harga (optional)"
                         {...field}
                         value={note}
                         onChange={(e) => setNote(e.target.value)}
