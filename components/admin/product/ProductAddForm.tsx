@@ -150,7 +150,7 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
 
       toast.success("Data produk berhasil disimpan");
 
-      const slug = res.data.data.slug;
+      const slug = res.data.data;
 
       setTimeout(() => {
         router.push(`/admin/products/${slug}`);
