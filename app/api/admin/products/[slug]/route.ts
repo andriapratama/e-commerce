@@ -1,4 +1,6 @@
+import { authOptions } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -7,6 +9,26 @@ export const GET = async (
   { params }: { params: { slug: string } }
 ) => {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json(
+        {
+          message: "You are not logged in",
+        },
+        { status: 401 }
+      );
+    }
+
+    if (session.user.role !== "super admin" && session.user.role !== "admin") {
+      return NextResponse.json(
+        {
+          message: "You are not have access",
+        },
+        { status: 401 }
+      );
+    }
+
     if (!params.slug) {
       return NextResponse.json(
         { message: "Slug is required" },
@@ -40,6 +62,13 @@ export const GET = async (
         },
       },
     });
+
+    if (!product) {
+      return NextResponse.json(
+        { message: "Product not found" },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json(
       { message: "Successfully to get one data by slug", data: product },
@@ -149,7 +178,7 @@ export const PATCH = async (
         {
           message: "Category not found",
         },
-        { status: 400 }
+        { status: 404 }
       );
     }
 
@@ -162,13 +191,22 @@ export const PATCH = async (
       },
     });
 
+    if (!findProduct) {
+      return NextResponse.json(
+        {
+          message: "Product not found",
+        },
+        { status: 404 }
+      );
+    }
+
     const product = await prismadb.product.update({
       where: {
-        id: findProduct?.id,
+        id: findProduct.id,
       },
       data: {
         name,
-        slug,
+        slug: slug.toLowerCase(),
         minimumStock,
         categoryId: findCategory.id,
         status,
