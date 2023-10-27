@@ -103,19 +103,21 @@ model ProductFinanceLog {
 }
 
 model ProductStockLog {
-  id          String @id @default(uuid())
-  stock       Int
-  status      Status
-  note        String?
+  id              String @id @default(uuid())
+  previousStock   Int
+  stock           Int
+  stockNow        Int
+  status          Status
+  note            String?
 
-  order       String?
-  productId   String
-  product     Product @relation("ProductToProductStockLog", fields: [productId], references: [id])
-  employeeId  String?
-  employee    Employee? @relation("EmployeeToProductStockLog", fields: [employeeId], references: [id])
+  order           String?
+  productId       String
+  product         Product @relation("ProductToProductStockLog", fields: [productId], references: [id])
+  employeeId      String?
+  employee        Employee? @relation("EmployeeToProductStockLog", fields: [employeeId], references: [id])
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@index([productId])
   @@index([employeeId])
@@ -123,7 +125,7 @@ model ProductStockLog {
 
 enum Status {
   first
-  updated
+  update
   decrease
   increase
 }

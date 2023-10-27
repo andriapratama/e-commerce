@@ -21,7 +21,9 @@ import { Button } from "@/components/ui/button";
 import { ConvertDate } from "@/utils/ConvertDate";
 
 interface ProductStockLogType {
+  previousStock: number;
   stock: number;
+  stockNow: number;
   status: string;
   note: string;
   createdAt: string;
@@ -44,7 +46,9 @@ const ProductDetailStockLog: React.FC<ProductDetailStockLogProps> = ({
         <TableHeader>
           <TableRow>
             <TableHead>Tanggal</TableHead>
+            <TableHead className="text-center">Stok Sebelumnya</TableHead>
             <TableHead className="text-center">Jumlah Stok</TableHead>
+            <TableHead className="text-center">Stok Skarang</TableHead>
             <TableHead className="text-center">Status</TableHead>
             <TableHead>Catatan</TableHead>
             <TableHead className="text-center">Pegawai</TableHead>
@@ -55,7 +59,11 @@ const ProductDetailStockLog: React.FC<ProductDetailStockLogProps> = ({
             stockList.map((value, index) => (
               <TableRow key={index}>
                 <TableCell>{ConvertDate(value.createdAt)}</TableCell>
+                <TableCell className="text-center">
+                  {value.previousStock}
+                </TableCell>
                 <TableCell className="text-center">{value.stock}</TableCell>
+                <TableCell className="text-center">{value.stockNow}</TableCell>
                 <TableCell className="capitalize text-center">
                   {value.status}
                 </TableCell>
