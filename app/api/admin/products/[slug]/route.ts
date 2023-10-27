@@ -9,26 +9,6 @@ export const GET = async (
   { params }: { params: { slug: string } }
 ) => {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return NextResponse.json(
-        {
-          message: "You are not logged in",
-        },
-        { status: 401 }
-      );
-    }
-
-    if (session.user.role !== "super admin" && session.user.role !== "admin") {
-      return NextResponse.json(
-        {
-          message: "You are not have access",
-        },
-        { status: 401 }
-      );
-    }
-
     if (!params.slug) {
       return NextResponse.json(
         { message: "Slug is required" },
@@ -85,6 +65,26 @@ export const PATCH = async (
   { params }: { params: { slug: string } }
 ) => {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json(
+        {
+          message: "You are not logged in",
+        },
+        { status: 401 }
+      );
+    }
+
+    if (session.user.role !== "super admin") {
+      return NextResponse.json(
+        {
+          message: "You are not have access",
+        },
+        { status: 401 }
+      );
+    }
+
     if (!params.slug) {
       return NextResponse.json(
         { message: "Slug is required" },
