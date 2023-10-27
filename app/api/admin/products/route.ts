@@ -233,3 +233,45 @@ export const POST = async (req: Request) => {
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };
+
+export const GET = async (req: Request) => {
+  try {
+    const products = await prismadb.product.findMany({
+      orderBy: {
+        name: "asc",
+      },
+      select: {
+        name: true,
+        slug: true,
+        totalStock: true,
+        minimumStock: true,
+        price: true,
+        cost: true,
+        netFill: true,
+        status: true,
+        linkGojek: true,
+        description: true,
+        image: true,
+        sale: true,
+        salePrice: true,
+        createdAt: true,
+        category: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(
+      {
+        message: "Successfully get all products",
+        data: products,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.log("[PRODUCT_GET]", error);
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
+  }
+};

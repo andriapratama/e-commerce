@@ -25,10 +25,10 @@ import { ProductType } from "@/types/ProductType";
 import Image from "next/image";
 
 interface ProductTableProps {
-  data: ProductType[];
+  products: ProductType[];
 }
 
-const ProductTable: React.FC<ProductTableProps> = ({ data }) => {
+const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
   const [search, setSearch] = useState<string>("");
   return (
     <div className="w-full">
@@ -56,29 +56,31 @@ const ProductTable: React.FC<ProductTableProps> = ({ data }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data ? (
-              data.map((value: ProductType) => (
-                <TableRow key={value.id}>
+            {products ? (
+              products.map((product: ProductType) => (
+                <TableRow key={product.slug}>
                   <TableCell>
                     <Image
-                      src={`/${value.image}`}
-                      alt={value.name}
+                      src={product.image}
+                      alt={product.name}
                       width={50}
                       height={50}
                       className="object-contain"
                     />
                   </TableCell>
-                  <TableCell className="capitalize">{value.name}</TableCell>
+                  <TableCell className="capitalize">{product.name}</TableCell>
                   <TableCell className="capitalize text-center">
-                    {value.category}
+                    {product.category.name}
                   </TableCell>
-                  <TableCell>{ConvertIDR(value.cost)}</TableCell>
-                  <TableCell>{ConvertIDR(value.price)}</TableCell>
-                  <TableCell className="text-center">{value.stock}</TableCell>
+                  <TableCell>{ConvertIDR(product.cost)}</TableCell>
+                  <TableCell>{ConvertIDR(product.price)}</TableCell>
+                  <TableCell className="text-center">
+                    {product.totalStock}
+                  </TableCell>
                   <TableCell className="text-center capitalize">
-                    {value.status}
+                    {product.status}
                   </TableCell>
-                  <TableCell className="text-center">{value.sale}</TableCell>
+                  <TableCell className="text-center">{product.sale}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger
@@ -88,7 +90,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ data }) => {
                         <MoreHorizontal className="h-4 w-4 cursor-pointer" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <Link href={`/admin/products/${value.id}`}>
+                        <Link href={`/admin/products/${product.slug}`}>
                           <DropdownMenuItem className="cursor-pointer">
                             Detail
                           </DropdownMenuItem>

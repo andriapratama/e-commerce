@@ -1,57 +1,29 @@
 import Title from "@/components/admin/Title";
 import ProductTable from "@/components/admin/product/ProductTable";
-import { ProductType } from "@/types/ProductType";
+import axios from "axios";
 import React from "react";
+import { toast } from "react-toastify";
 
-const _data: ProductType[] = [
-  {
-    id: "1",
-    image: "wine.webp",
-    name: "jim beam kentucky straight",
-    category: "gin",
-    cost: 1000000,
-    price: 1200000,
-    stock: 100,
-    status: "active",
-    sale: "false",
-  },
-  {
-    id: "2",
-    image: "wine.webp",
-    name: "jim beam kentucky straight",
-    category: "gin",
-    cost: 1000000,
-    price: 1200000,
-    stock: 100,
-    status: "active",
-    sale: "false",
-  },
-  {
-    id: "3",
-    image: "wine.webp",
-    name: "jim beam kentucky straight",
-    category: "gin",
-    cost: 1000000,
-    price: 1200000,
-    stock: 100,
-    status: "active",
-    sale: "false",
-  },
-];
+const Product = async () => {
+  try {
+    const res = await axios.get(`${process.env.WEB_URL}/api/admin/products`);
 
-const Product = () => {
-  return (
-    <section className="admin__container">
-      <div className="admin__container-body">
-        <Title
-          title="Produk"
-          nameBtn="Tambah Produk"
-          link="/admin/products/add"
-        />
-        <ProductTable data={_data} />
-      </div>
-    </section>
-  );
+    const products = res.data.data;
+    return (
+      <section className="admin__container">
+        <div className="admin__container-body">
+          <Title
+            title="Produk"
+            nameBtn="Tambah Produk"
+            link="/admin/products/add"
+          />
+          <ProductTable products={products} />
+        </div>
+      </section>
+    );
+  } catch (error: any) {
+    return toast.error(error.response.data.message);
+  }
 };
 
 export default Product;
