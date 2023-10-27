@@ -48,5 +48,7 @@ export const config = {
     "/admin/orders",
     "/admin/orders/(.*)",
     "/admin/products",
+    "/admin/products/add",
+    "/admin/products/(.*)",
   ],
 };
