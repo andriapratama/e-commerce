@@ -185,7 +185,7 @@ export const POST = async (req: Request) => {
     const product = await prismadb.product.create({
       data: {
         name,
-        slug,
+        slug: slug.toLowerCase(),
         totalStock: parseInt(totalStock),
         minimumStock: parseInt(minimumStock),
         price: parseInt(price),
@@ -211,7 +211,9 @@ export const POST = async (req: Request) => {
 
     await prismadb.productStockLog.create({
       data: {
+        previousStock: 0,
         stock: parseInt(totalStock),
+        stockNow: parseInt(totalStock),
         status: "first",
         note: "Pertama kali dibuat",
         productId: product.id,
@@ -222,7 +224,7 @@ export const POST = async (req: Request) => {
     return NextResponse.json(
       {
         message: "Product created!",
-        data: product,
+        data: slug.toLowerCase(),
       },
       { status: 201 }
     );
