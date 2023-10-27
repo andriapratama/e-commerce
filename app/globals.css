@@ -106,11 +106,11 @@
   }
 
   .admin-product-detail__group {
-    @apply md:flex xl:flex-wrap flex-wrap xl:justify-between block gap-3 w-full;
+    @apply md:flex lg:flex-wrap flex-wrap lg:justify-between block gap-3 w-full;
   }
 
   .admin-product-detail__content {
-    @apply w-full md:w-[49%] lg:w-full xl:w-[48.5%] mb-3 md:mb-0 border rounded-md p-3 overflow-hidden;
+    @apply w-full md:w-[49%] lg:w-[48.5%] mb-3 md:mb-0 border rounded-md p-3 overflow-hidden;
   }
 
   .admin-product-detail__title {
