@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import ButtonLoading from "../ButtonLoading";
 
 interface WarningAlertProps {
   isOpenWarning: boolean;
@@ -43,7 +44,7 @@ const WarningAlert: React.FC<WarningAlertProps> = ({
             onClick={() => handleSendData()}
             disabled={isLoading}
           >
-            Ya
+            {isLoading ? <ButtonLoading /> : "Ya"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
