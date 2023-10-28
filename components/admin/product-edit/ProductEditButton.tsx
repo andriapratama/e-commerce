@@ -14,6 +14,7 @@ import { CategoriesDataType } from "@/types/admin/Categories";
 import ProductEditFinance from "./ProductEditFinance";
 import ProductEditStock from "./ProductEditStock";
 import ProductEditSale from "./ProductEditSale";
+import ProductEditImage from "./ProductEditImage";
 
 interface ProductEditButtonProps {
   product: ProductType;
@@ -30,6 +31,7 @@ const ProductEditButton: React.FC<ProductEditButtonProps> = ({
   const [isOpenEditFinance, setIsOpenEditFinance] = useState<boolean>(false);
   const [isOpenEditStock, setIsOpenEditStock] = useState<boolean>(false);
   const [isOpenEditSale, setIsOpenEditSale] = useState<boolean>(false);
+  const [isOpenEditImage, setIsOpenEditImage] = useState<boolean>(false);
   return (
     <React.Fragment>
       <DropdownMenu>
@@ -61,8 +63,11 @@ const ProductEditButton: React.FC<ProductEditButtonProps> = ({
           >
             Status Sale
           </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer">
-            Ganti Gambar
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => setIsOpenEditImage(true)}
+          >
+            Gambar
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -92,6 +97,12 @@ const ProductEditButton: React.FC<ProductEditButtonProps> = ({
         isOpen={isOpenEditSale}
         setIsOpen={setIsOpenEditSale}
         product={product}
+        paramsSlug={paramsSlug}
+      />
+
+      <ProductEditImage
+        isOpen={isOpenEditImage}
+        setIsOpen={setIsOpenEditImage}
         paramsSlug={paramsSlug}
       />
     </React.Fragment>

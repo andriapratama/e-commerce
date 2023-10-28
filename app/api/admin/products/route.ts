@@ -195,6 +195,7 @@ export const POST = async (req: Request) => {
         netFill: parseInt(netFill),
         description,
         image: imageLink + "&raw=1",
+        imagePathname: pathDisplay,
         categoryId: findCategory.id,
       },
     });

@@ -63,6 +63,8 @@ model Product {
   linkGojek     String?
   description   String? @db.Text
   image         String
+  imagePathname String
+  sold          Int @default(0)
   sale          Sale @default(false)
   salePrice     Int @default(0)
 
