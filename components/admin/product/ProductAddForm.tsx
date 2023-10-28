@@ -34,14 +34,11 @@ import { CategoriesDataType } from "@/types/admin/Categories";
 import BackButton from "./BackButton";
 import { useRouter } from "next/navigation";
 import { handleSetNumber } from "@/utils/HandleSetNumber";
-
-const MAX_FILE_SIZE = 500000;
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
+import {
+  ACCEPTED_IMAGE_TYPES,
+  ImageInputType,
+  MAX_FILE_SIZE,
+} from "@/types/admin/Image";
 
 const formSchema = z.object({
   name: z
@@ -79,12 +76,6 @@ const formSchema = z.object({
     ),
 });
 
-interface ImageType {
-  image: File | undefined;
-  preview: string;
-  pathName: string;
-}
-
 interface ProductAddFormProps {
   categories: CategoriesDataType[];
 }
@@ -101,7 +92,7 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
   const [status, setStatus] = useState<string>("");
   const [linkGojek, setLinkGojek] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [image, setImage] = useState<ImageType>({
+  const [image, setImage] = useState<ImageInputType>({
     image: undefined,
     preview: "",
     pathName: "",
@@ -201,11 +192,19 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
                       onChange={(e) => {
                         const files = e.target.files;
                         if (files) {
-                          setImage({
-                            image: files[0],
-                            preview: URL.createObjectURL(files[0]),
-                            pathName: e.target.value,
-                          });
+                          if (image.pathName) {
+                            setImage((previous) => ({
+                              image: previous.image,
+                              preview: previous.preview,
+                              pathName: "",
+                            }));
+                          } else {
+                            setImage({
+                              image: files[0],
+                              preview: URL.createObjectURL(files[0]),
+                              pathName: e.target.value,
+                            });
+                          }
                         }
                       }}
                       accept="image/png, image/jpg, image/jpeg, image/webp"
