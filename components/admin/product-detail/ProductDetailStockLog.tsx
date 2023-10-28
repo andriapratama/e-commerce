@@ -50,7 +50,7 @@ const ProductDetailStockLog: React.FC<ProductDetailStockLogProps> = ({
             <TableHead className="text-center">Jumlah Stok</TableHead>
             <TableHead className="text-center">Stok Skarang</TableHead>
             <TableHead className="text-center">Status</TableHead>
-            <TableHead>Catatan</TableHead>
+            <TableHead className="text-center">Catatan</TableHead>
             <TableHead className="text-center">Pegawai</TableHead>
           </TableRow>
         </TableHeader>
@@ -67,20 +67,24 @@ const ProductDetailStockLog: React.FC<ProductDetailStockLogProps> = ({
                 <TableCell className="capitalize text-center">
                   {value.status}
                 </TableCell>
-                <TableCell>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        Buka
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>Catatan</DialogTitle>
-                        <DialogDescription>{value.note}</DialogDescription>
-                      </DialogHeader>
-                    </DialogContent>
-                  </Dialog>
+                <TableCell className="text-center">
+                  {!value.note ? (
+                    "-"
+                  ) : (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          Buka
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Catatan</DialogTitle>
+                          <DialogDescription>{value.note}</DialogDescription>
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
+                  )}
                 </TableCell>
                 <TableCell className="capitalize text-center">
                   {value.employee.name}

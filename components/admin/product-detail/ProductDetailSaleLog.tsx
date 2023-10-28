@@ -47,7 +47,7 @@ const ProductDetailSaleLog: React.FC<ProductDetailSaleLogProps> = ({
             <TableHead>Tanggal</TableHead>
             <TableHead className="text-center">Status Sale</TableHead>
             <TableHead>Harga Sale</TableHead>
-            <TableHead>Catatan</TableHead>
+            <TableHead className="text-center">Catatan</TableHead>
             <TableHead className="text-center">Pegawai</TableHead>
           </TableRow>
         </TableHeader>
@@ -60,20 +60,24 @@ const ProductDetailSaleLog: React.FC<ProductDetailSaleLogProps> = ({
                   {value.sale}
                 </TableCell>
                 <TableCell>{ConvertIDR(value.salePrice)}</TableCell>
-                <TableCell>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        Buka
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>Catatan</DialogTitle>
-                        <DialogDescription>{value.note}</DialogDescription>
-                      </DialogHeader>
-                    </DialogContent>
-                  </Dialog>
+                <TableCell className="text-center">
+                  {!value.note ? (
+                    "-"
+                  ) : (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          Buka
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Catatan</DialogTitle>
+                          <DialogDescription>{value.note}</DialogDescription>
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
+                  )}
                 </TableCell>
                 <TableCell className="capitalize text-center">
                   {value.employee.name}
