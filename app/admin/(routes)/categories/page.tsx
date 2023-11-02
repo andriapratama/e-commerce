@@ -12,7 +12,6 @@ import { useShowCategoriesHook } from "@/hooks/admin/CategoryHook";
 const Categories = () => {
   const { categories, showCategories } = useShowCategoriesHook();
   const [editCategory, setEditCategory] = useState<EditCategoryType>({
-    id: "",
     name: "",
     slug: "",
   });
@@ -23,7 +22,7 @@ const Categories = () => {
         <ToastContainer />
         <Title title="Kategori" />
         <div className="flex justify-between md:flex-nowrap flex-wrap gap-3 w-full">
-          {editCategory.id ? (
+          {editCategory.name ? (
             <CategoryEdit
               editCategory={editCategory}
               setEditCategory={setEditCategory}

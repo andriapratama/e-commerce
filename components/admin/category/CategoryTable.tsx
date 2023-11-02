@@ -55,7 +55,6 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
                         className="cursor-pointer"
                         onClick={() =>
                           setEditCategory({
-                            id: category.id,
                             name: category.name,
                             slug: category.slug,
                           })

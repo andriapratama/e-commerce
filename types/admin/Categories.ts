@@ -4,7 +4,6 @@ export interface CategoriesDataType {
 }
 
 export interface EditCategoryType {
-  id: string;
   name: string;
   slug: string;
 }

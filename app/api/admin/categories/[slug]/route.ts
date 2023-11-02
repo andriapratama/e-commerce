@@ -4,11 +4,11 @@ import { z } from "zod";
 
 export const PATCH = async (
   req: Request,
-  { params }: { params: { categoryId: string } }
+  { params }: { params: { slug: string } }
 ) => {
   try {
-    if (!params.categoryId) {
-      return new NextResponse("Category id is required", { status: 400 });
+    if (!params.slug) {
+      return new NextResponse("Category slug is required", { status: 400 });
     }
 
     const body = await req.json();
@@ -64,25 +64,22 @@ export const PATCH = async (
       );
     }
 
-    if (!findName && !findSlug) {
-      const category = await prismadb.category.update({
-        where: {
-          id: params.categoryId,
-        },
-        data: {
-          name,
-          slug,
-        },
-      });
+    const category = await prismadb.category.update({
+      where: {
+        slug: params.slug,
+      },
+      data: {
+        name,
+        slug,
+      },
+    });
 
-      return NextResponse.json(
-        {
-          message: "Category successfully updated!",
-          data: category,
-        },
-        { status: 200 }
-      );
-    }
+    return NextResponse.json(
+      {
+        message: "Category successfully updated!",
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.log("[CATEGORY_PATCH]", error);
     return new NextResponse("Server error", { status: 500 });

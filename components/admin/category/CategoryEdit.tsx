@@ -61,7 +61,7 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({
     try {
       setLoading(true);
 
-      await axios.patch(`/api/admin/categories/${editCategory.id}`, {
+      await axios.patch(`/api/admin/categories/${editCategory.slug}`, {
         name: values.name.toLowerCase(),
         slug: values.slug.toLowerCase(),
       });
@@ -74,7 +74,6 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({
       showCategories();
 
       setEditCategory({
-        id: "",
         name: "",
         slug: "",
       });
@@ -138,9 +137,9 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({
           <Button
             size="sm"
             variant="outline"
+            type="button"
             onClick={() =>
               setEditCategory({
-                id: "",
                 name: "",
                 slug: "",
               })
