@@ -67,7 +67,7 @@ const EmployeeEdit: React.FC<EmployeeEditProps> = ({
     try {
       setLoading(true);
 
-      await axios.patch(`/api/admin/employees/${editEmployee.id}`, {
+      await axios.patch(`/api/admin/employees/${editEmployee.username}`, {
         name: values.name.toLowerCase(),
         username: values.username.toLowerCase(),
         role: values.role,
@@ -138,7 +138,7 @@ const EmployeeEdit: React.FC<EmployeeEditProps> = ({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="super admin">Super Admin</SelectItem>
+                  <SelectItem value="superAdmin">Super Admin</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
                 </SelectContent>
               </Select>
@@ -153,7 +153,6 @@ const EmployeeEdit: React.FC<EmployeeEditProps> = ({
             variant="outline"
             onClick={() =>
               setEditEmployee({
-                id: "",
                 name: "",
                 username: "",
                 role: "",

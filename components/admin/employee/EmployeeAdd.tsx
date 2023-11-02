@@ -22,13 +22,14 @@ import {
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Input } from "@/components/ui/input";
-import ButtonLoading from "@/components/ButtonLoading";
 import axios from "axios";
+import React from "react";
+import WarningAlert from "../WarningAlert";
+import EmployeeAddResult from "./EmployeeAddResult";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "Username minimal 3 karakter" }),
   username: z.string().min(3, { message: "Username minimal 3 karakter" }),
-  password: z.string().min(6, { message: "Password minimal 6 karakter" }),
   role: z.string().min(1, { message: "Pilih role pegawai" }),
 });
 
@@ -37,30 +38,45 @@ interface EmployeeAddProps {
 }
 
 const EmployeeAdd: React.FC<EmployeeAddProps> = ({ ShowEmployees }) => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [name, setName] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [role, setRole] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     values: {
-      name: "",
-      username: "",
-      password: "",
-      role: "",
+      name: name,
+      username: username,
+      role: role,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      setLoading(true);
+    setIsOpenWarning(true);
+  };
 
-      await axios.post("/api/admin/employees", {
-        name: values.name.toLowerCase(),
-        username: values.username.toLowerCase(),
-        password: values.password,
-        role: values.role,
+  const handleSendData = async () => {
+    try {
+      setIsLoading(true);
+
+      const res = await axios.post("/api/admin/employees", {
+        name: name.toLowerCase(),
+        username: username.toLowerCase(),
+        role: role,
       });
 
-      form.reset();
+      const data = res.data.data;
+
+      setName(data.name);
+      setUsername(data.username);
+      setRole("");
+      setPassword(data.password);
+      setIsOpen(true);
 
       toast.success("Data karyawan berhasil disimpan!");
 
@@ -68,95 +84,100 @@ const EmployeeAdd: React.FC<EmployeeAddProps> = ({ ShowEmployees }) => {
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
+      setIsOpenWarning(false);
     }
   };
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="md:w-2/3 w-full admin__card h-full"
-      >
-        <h2 className="admin__form-title">Tambah Pegawai</h2>
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-gray-700">Nama</FormLabel>
-              <FormControl>
-                <Input
-                  className="mb-3"
-                  placeholder="Masukkan nama"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-gray-700">Username</FormLabel>
-              <FormControl>
-                <Input
-                  className="mb-3"
-                  placeholder="Masukkan username"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-gray-700">Password</FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  className="mb-3"
-                  placeholder="Masukkan password"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="role"
-          render={({ field }) => (
-            <FormItem className="mb-3">
-              <FormLabel className="text-gray-700">Role</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+    <React.Fragment>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="md:w-2/3 w-full admin__card h-full"
+        >
+          <h2 className="admin__form-title">Tambah Pegawai</h2>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-700">Nama</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pilih role pegawai" />
-                  </SelectTrigger>
+                  <Input
+                    className="mb-3"
+                    placeholder="Masukkan nama"
+                    {...field}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="super admin">Super Admin</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage className="!mt-1" />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-700">Username</FormLabel>
+                <FormControl>
+                  <Input
+                    className="mb-3"
+                    placeholder="Masukkan username"
+                    {...field}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="role"
+            render={({ field }) => (
+              <FormItem className="mb-3">
+                <FormLabel className="text-gray-700">Role</FormLabel>
+                <Select onValueChange={setRole} value={role}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pilih role pegawai" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="superAdmin">Super Admin</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage className="!mt-1" />
+              </FormItem>
+            )}
+          />
 
-        <Button disabled={loading} type="submit">
-          {loading ? <ButtonLoading /> : "Simpan"}
-        </Button>
-      </form>
-    </Form>
+          <Button type="submit">Simpan</Button>
+        </form>
+      </Form>
+
+      <WarningAlert
+        isOpenWarning={isOpenWarning}
+        setIsOpenWarning={setIsOpenWarning}
+        isLoading={isLoading}
+        handleSendData={handleSendData}
+      />
+
+      <EmployeeAddResult
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        name={name}
+        setName={setName}
+        username={username}
+        setUsername={setUsername}
+        password={password}
+        setPassword={setPassword}
+      />
+    </React.Fragment>
   );
 };
 

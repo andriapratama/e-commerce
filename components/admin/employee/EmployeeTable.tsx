@@ -42,7 +42,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
         {employees ? (
           <TableBody>
             {employees.map((employee, index) => (
-              <TableRow key={employee.id}>
+              <TableRow key={employee.username}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell className="capitalize">{employee.name}</TableCell>
                 <TableCell>{employee.username}</TableCell>
@@ -57,7 +57,6 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                         className="cursor-pointer"
                         onClick={() =>
                           setEditEmployee({
-                            id: employee.id,
                             name: employee.name,
                             username: employee.username,
                             role: employee.role,

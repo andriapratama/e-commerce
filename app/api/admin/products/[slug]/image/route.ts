@@ -20,7 +20,7 @@ export const PATCH = async (
       );
     }
 
-    if (session.user.role !== "super admin") {
+    if (session.user.role !== "superAdmin") {
       return NextResponse.json(
         {
           message: "You are not have access",

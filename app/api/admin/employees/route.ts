@@ -10,8 +10,7 @@ export const POST = async (req: Request) => {
     const schema = z.object({
       name: z.string().min(3),
       username: z.string().min(3),
-      password: z.string().min(6),
-      role: z.string().min(1),
+      role: z.enum(["superAdmin", "admin"]),
     });
 
     const response = schema.safeParse(body);
@@ -28,7 +27,7 @@ export const POST = async (req: Request) => {
       );
     }
 
-    const { name, username, password, role } = response.data;
+    const { name, username, role } = response.data;
 
     const findUsername = await prismadb.employee.findFirst({
       where: {
@@ -43,26 +42,31 @@ export const POST = async (req: Request) => {
         },
         { status: 400 }
       );
-    } else {
-      const passwordHash = bcrypt.hashSync(password, 10);
-
-      const employee = await prismadb.employee.create({
-        data: {
-          name: name,
-          username: username,
-          password: passwordHash,
-          role: role,
-        },
-      });
-
-      return NextResponse.json(
-        {
-          message: "Employee successfully saved!",
-          data: employee,
-        },
-        { status: 201 }
-      );
     }
+
+    const password = "123456";
+    const passwordHash = bcrypt.hashSync(password, 10);
+
+    const employee = await prismadb.employee.create({
+      data: {
+        name: name,
+        username: username,
+        password: passwordHash,
+        role: role,
+      },
+    });
+
+    return NextResponse.json(
+      {
+        message: "Employee successfully saved!",
+        data: {
+          name: employee.name,
+          username: employee.username,
+          password: "123456",
+        },
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.log("[EMPLOYEE_POST]", error);
     return new NextResponse("Server error", { status: 500 });
@@ -73,7 +77,6 @@ export const GET = async (req: Request) => {
   try {
     const employees = await prismadb.employee.findMany({
       select: {
-        id: true,
         name: true,
         username: true,
         role: true,

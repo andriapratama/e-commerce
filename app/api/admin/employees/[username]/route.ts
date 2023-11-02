@@ -4,11 +4,11 @@ import { z } from "zod";
 
 export const PATCH = async (
   req: Request,
-  { params }: { params: { employeeId: string } }
+  { params }: { params: { username: string } }
 ) => {
   try {
-    if (!params.employeeId) {
-      return new NextResponse("Employee id is required", { status: 400 });
+    if (!params.username) {
+      return new NextResponse("Employee username is required", { status: 400 });
     }
 
     const body = await req.json();
@@ -16,7 +16,7 @@ export const PATCH = async (
     const schema = z.object({
       name: z.string().min(3),
       username: z.string().min(3),
-      role: z.string().min(1),
+      role: z.enum(["superAdmin", "admin"]),
     });
 
     const response = schema.safeParse(body);
@@ -33,26 +33,43 @@ export const PATCH = async (
       );
     }
 
+    const findEmployee = await prismadb.employee.findUnique({
+      where: {
+        username: params.username,
+      },
+    });
+
+    if (!findEmployee) {
+      return NextResponse.json(
+        {
+          message: "Employee not found",
+        },
+        { status: 404 }
+      );
+    }
+
     const { name, username, role } = response.data;
 
-    const findUsername = await prismadb.employee.findFirst({
+    const findUsername = await prismadb.employee.findUnique({
       where: {
         username: username,
       },
     });
 
-    if (findUsername?.id !== params.employeeId) {
-      return NextResponse.json(
-        {
-          message: "Username sudah digunakan",
-        },
-        { status: 400 }
-      );
+    if (findUsername) {
+      if (findUsername?.id !== findEmployee.id) {
+        return NextResponse.json(
+          {
+            message: "Username sudah digunakan",
+          },
+          { status: 400 }
+        );
+      }
     }
 
     const employee = await prismadb.employee.update({
       where: {
-        id: params.employeeId,
+        username: params.username,
       },
       data: {
         name: name,
@@ -64,7 +81,6 @@ export const PATCH = async (
     return NextResponse.json(
       {
         message: "Employee successfully saved!",
-        data: employee,
       },
       { status: 200 }
     );

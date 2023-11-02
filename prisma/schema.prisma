@@ -27,7 +27,7 @@ model Employee {
   name      String
   username  String @unique
   password  String
-  role      String
+  role      RoleEmployee
 
   productFinanceLog ProductFinanceLog[] @relation("EmployeeToProductFinanceLog")
   productStockLog ProductStockLog[] @relation("EmployeeToProductStockLog")
@@ -37,17 +37,28 @@ model Employee {
   updatedAt DateTime @updatedAt
 }
 
+enum RoleEmployee {
+  superAdmin
+  admin
+}
+
 model User {
   id        String @id @default(uuid())
   firstName  String
   lastName  String
   email     String @unique
   password  String
-  role      String
+  role      RoleUser
   addres    String @db.Text
   phone     String
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum RoleUser {
+  member
+  guest
 }
 
 model Product {
@@ -59,13 +70,11 @@ model Product {
   price         Int
   cost          Int
   netFill       Int @db.SmallInt
-  status        String
+  status        StatusProduct 
   linkGojek     String?
   description   String? @db.Text
   image         String
   imagePathname String
-  sold          Int @default(0)
-  sale          Sale @default(false)
   salePrice     Int @default(0)
 
   categoryId    String
@@ -81,9 +90,12 @@ model Product {
   @@index([categoryId])
 }
 
-enum Sale {
-  true
-  false
+enum StatusProduct {
+  new
+  active
+  best
+  sale
+  archive
 }
 
 model ProductFinanceLog {
@@ -109,14 +121,14 @@ model ProductStockLog {
   previousStock   Int
   stock           Int
   stockNow        Int
-  status          Status
+  status          StatusStock
   note            String?
 
   order           String?
   productId       String
   product         Product @relation("ProductToProductStockLog", fields: [productId], references: [id])
-  employeeId      String?
-  employee        Employee? @relation("EmployeeToProductStockLog", fields: [employeeId], references: [id])
+  employeeId      String
+  employee        Employee @relation("EmployeeToProductStockLog", fields: [employeeId], references: [id])
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -125,7 +137,7 @@ model ProductStockLog {
   @@index([employeeId])
 }
 
-enum Status {
+enum StatusStock {
   first
   update
   decrease
@@ -134,7 +146,7 @@ enum Status {
 
 model ProductSaleLog {
   id          String @id @default(uuid())
-  sale        Sale
+  status      Boolean
   salePrice   Int
   note        String?
 

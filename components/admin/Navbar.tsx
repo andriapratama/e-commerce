@@ -28,32 +28,32 @@ const menus: MenuType[] = [
   {
     name: "order",
     link: "/admin/orders",
-    role: ["super admin", "admin"],
+    role: ["superAdmin", "admin"],
   },
   {
     name: "produk",
     link: "/admin/products",
-    role: ["super admin"],
+    role: ["superAdmin"],
   },
   {
     name: "kategori",
     link: "/admin/categories",
-    role: ["super admin"],
+    role: ["superAdmin"],
   },
   {
     name: "pegawai",
     link: "/admin/employees",
-    role: ["super admin"],
+    role: ["superAdmin"],
   },
   {
     name: "pelanggan",
     link: "/admin/users",
-    role: ["super admin", "admin"],
+    role: ["superAdmin", "admin"],
   },
   {
     name: "tamu",
     link: "/admin/guests",
-    role: ["super admin", "admin"],
+    role: ["superAdmin", "admin"],
   },
 ];
 

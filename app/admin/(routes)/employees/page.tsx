@@ -12,7 +12,6 @@ import { ToastContainer } from "react-toastify";
 const Employees = () => {
   const [employees, setEmployees] = useState<EmployeeDataType[]>([]);
   const [editEmployee, setEditEmployee] = useState({
-    id: "",
     name: "",
     username: "",
     role: "",
