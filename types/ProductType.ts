@@ -9,7 +9,6 @@ export interface ProductType {
   status: string;
   linkGojek: string;
   description: string;
-  sale: string;
   salePrice: number;
   category: { name: string };
   image: string;

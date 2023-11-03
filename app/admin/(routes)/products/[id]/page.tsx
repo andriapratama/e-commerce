@@ -6,7 +6,7 @@ import axios from "axios";
 import ProductDetailData from "@/components/admin/product-detail/ProductDetailData";
 import ProductDetailFinanceLog from "@/components/admin/product-detail/ProductDetailFinanceLog";
 import ProductDetailStockLog from "@/components/admin/product-detail/ProductDetailStockLog";
-import ProductDetailSaleLog from "@/components/admin/product-detail/ProductDetailSaleLog";
+import ProductDetailStatusLog from "@/components/admin/product-detail/ProductDetailStatusLog";
 import ProductEditButton from "@/components/admin/product-edit/ProductEditButton";
 import { ToastContainer } from "react-toastify";
 import { redirect } from "next/navigation";
@@ -27,9 +27,9 @@ const ProductDetail = async ({ params }: { params: { id: string } }) => {
 
     const stockList = stockLog.data.data;
 
-    const saleLog = await axios.get(api + "/sale");
+    const statusLog = await axios.get(api + "/status");
 
-    const saleList = saleLog.data.data;
+    const statusList = statusLog.data.data;
 
     const categoryRes = await axios.get(
       `${process.env.WEB_URL}/api/admin/categories`
@@ -73,7 +73,7 @@ const ProductDetail = async ({ params }: { params: { id: string } }) => {
           </div>
           <div className="lg:flex block gap-3">
             <ProductDetailFinanceLog financeList={financeList} />
-            <ProductDetailSaleLog saleList={saleList} />
+            <ProductDetailStatusLog statusList={statusList} />
           </div>
           <div className="flex justify-center">
             <div className="lg:w-[80%] w-full">

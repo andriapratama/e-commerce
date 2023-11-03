@@ -18,7 +18,7 @@ export const POST = async (req: Request) => {
       );
     }
 
-    if (session.user.role !== "super admin") {
+    if (session.user.role !== "superAdmin") {
       return NextResponse.json(
         {
           message: "You are not have access",
@@ -53,7 +53,7 @@ export const POST = async (req: Request) => {
       price: z.string().min(1).min(3),
       cost: z.string().min(1).min(3),
       category: z.string().min(1),
-      status: z.string().min(1),
+      status: z.enum(["new", "active", "best", "sale", "archive"]),
       linkGojek: z.string().optional(),
       netFill: z.string().min(1),
       description: z.string().optional(),
@@ -253,7 +253,6 @@ export const GET = async (req: Request) => {
         linkGojek: true,
         description: true,
         image: true,
-        sale: true,
         salePrice: true,
         createdAt: true,
         category: {

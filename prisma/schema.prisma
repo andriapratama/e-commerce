@@ -31,7 +31,7 @@ model Employee {
 
   productFinanceLog ProductFinanceLog[] @relation("EmployeeToProductFinanceLog")
   productStockLog ProductStockLog[] @relation("EmployeeToProductStockLog")
-  productSaleLog ProductSaleLog[] @relation("EmployeeToProductSaleLog")
+  productStatusLog ProductStatusLog[] @relation("EmployeeToProductStatusLog")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -82,7 +82,7 @@ model Product {
 
   productFinanceLog   ProductFinanceLog[] @relation("ProductToProductFinanceLog")
   productStockLog     ProductStockLog[] @relation("ProductToProductStockLog")
-  productSaleLog     ProductSaleLog[] @relation("ProductToProductSaleLog")
+  productStatusLog     ProductStatusLog[] @relation("ProductToProductStatusLog")
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -144,16 +144,16 @@ enum StatusStock {
   increase
 }
 
-model ProductSaleLog {
+model ProductStatusLog {
   id          String @id @default(uuid())
-  status      Boolean
-  salePrice   Int
+  status      StatusProduct
+  salePrice   Int @default(0)
   note        String?
 
   productId   String
-  product     Product @relation("ProductToProductSaleLog", fields: [productId], references: [id])
+  product     Product @relation("ProductToProductStatusLog", fields: [productId], references: [id])
   employeeId  String
-  employee    Employee @relation("EmployeeToProductSaleLog", fields: [employeeId], references: [id])
+  employee    Employee @relation("EmployeeToProductStatusLog", fields: [employeeId], references: [id])
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

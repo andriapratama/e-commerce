@@ -24,15 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { ProductType } from "@/types/ProductType";
 import { CategoriesDataType } from "@/types/admin/Categories";
@@ -46,6 +37,7 @@ import { z } from "zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import WarningAlert from "../WarningAlert";
 
 interface ProductEditDataProps {
   isOpen: boolean;
@@ -66,7 +58,6 @@ const formSchema = z.object({
     .min(3, "Slug minimal 3 karakter."),
   minimumStock: z.string().min(1, "Stok minimal harus diisi."),
   category: z.string().min(1, "Category harus diisi."),
-  status: z.string().min(1, "Status harus diisi."),
   linkGojek: z.string().optional(),
   netFill: z.string().min(1, "Isi bersih harus diisi"),
   description: z.string().optional(),
@@ -84,7 +75,6 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
   const [minimumStock, setMinimumStock] = useState<string>("");
   const [netFill, setNetFill] = useState<string>("");
   const [category, setCategory] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
   const [linkGojek, setLinkGojek] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
@@ -100,7 +90,6 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
     setMinimumStock(product.minimumStock.toString());
     setNetFill(product.netFill.toString());
     setCategory(product.category.name);
-    setStatus(product.status);
     setLinkGojek(product.linkGojek);
     setDescription(product.description);
   }, [product, isOpen]);
@@ -112,7 +101,6 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
       slug: slug,
       minimumStock: minimumStock,
       category: category,
-      status: status,
       linkGojek: linkGojek,
       netFill: netFill,
       description: description,
@@ -125,7 +113,6 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
       values.slug !== product.slug ||
       parseInt(values.minimumStock) !== product.minimumStock ||
       values.category !== product.category.name ||
-      values.status !== product.status ||
       values.linkGojek !== product.linkGojek ||
       parseInt(values.netFill) !== product.netFill ||
       values.description !== product.description
@@ -145,7 +132,6 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
         slug: slug,
         minimumStock: parseInt(minimumStock),
         category: category,
-        status: status,
         linkGojek: linkGojek,
         netFill: parseInt(netFill),
         description: description,
@@ -302,48 +288,30 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
-                  name="status"
+                  name="linkGojek"
                   render={({ field }) => (
-                    <FormItem className="mb-3 w-full">
-                      <FormLabel className="text-gray-700">Status</FormLabel>
-                      <Select onValueChange={setStatus} value={field.value}>
-                        <FormControl className="capitalize">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Pilih status" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent className="capitalize">
-                          <SelectItem value="active">aktif</SelectItem>
-                          <SelectItem value="archive">arsip</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage className="!mt-1" />
+                    <FormItem className="w-full">
+                      <FormLabel className="text-gray-700">
+                        Link Gojek
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          className="mb-3"
+                          placeholder="Link gojek"
+                          {...field}
+                          value={linkGojek}
+                          onChange={(e) => setLinkGojek(e.target.value)}
+                        />
+                      </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
-              <FormField
-                control={form.control}
-                name="linkGojek"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel className="text-gray-700">Link Gojek</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="mb-3"
-                        placeholder="Link gojek"
-                        {...field}
-                        value={linkGojek}
-                        onChange={(e) => setLinkGojek(e.target.value)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="description"
@@ -373,29 +341,12 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={isOpenWarning}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Apakah anda yakin ingin menyiman data?
-            </AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              onClick={() => setIsOpenWarning(false)}
-              disabled={isLoading}
-            >
-              Batal
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => handleSendData()}
-              disabled={isLoading}
-            >
-              Ya
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <WarningAlert
+        isOpenWarning={isOpenWarning}
+        setIsOpenWarning={setIsOpenWarning}
+        isLoading={isLoading}
+        handleSendData={handleSendData}
+      />
     </React.Fragment>
   );
 };

@@ -22,7 +22,7 @@ const Product = async () => {
       </section>
     );
   } catch (error: any) {
-    return toast.error(error.response.data.message);
+    return console.log(error.response.data.message);
   }
 };
 

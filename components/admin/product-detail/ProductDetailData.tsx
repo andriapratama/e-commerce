@@ -62,7 +62,15 @@ const ProductDetailData: React.FC<ProductDetailDataProps> = ({ product }) => {
         <div className="admin-product-detail__content">
           <div className="admin-product-detail__title">Status</div>
           <div className="admin-product-detail__value capitalize">
-            {product.status === "active" ? "aktif" : "arsip"}
+            {product.status === "new"
+              ? "baru"
+              : product.status === "active"
+              ? "aktif"
+              : product.status === "best"
+              ? "best seller"
+              : product.status === "sale"
+              ? "sale"
+              : "arsip"}
           </div>
         </div>
 
@@ -71,14 +79,7 @@ const ProductDetailData: React.FC<ProductDetailDataProps> = ({ product }) => {
           <div className="admin-product-detail__value">{product.netFill}ml</div>
         </div>
 
-        <div className="admin-product-detail__content">
-          <div className="admin-product-detail__title">Sale</div>
-          <div className="admin-product-detail__value capitalize">
-            {product.sale === "true" ? "hidup" : "mati"}
-          </div>
-        </div>
-
-        {product.sale === "true" ? (
+        {product.status === "sale" ? (
           <div className="admin-product-detail__content">
             <div className="admin-product-detail__title">Harga Sale</div>
             <div className="admin-product-detail__value">

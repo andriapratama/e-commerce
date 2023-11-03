@@ -51,7 +51,6 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
               <TableHead>Harga Jual</TableHead>
               <TableHead className="text-center">Stok</TableHead>
               <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Sale</TableHead>
               <TableHead className="text-center">Aksi</TableHead>
             </TableRow>
           </TableHeader>
@@ -80,7 +79,6 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                   <TableCell className="text-center capitalize">
                     {product.status}
                   </TableCell>
-                  <TableCell className="text-center">{product.sale}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger
@@ -102,7 +100,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={9} className="h-24 text-center">
+                <TableCell colSpan={8} className="h-24 text-center">
                   Data kosong
                 </TableCell>
               </TableRow>

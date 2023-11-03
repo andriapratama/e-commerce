@@ -36,14 +36,14 @@ import {
 } from "@/components/ui/select";
 import { ProductType } from "@/types/ProductType";
 
-interface ProductEditSaleProps {
+interface ProductEditStatusProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   product: ProductType;
   paramsSlug: string;
 }
 
-const ProductEditSale: React.FC<ProductEditSaleProps> = ({
+const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
   isOpen,
   setIsOpen,
   product,
@@ -52,7 +52,7 @@ const ProductEditSale: React.FC<ProductEditSaleProps> = ({
   const [salePrice, setSalePrice] = useState<string>(
     product.salePrice.toString()
   );
-  const [status, setStatus] = useState<string>(product.sale);
+  const [status, setStatus] = useState<string>(product.status);
   const [note, setNote] = useState<string>("");
 
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
@@ -61,7 +61,7 @@ const ProductEditSale: React.FC<ProductEditSaleProps> = ({
   const router = useRouter();
 
   const formSchema =
-    status === "true"
+    status === "sale"
       ? z.object({
           salePrice: z
             .string()
@@ -86,7 +86,10 @@ const ProductEditSale: React.FC<ProductEditSaleProps> = ({
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (status !== product.sale || parseInt(salePrice) !== product.salePrice) {
+    if (
+      status !== product.status ||
+      parseInt(salePrice) !== product.salePrice
+    ) {
       setIsOpenWarning(true);
     } else {
       setIsOpen(false);
@@ -97,11 +100,14 @@ const ProductEditSale: React.FC<ProductEditSaleProps> = ({
     try {
       setIsLoading(true);
 
-      const res = await axios.patch(`/api/admin/products/${paramsSlug}/sale`, {
-        salePrice: parseInt(salePrice),
-        status: status,
-        note: note,
-      });
+      const res = await axios.patch(
+        `/api/admin/products/${paramsSlug}/status`,
+        {
+          salePrice: parseInt(salePrice),
+          status: status,
+          note: note,
+        }
+      );
 
       setIsOpenWarning(false);
       setIsOpen(false);
@@ -114,7 +120,7 @@ const ProductEditSale: React.FC<ProductEditSaleProps> = ({
 
       router.refresh();
 
-      toast.success("Status sale berhasil diubah");
+      toast.success("Status produk berhasil diubah");
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {
@@ -143,8 +149,11 @@ const ProductEditSale: React.FC<ProductEditSaleProps> = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="capitalize">
-                        <SelectItem value="true">Hidup</SelectItem>
-                        <SelectItem value="false">Mati</SelectItem>
+                        <SelectItem value="new">Baru</SelectItem>
+                        <SelectItem value="active">Aktif</SelectItem>
+                        <SelectItem value="best">Best Seller</SelectItem>
+                        <SelectItem value="sale">Sale</SelectItem>
+                        <SelectItem value="archive">Arsip</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage className="!mt-1" />
@@ -152,7 +161,7 @@ const ProductEditSale: React.FC<ProductEditSaleProps> = ({
                 )}
               />
 
-              {status === "true" ? (
+              {status === "sale" ? (
                 <FormField
                   control={form.control}
                   name="salePrice"
@@ -215,4 +224,4 @@ const ProductEditSale: React.FC<ProductEditSaleProps> = ({
   );
 };
 
-export default ProductEditSale;
+export default ProductEditStatus;

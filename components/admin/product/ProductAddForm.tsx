@@ -89,7 +89,7 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
   const [cost, setCost] = useState<string>("");
   const [netFill, setNetFill] = useState<string>("");
   const [category, setCategory] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
+  const [status, setStatus] = useState<string>("new");
   const [linkGojek, setLinkGojek] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [image, setImage] = useState<ImageInputType>({
@@ -392,6 +392,7 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="capitalize">
+                      <SelectItem value="new">baru</SelectItem>
                       <SelectItem value="active">aktif</SelectItem>
                       <SelectItem value="archive">arsip</SelectItem>
                     </SelectContent>

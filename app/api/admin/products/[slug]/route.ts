@@ -32,7 +32,6 @@ export const GET = async (
         linkGojek: true,
         description: true,
         image: true,
-        sale: true,
         salePrice: true,
         createdAt: true,
         category: {
@@ -76,7 +75,7 @@ export const PATCH = async (
       );
     }
 
-    if (session.user.role !== "super admin") {
+    if (session.user.role !== "superAdmin") {
       return NextResponse.json(
         {
           message: "You are not have access",
@@ -99,7 +98,6 @@ export const PATCH = async (
       slug: z.string().min(1).min(3),
       minimumStock: z.number().min(1),
       category: z.string().min(1),
-      status: z.string().min(1),
       linkGojek: z.string().optional(),
       netFill: z.number().min(1),
       description: z.string().optional(),
@@ -124,7 +122,6 @@ export const PATCH = async (
       slug,
       minimumStock,
       category,
-      status,
       linkGojek,
       netFill,
       description,
@@ -209,7 +206,6 @@ export const PATCH = async (
         slug: slug.toLowerCase(),
         minimumStock,
         categoryId: findCategory.id,
-        status,
         linkGojek,
         netFill,
         description,

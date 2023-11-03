@@ -30,16 +30,16 @@ export const GET = async (
         {
           message: "Product not found",
         },
-        { status: 400 }
+        { status: 404 }
       );
     }
 
-    const saleLog = await prismadb.productSaleLog.findMany({
+    const statusLog = await prismadb.productStatusLog.findMany({
       where: {
         productId: product.id,
       },
       select: {
-        sale: true,
+        status: true,
         salePrice: true,
         note: true,
         createdAt: true,
@@ -56,13 +56,13 @@ export const GET = async (
 
     return NextResponse.json(
       {
-        message: "Successfully to get all sale log by product slug",
-        data: saleLog,
+        message: "Successfully to get all status log by product slug",
+        data: statusLog,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.log("[STOCK_LOG_GET]", error);
+    console.log("[STATUS_LOG_GET]", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };
@@ -83,7 +83,7 @@ export const PATCH = async (
       );
     }
 
-    if (session.user.role !== "super admin") {
+    if (session.user.role !== "superAdmin") {
       return NextResponse.json(
         {
           message: "You are not have access",
@@ -102,8 +102,8 @@ export const PATCH = async (
     const body = await req.json();
 
     const schema = z.object({
-      salePrice: z.number().min(1),
-      status: z.string().min(1),
+      salePrice: z.number().optional(),
+      status: z.enum(["new", "active", "best", "sale", "archive"]),
       note: z.string().optional(),
     });
 
@@ -135,7 +135,7 @@ export const PATCH = async (
     if (!findProduct) {
       return NextResponse.json(
         { message: "Product not found" },
-        { status: 400 }
+        { status: 404 }
       );
     }
 
@@ -153,7 +153,7 @@ export const PATCH = async (
     if (!findEmployee) {
       return NextResponse.json(
         { message: "Employee not found" },
-        { status: 400 }
+        { status: 404 }
       );
     }
 
@@ -162,15 +162,15 @@ export const PATCH = async (
         slug: params.slug,
       },
       data: {
-        sale: status === "true" ? "true" : "false",
-        salePrice: status === "true" ? salePrice : 0,
+        status,
+        salePrice: status === "sale" ? salePrice : 0,
       },
     });
 
-    const sale = await prismadb.productSaleLog.create({
+    const sale = await prismadb.productStatusLog.create({
       data: {
-        sale: status === "true" ? "true" : "false",
-        salePrice: status === "true" ? salePrice : 0,
+        status,
+        salePrice: status === "sale" ? salePrice : 0,
         note,
         productId: findProduct.id,
         employeeId: findEmployee.id,
@@ -179,16 +179,16 @@ export const PATCH = async (
 
     return NextResponse.json(
       {
-        message: "Sale status successfully updated!",
+        message: "Status product successfully updated!",
         data: {
-          sale: sale.sale,
+          sale: sale.status,
           salePrice: sale.salePrice,
         },
       },
       { status: 200 }
     );
   } catch (error) {
-    console.log("[FINANCE_UPDATE_BY_SLUG]", error);
+    console.log("[STATUS_UPDATE_BY_SLUG]", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };
