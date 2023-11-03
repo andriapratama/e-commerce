@@ -9,17 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { ConvertDate } from "@/utils/ConvertDate";
 import { ConvertIDR } from "@/utils/ConvertIDR";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import ProductDetailShowNote from "./ProductDetailShowNote";
 
 interface ProductFinanceLogType {
   price: number;
@@ -62,19 +54,7 @@ const ProductDetailFinanceLog: React.FC<ProductDetailFinanceLogProps> = ({
                   {!value.note ? (
                     "-"
                   ) : (
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="sm">
-                          Buka
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-[425px]">
-                        <DialogHeader>
-                          <DialogTitle>Catatan</DialogTitle>
-                          <DialogDescription>{value.note}</DialogDescription>
-                        </DialogHeader>
-                      </DialogContent>
-                    </Dialog>
+                    <ProductDetailShowNote note={value.note} />
                   )}
                 </TableCell>
                 <TableCell className="capitalize">
