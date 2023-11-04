@@ -44,7 +44,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
         <Table className="bg-white rounded-md">
           <TableHeader>
             <TableRow>
-              <TableHead>Gambar</TableHead>
+              <TableHead className="text-center">Gambar</TableHead>
               <TableHead>Nama</TableHead>
               <TableHead className="text-center">Kategori</TableHead>
               <TableHead>Harga Pokok</TableHead>
@@ -58,13 +58,13 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
             {products.length > 0 ? (
               products.map((product: ProductType) => (
                 <TableRow key={product.slug}>
-                  <TableCell>
+                  <TableCell className="flex justify-center">
                     <Image
                       src={product.image}
                       alt={product.name}
                       width={50}
                       height={50}
-                      className="object-contain"
+                      className="object-contain h-[50px] w-auto"
                     />
                   </TableCell>
                   <TableCell className="capitalize">{product.name}</TableCell>

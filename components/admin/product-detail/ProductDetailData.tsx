@@ -88,10 +88,14 @@ const ProductDetailData: React.FC<ProductDetailDataProps> = ({ product }) => {
           </div>
         ) : null}
 
-        <div className="admin-product-detail__content xl:!w-full md:!w-full">
-          <div className="admin-product-detail__title">Link Gojek</div>
-          <div className="admin-product-detail__value">{product.linkGojek}</div>
-        </div>
+        {product.linkGojek ? (
+          <div className="admin-product-detail__content xl:!w-full md:!w-full">
+            <div className="admin-product-detail__title">Link Gojek</div>
+            <div className="admin-product-detail__value">
+              {product.linkGojek}
+            </div>
+          </div>
+        ) : null}
 
         <div className="admin-product-detail__content xl:!w-full md:!w-full">
           <div className="admin-product-detail__title">Deskripsi</div>

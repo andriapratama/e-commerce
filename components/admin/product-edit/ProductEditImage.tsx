@@ -146,20 +146,18 @@ const ProductEditImage: React.FC<ProductEditImageProps> = ({
                         value={image.pathName}
                         onChange={(e) => {
                           const files = e.target.files;
-                          if (files) {
-                            if (image.pathName) {
-                              setImage((previous) => ({
-                                image: previous.image,
-                                preview: previous.preview,
-                                pathName: "",
-                              }));
-                            } else {
-                              setImage({
-                                image: files[0],
-                                preview: URL.createObjectURL(files[0]),
-                                pathName: e.target.value,
-                              });
-                            }
+                          if (files && files.length > 0) {
+                            setImage({
+                              image: files[0],
+                              preview: URL.createObjectURL(files[0]),
+                              pathName: e.target.value,
+                            });
+                          } else {
+                            setImage((previous) => ({
+                              image: previous.image,
+                              preview: previous.preview,
+                              pathName: "",
+                            }));
                           }
                         }}
                         accept="image/png, image/jpg, image/jpeg, image/webp"

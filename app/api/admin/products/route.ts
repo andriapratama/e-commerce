@@ -222,6 +222,16 @@ export const POST = async (req: Request) => {
       },
     });
 
+    await prismadb.productStatusLog.create({
+      data: {
+        status,
+        salePrice: 0,
+        note: "Pertama kali dibuat",
+        productId: product.id,
+        employeeId: employee.id,
+      },
+    });
+
     return NextResponse.json(
       {
         message: "Product created!",

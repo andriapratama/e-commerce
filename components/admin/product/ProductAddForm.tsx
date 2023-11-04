@@ -143,9 +143,8 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
 
       const slug = res.data.data;
 
-      setTimeout(() => {
-        router.push(`/admin/products/${slug}`);
-      }, 1000);
+      router.push(`/admin/products/${slug}`);
+      router.refresh();
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {
@@ -173,7 +172,7 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
                   alt={image.pathName}
                   width={350}
                   height={500}
-                  className="object-containt mb-3 rounded-md"
+                  className="object-containt mb-3 rounded-md h-[500px] w-auto"
                 />
               </div>
             )}
@@ -191,20 +190,18 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
                       value={image.pathName}
                       onChange={(e) => {
                         const files = e.target.files;
-                        if (files) {
-                          if (image.pathName) {
-                            setImage((previous) => ({
-                              image: previous.image,
-                              preview: previous.preview,
-                              pathName: "",
-                            }));
-                          } else {
-                            setImage({
-                              image: files[0],
-                              preview: URL.createObjectURL(files[0]),
-                              pathName: e.target.value,
-                            });
-                          }
+                        if (files && files.length > 0) {
+                          setImage({
+                            image: files[0],
+                            preview: URL.createObjectURL(files[0]),
+                            pathName: e.target.value,
+                          });
+                        } else {
+                          setImage((previous) => ({
+                            image: previous.image,
+                            preview: previous.preview,
+                            pathName: "",
+                          }));
                         }
                       }}
                       accept="image/png, image/jpg, image/jpeg, image/webp"

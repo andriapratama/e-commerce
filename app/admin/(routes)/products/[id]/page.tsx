@@ -45,17 +45,15 @@ const ProductDetail = async ({ params }: { params: { id: string } }) => {
 
           <div className="w-full flex justify-center mb-5">
             <div className="xl:w-[90%] lg:flex block w-full gap-5">
-              <div className="w-full flex justify-center">
-                <div className="lg:w-full sm:w-[400px] md:w-[450px] w-full">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    width={900}
-                    height={600}
-                    className="object-contain mb-3 shadow-md rounded-md"
-                    priority
-                  />
-                </div>
+              <div className="w-full flex justify-center items-start">
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  width={400}
+                  height={600}
+                  className="object-cover lg:h-[650px] md:h-[500px] h-[400px] w-auto mb-3 rounded-md"
+                  priority
+                />
               </div>
 
               <div className="w-full bg-white border rounded-md shadow-md p-5 h-max">
