@@ -98,6 +98,7 @@ const Navbar = () => {
                 <li
                   className="w-full text-center mb-3 uppercase font-serif"
                   key={menu.name}
+                  onClick={() => setIsShowMenu(false)}
                 >
                   <Link href={menu.link}>{menu.name}</Link>
                 </li>
