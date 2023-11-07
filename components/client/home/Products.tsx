@@ -51,7 +51,7 @@ const Products: React.FC<ProductProps> = ({ products }) => {
           Which Your
         </div>
 
-        <div className="w-full flex flex-wrap justify-between gap-3">
+        <div className="w-full grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
           {productsLimit.map((product) => (
             <ProductCard product={product} key={product.slug} />
           ))}

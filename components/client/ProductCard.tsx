@@ -24,7 +24,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
-    <div className="lg:w-[23.5%] sm:w-[30%] w-full h-fit mb-6 hover:shadow">
+    <div className="w-full h-fit mb-6 hover:shadow">
       <Link href={`/collections/${product.slug}`}>
         <div className="w-full flex justify-center h-fit relative">
           {product.status === "sale" ||
