@@ -1,9 +1,9 @@
-import { CategoriesDataType } from "@/types/admin/Categories";
+import { CategoryType } from "@/types/CategoryType";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
 export const useShowCategoriesHook = () => {
-  const [categories, setCategories] = useState<CategoriesDataType[]>([]);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
 
   const showCategories = async () => {
     try {

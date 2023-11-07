@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { AdminProductType } from "@/types/ProductType";
-import { CategoriesDataType } from "@/types/admin/Categories";
+import { CategoryType } from "@/types/CategoryType";
 import { handleSetNumber } from "@/utils/HandleSetNumber";
 import { handleSetSlug } from "@/utils/HandleSetSlug";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,7 +43,7 @@ interface ProductEditDataProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   product: AdminProductType;
-  categories: CategoriesDataType[];
+  categories: CategoryType[];
   paramsSlug: string;
 }
 

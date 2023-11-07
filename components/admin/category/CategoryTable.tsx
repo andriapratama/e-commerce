@@ -15,12 +15,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import { CategoriesDataType, EditCategoryType } from "@/types/admin/Categories";
+import { CategoryType } from "@/types/CategoryType";
 import { Dispatch, SetStateAction } from "react";
 
 interface CategoryTableProps {
-  categories: CategoriesDataType[];
-  setEditCategory: Dispatch<SetStateAction<EditCategoryType>>;
+  categories: CategoryType[];
+  setEditCategory: Dispatch<SetStateAction<CategoryType>>;
 }
 
 const CategoryTable: React.FC<CategoryTableProps> = ({

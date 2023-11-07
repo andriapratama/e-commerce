@@ -30,7 +30,7 @@ import {
 import ButtonLoading from "@/components/ButtonLoading";
 import { handleSetSlug } from "@/utils/HandleSetSlug";
 import { ToastContainer, toast } from "react-toastify";
-import { CategoriesDataType } from "@/types/admin/Categories";
+import { CategoryType } from "@/types/CategoryType";
 import BackButton from "./BackButton";
 import { useRouter } from "next/navigation";
 import { handleSetNumber } from "@/utils/HandleSetNumber";
@@ -77,7 +77,7 @@ const formSchema = z.object({
 });
 
 interface ProductAddFormProps {
-  categories: CategoriesDataType[];
+  categories: CategoryType[];
 }
 
 const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {

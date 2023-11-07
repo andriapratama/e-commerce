@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { EditCategoryType } from "@/types/admin/Categories";
+import { CategoryType } from "@/types/CategoryType";
 import { toast } from "react-toastify";
 import axios from "axios";
 import ButtonLoading from "@/components/ButtonLoading";
@@ -30,8 +30,8 @@ const formSchema = z.object({
 });
 
 interface CategoryEditProps {
-  editCategory: EditCategoryType;
-  setEditCategory: Dispatch<SetStateAction<EditCategoryType>>;
+  editCategory: CategoryType;
+  setEditCategory: Dispatch<SetStateAction<CategoryType>>;
   showCategories: () => void;
 }
 

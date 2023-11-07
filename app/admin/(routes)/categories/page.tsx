@@ -5,13 +5,13 @@ import CategoryEdit from "@/components/admin/category/CategoryEdit";
 import CategoryInput from "@/components/admin/category/CategoryInput";
 import CategoryTable from "@/components/admin/category/CategoryTable";
 import React, { useState } from "react";
-import { EditCategoryType } from "@/types/admin/Categories";
+import { CategoryType } from "@/types/CategoryType";
 import { ToastContainer } from "react-toastify";
 import { useShowCategoriesHook } from "@/hooks/admin/CategoryHook";
 
 const Categories = () => {
   const { categories, showCategories } = useShowCategoriesHook();
-  const [editCategory, setEditCategory] = useState<EditCategoryType>({
+  const [editCategory, setEditCategory] = useState<CategoryType>({
     name: "",
     slug: "",
   });

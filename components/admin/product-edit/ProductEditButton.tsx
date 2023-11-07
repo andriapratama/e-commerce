@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import ProductEditData from "./ProductEditData";
 import { AdminProductType } from "@/types/ProductType";
-import { CategoriesDataType } from "@/types/admin/Categories";
+import { CategoryType } from "@/types/CategoryType";
 import ProductEditFinance from "./ProductEditFinance";
 import ProductEditStock from "./ProductEditStock";
 import ProductEditStatus from "./ProductEditStatus";
@@ -18,7 +18,7 @@ import ProductEditImage from "./ProductEditImage";
 
 interface ProductEditButtonProps {
   product: AdminProductType;
-  categories: CategoriesDataType[];
+  categories: CategoryType[];
   paramsSlug: string;
 }
 
