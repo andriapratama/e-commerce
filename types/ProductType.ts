@@ -7,10 +7,10 @@ export interface ProductType {
   cost: number;
   netFill: number;
   status: string;
-  linkGojek: string;
-  description: string;
+  linkGojek: string | null;
+  description: string | null;
   salePrice: number;
   category: { name: string };
   image: string;
-  createdAt: string;
+  createdAt: string | Date;
 }

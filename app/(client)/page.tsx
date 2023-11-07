@@ -1,9 +1,21 @@
-import Image from "next/image";
+import Hero from "@/components/client/home/Hero";
+import Products from "@/components/client/home/Products";
+import axios from "axios";
 
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1>Home Page</h1>
-    </main>
-  );
-}
+const Home = async () => {
+  try {
+    const res = await axios.get(`${process.env.WEB_URL}/api/products/special`);
+    const products = res.data.data;
+
+    return (
+      <main className="min-h-screen w-full">
+        <Hero />
+        <Products products={products} />
+      </main>
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export default Home;

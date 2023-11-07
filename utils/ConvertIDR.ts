@@ -4,5 +4,6 @@ export const ConvertIDR = (number: number) => {
     currency: "IDR",
   }).format(number);
 
-  return num;
+  const result = num.replace(",00", "");
+  return result;
 };
