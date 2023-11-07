@@ -1,13 +1,12 @@
 "use client";
 
-import { MenuIcon, ShoppingBag } from "lucide-react";
+import { Menu, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTrigger,
   DialogTitle,
 } from "@/components/ui/dialog";
 
@@ -30,7 +29,7 @@ const menus: MenuType[] = [
 const Navbar = () => {
   const [isActive, setIsActive] = useState<boolean>(false);
   const [positionY, setPositionY] = useState<number>(0);
-
+  const [isShowMenu, setIsShowMenu] = useState<boolean>(false);
   useEffect(() => {
     const widhtScreen = window.innerWidth;
 
@@ -78,10 +77,14 @@ const Navbar = () => {
           ))}
         </div>
 
-        <Dialog>
-          <DialogTrigger asChild className="lg:hidden block">
-            <MenuIcon width={25} height={25} className="block lg:hidden" />
-          </DialogTrigger>
+        <Menu
+          width={25}
+          height={25}
+          className="lg:hidden block"
+          onClick={() => setIsShowMenu(true)}
+        />
+
+        <Dialog open={isShowMenu} onOpenChange={setIsShowMenu}>
           <DialogContent className="!p-0 !pb-5">
             <DialogHeader className="pt-5 px-5"></DialogHeader>
             <DialogTitle className="w-full text-center uppercase">
