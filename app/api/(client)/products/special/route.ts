@@ -1,11 +1,11 @@
 import prismadb from "@/lib/prismadb";
-import { ProductType } from "@/types/ProductType";
+import { ClientProductType } from "@/types/ProductType";
 import { NextResponse } from "next/server";
 
 export const GET = async (req: Request) => {
   try {
     const status = ["sale", "new", "best", "active"];
-    let products: ProductType[] = [];
+    let products: ClientProductType[] = [];
 
     for (let i = 0; i < status.length; i++) {
       const res = await prismadb.product.findMany({

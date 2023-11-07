@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Alegreya_SC, Lugrasimo } from "next/font/google";
 import ProductCard from "../ProductCard";
-import { ProductType } from "@/types/ProductType";
+import { ClientProductType } from "@/types/ProductType";
 import Link from "next/link";
 
 const lugrasimo = Lugrasimo({
@@ -19,7 +19,7 @@ const alegreya = Alegreya_SC({
 });
 
 interface ProductProps {
-  products: ProductType[];
+  products: ClientProductType[];
 }
 
 const Products: React.FC<ProductProps> = ({ products }) => {

@@ -34,12 +34,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ProductType } from "@/types/ProductType";
+import { AdminProductType } from "@/types/ProductType";
 
 interface ProductEditStatusProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  product: ProductType;
+  product: AdminProductType;
   paramsSlug: string;
 }
 

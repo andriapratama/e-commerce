@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ProductType } from "@/types/ProductType";
+import { AdminProductType } from "@/types/ProductType";
 import { CategoriesDataType } from "@/types/admin/Categories";
 import { handleSetNumber } from "@/utils/HandleSetNumber";
 import { handleSetSlug } from "@/utils/HandleSetSlug";
@@ -42,7 +42,7 @@ import WarningAlert from "../WarningAlert";
 interface ProductEditDataProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  product: ProductType;
+  product: AdminProductType;
   categories: CategoriesDataType[];
   paramsSlug: string;
 }

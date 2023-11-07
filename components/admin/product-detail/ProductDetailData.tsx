@@ -1,11 +1,11 @@
 "use client";
 
-import { ProductType } from "@/types/ProductType";
+import { AdminProductType } from "@/types/ProductType";
 import { ConvertIDR } from "@/utils/ConvertIDR";
 import React from "react";
 
 interface ProductDetailDataProps {
-  product: ProductType;
+  product: AdminProductType;
 }
 
 const ProductDetailData: React.FC<ProductDetailDataProps> = ({ product }) => {

@@ -1,4 +1,4 @@
-import { ProductType } from "@/types/ProductType";
+import { ClientProductType } from "@/types/ProductType";
 import { ConvertIDR } from "@/utils/ConvertIDR";
 import { ShoppingCart } from "lucide-react";
 import { Lugrasimo, Junge } from "next/font/google";
@@ -19,7 +19,7 @@ const junge = Junge({
 });
 
 interface ProductCardProps {
-  product: ProductType;
+  product: ClientProductType;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
@@ -88,7 +88,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
       <div className="w-full flex justify-center items-center gap-5 my-5">
         {product.linkGojek ? (
-          <Link href={product.linkGojek}>
+          <Link href={product.linkGojek} target="blank">
             <Image
               src="/gojek.svg"
               alt="gojek"

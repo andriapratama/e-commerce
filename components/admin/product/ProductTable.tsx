@@ -21,11 +21,11 @@ import {
 import { ConvertIDR } from "@/utils/ConvertIDR";
 import Link from "next/link";
 import { useState } from "react";
-import { ProductType } from "@/types/ProductType";
+import { AdminProductType } from "@/types/ProductType";
 import Image from "next/image";
 
 interface ProductTableProps {
-  products: ProductType[];
+  products: AdminProductType[];
 }
 
 const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
@@ -56,7 +56,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
           </TableHeader>
           <TableBody>
             {products.length > 0 ? (
-              products.map((product: ProductType) => (
+              products.map((product: AdminProductType) => (
                 <TableRow key={product.slug}>
                   <TableCell className="flex justify-center">
                     <Image

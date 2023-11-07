@@ -25,14 +25,14 @@ import { handleSetNumber } from "@/utils/HandleSetNumber";
 import { Textarea } from "@/components/ui/textarea";
 import WarningAlert from "../WarningAlert";
 import axios from "axios";
-import { ProductType } from "@/types/ProductType";
+import { AdminProductType } from "@/types/ProductType";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 interface ProductEditFinanceProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  product: ProductType;
+  product: AdminProductType;
   paramsSlug: string;
 }
 
