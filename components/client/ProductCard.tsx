@@ -5,6 +5,7 @@ import { Lugrasimo, Junge } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import StatusProduct from "./StatusProduct";
 
 const lugrasimo = Lugrasimo({
   weight: "400",
@@ -27,23 +28,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     <div className="w-full h-fit mb-6 hover:shadow">
       <Link href={`/collections/${product.slug}`}>
         <div className="w-full flex justify-center h-fit relative">
-          {product.status === "sale" ||
-          product.status === "best" ||
-          product.status === "new" ? (
-            <div
-              className={`absolute text-sm px-3 py-[2px] font-serif capitalize top-0 left-2 rounded text-white ${
-                product.status === "sale"
-                  ? "bg-red-500"
-                  : product.status === "new"
-                  ? "bg-blue-500"
-                  : product.status === "best"
-                  ? "bg-yellow-600"
-                  : ""
-              }`}
-            >
-              {product.status === "best" ? "Best Seller" : product.status}
-            </div>
-          ) : null}
+          <StatusProduct status={product.status} />
           <Image
             src={product.image}
             alt={product.name}
