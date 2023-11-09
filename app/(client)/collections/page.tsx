@@ -1,4 +1,7 @@
+import Footer from "@/components/client/Footer";
+import Navbar from "@/components/client/Navbar";
 import TitlePage from "@/components/client/TitlePage";
+import Topbar from "@/components/client/Topbar";
 import Categories from "@/components/client/collection/Categories";
 import Products from "@/components/client/collection/Products";
 import SearchByCategory from "@/components/client/collection/SearchByCategory";
@@ -20,6 +23,8 @@ const Collections = async () => {
 
     return (
       <section className="w-full min-h-screen">
+        <Topbar />
+        <Navbar />
         <TitlePage title="Our Collections" />
 
         <div className="w-full flex justify-center mt-5">
@@ -34,6 +39,7 @@ const Collections = async () => {
             <Categories categories={categories} />
           </div>
         </div>
+        <Footer />
       </section>
     );
   } catch (error) {
