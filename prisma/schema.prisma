@@ -49,8 +49,11 @@ model User {
   email     String @unique
   password  String
   role      RoleUser
-  addres    String @db.Text
-  phone     String
+  addres    String? @db.Text
+  phone     String?
+  active    Boolean @default(false)
+
+  activateToken ActivateToken[] @relation("UserToActivateToken")
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -59,6 +62,20 @@ model User {
 enum RoleUser {
   member
   guest
+}
+
+model ActivateToken {
+  id          String @id @default(uuid())
+  token       String @unique
+  activateAt  DateTime?
+
+  userId      String
+  user        User @relation("UserToActivateToken", fields: [userId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model Product {

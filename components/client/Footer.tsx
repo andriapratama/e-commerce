@@ -48,7 +48,7 @@ const menus = [
 
 const Footer = () => {
   return (
-    <footer className="w-full mt-[100px] flex bg-gray-100 justify-center text-gray-600">
+    <footer className="w-full mt-[50px] flex bg-gray-100 justify-center text-gray-600">
       <div className="w-[80%] sm:w-[90%] lg:w-[70%] md:flex block gap-3 py-20">
         <div className="w-full mb-7 md:mb-0">
           <div className="text-lg font-serif mb-5 font-semibold">

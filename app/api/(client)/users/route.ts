@@ -1,0 +1,82 @@
+import prismadb from "@/lib/prismadb";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import bcrypt from "bcryptjs";
+import { randomUUID } from "crypto";
+
+export const POST = async (req: Request) => {
+  try {
+    const body = await req.json();
+
+    const schema = z.object({
+      firstName: z.string().min(1).min(3),
+      lastName: z.string().min(1).min(3),
+      email: z.string().min(1).email(),
+      password: z.string().min(1).min(6),
+    });
+
+    const response = schema.safeParse(body);
+
+    if (!response.success) {
+      const { errors } = response.error;
+
+      return NextResponse.json(
+        {
+          message: "Invalid request",
+          errors: errors,
+        },
+        { status: 400 }
+      );
+    }
+
+    const { firstName, lastName, email, password } = response.data;
+
+    const findEmail = await prismadb.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (findEmail) {
+      return NextResponse.json(
+        {
+          message: "Email already used",
+        },
+        { status: 400 }
+      );
+    }
+
+    const passwordHash = bcrypt.hashSync(password, 10);
+
+    const user = await prismadb.user.create({
+      data: {
+        firstName,
+        lastName,
+        email,
+        password: passwordHash,
+        role: "member",
+      },
+    });
+
+    const token = await prismadb.activateToken.create({
+      data: {
+        token: `${randomUUID()}`,
+        userId: user.id,
+      },
+    });
+
+    return NextResponse.json(
+      {
+        message: "Successfully to create user",
+        data: {
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email,
+        },
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.log("[USER_POST]", error);
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
+  }
+};
