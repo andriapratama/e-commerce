@@ -6,11 +6,15 @@ import Categories from "@/components/client/collection/Categories";
 import Products from "@/components/client/collection/Products";
 import SearchByCategory from "@/components/client/collection/SearchByCategory";
 import SearchByName from "@/components/client/collection/SearchByName";
+import { authOptions } from "@/lib/auth";
 import axios from "axios";
+import { getServerSession } from "next-auth";
 import React from "react";
 
 const Collections = async () => {
   try {
+    const session = await getServerSession(authOptions);
+
     const categoriesRes = await axios.get(
       `${process.env.WEB_URL}/api/categories`
     );
@@ -23,7 +27,7 @@ const Collections = async () => {
 
     return (
       <section className="w-full min-h-screen">
-        <Topbar />
+        <Topbar session={session} />
         <Navbar />
         <TitlePage title="Our Collections" />
 
