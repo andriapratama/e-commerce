@@ -1,19 +1,10 @@
-import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar";
-import Topbar from "@/components/client/Topbar";
-import React from "react";
+import React, { Suspense } from "react";
+import ClientLoading from "./loading";
 
 export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <React.Fragment>
-      <Topbar />
-      <Navbar />
-      {children}
-      <Footer />
-    </React.Fragment>
-  );
+  return <Suspense fallback={<ClientLoading />}>{children}</Suspense>;
 }
