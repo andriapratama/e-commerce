@@ -13,7 +13,7 @@ const Register = async () => {
 
     return (
       <section className="w-full">
-        <Topbar session={session} />
+        <Topbar role={session?.user.role} />
         <Navbar />
         <TitlePage title="Register" />
         <RegisterForm />

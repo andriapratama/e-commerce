@@ -19,7 +19,7 @@ const CollectionDetail = async ({ params }: { params: { id: string } }) => {
     const product = productRes.data.data;
     return (
       <section className="w-full">
-        <Topbar session={session} />
+        <Topbar role={session?.user.role} />
         <Navbar />
         <TitlePage title="Collection Detail" />
 

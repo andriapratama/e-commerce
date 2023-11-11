@@ -1,4 +1,4 @@
-import AnnouncementPage from "@/app/api/(client)/announcement/Announcement";
+import AnnouncementPage from "@/components/client/announcement/Announcement";
 import Navbar from "@/components/client/Navbar";
 import TitlePage from "@/components/client/TitlePage";
 import Topbar from "@/components/client/Topbar";
@@ -12,7 +12,7 @@ const Announcement = async () => {
 
     return (
       <section className="w-full min-h-screen realtive">
-        <Topbar session={session} />
+        <Topbar role={session?.user.role} />
         <Navbar />
         <TitlePage title="Announcement" />
         <AnnouncementPage email={session?.user.email} />

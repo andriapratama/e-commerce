@@ -23,7 +23,7 @@ const Home = async () => {
 
     return (
       <main className="min-h-screen w-full">
-        <Topbar session={session} />
+        <Topbar role={session?.user.role} />
         <Navbar />
         <Hero />
         <Products products={products} />

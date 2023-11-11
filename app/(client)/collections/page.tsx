@@ -27,7 +27,7 @@ const Collections = async () => {
 
     return (
       <section className="w-full min-h-screen">
-        <Topbar session={session} />
+        <Topbar role={session?.user.role} />
         <Navbar />
         <TitlePage title="Our Collections" />
 
