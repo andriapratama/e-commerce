@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
+import { transporter } from "@/lib/nodemailer";
+import { TemplateEmailVerify } from "@/utils/TemplateEmailVerify";
 
 export const POST = async (req: Request) => {
   try {
@@ -34,6 +36,7 @@ export const POST = async (req: Request) => {
     const findEmail = await prismadb.user.findUnique({
       where: {
         email,
+        role: "member",
       },
     });
 
@@ -65,16 +68,19 @@ export const POST = async (req: Request) => {
       },
     });
 
-    return NextResponse.json(
-      {
-        message: "Successfully to create user",
-        data: {
-          name: `${user.firstName} ${user.lastName}`,
-          email: user.email,
-        },
-      },
-      { status: 201 }
-    );
+    const name = `${firstName} ${lastName}`;
+    const link = `${process.env.WEB_URL}/api/activate/${token.token}`;
+
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: body.email,
+      subject: "Email Verify",
+      html: TemplateEmailVerify(name, link),
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return NextResponse.json({ message: "User Created" }, { status: 201 });
   } catch (error) {
     console.log("[USER_POST]", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });

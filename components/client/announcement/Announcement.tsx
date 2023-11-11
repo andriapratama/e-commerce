@@ -15,7 +15,8 @@ const AnnouncementPage: React.FC<AnnouncementProps> = ({ email }) => {
         await axios.get(`/api/users/${email}`);
       }
     } catch (error: any) {
-      if (error.response.data.data === false) {
+      const active = error.response.data.data;
+      if (active === false) {
         signOut();
       }
     }
