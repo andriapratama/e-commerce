@@ -1,3 +1,5 @@
+"use client";
+
 import { ClientProductType } from "@/types/ProductType";
 import { ConvertIDR } from "@/utils/ConvertIDR";
 import { ShoppingCart } from "lucide-react";

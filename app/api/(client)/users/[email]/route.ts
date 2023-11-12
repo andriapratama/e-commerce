@@ -1,10 +1,12 @@
 import prismadb from "@/lib/prismadb";
+import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
 
 export const GET = async (
   req: Request,
   { params }: { params: { email: string } }
 ) => {
+  let isSuccess = false;
   try {
     if (!params.email) {
       return NextResponse.json(
@@ -27,18 +29,24 @@ export const GET = async (
     }
 
     if (user.active === false) {
+      isSuccess = false;
       return NextResponse.json(
         {
           message: "User is not active",
-          data: user.active,
         },
         { status: 400 }
       );
     }
 
+    isSuccess = true;
+
     return NextResponse.json({ message: "User is active" }, { status: 200 });
   } catch (error) {
     console.log("[USER_GET_BY_EMAIL]" + error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
+  } finally {
+    if (isSuccess === false) {
+      return redirect("/announcement");
+    }
   }
 };
