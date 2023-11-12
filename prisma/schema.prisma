@@ -54,6 +54,7 @@ model User {
   active    Boolean @default(false)
 
   activateToken ActivateToken[] @relation("UserToActivateToken")
+  cart          Cart[] @relation("UserToCart")
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -99,7 +100,8 @@ model Product {
 
   productFinanceLog   ProductFinanceLog[] @relation("ProductToProductFinanceLog")
   productStockLog     ProductStockLog[] @relation("ProductToProductStockLog")
-  productStatusLog     ProductStatusLog[] @relation("ProductToProductStatusLog")
+  productStatusLog    ProductStatusLog[] @relation("ProductToProductStatusLog")
+  cart                Cart[] @relation("ProductToCart")
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -177,4 +179,21 @@ model ProductStatusLog {
 
   @@index([productId])
   @@index([employeeId])
+}
+
+model Cart {
+  id          String @id @default(uuid())
+  quantity    Int @db.SmallInt
+  total       Int
+
+  productId   String
+  product     Product @relation("ProductToCart", fields: [productId], references: [id])
+  userId      String
+  user        User @relation("UserToCart", fields: [userId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([productId])
+  @@index([userId])
 }

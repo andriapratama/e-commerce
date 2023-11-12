@@ -4,8 +4,12 @@ import { ShoppingCart } from "lucide-react";
 import { Lugrasimo, Junge } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import StatusProduct from "./StatusProduct";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import LoadingGif from "../LoadingGif";
 
 const lugrasimo = Lugrasimo({
   weight: "400",
@@ -24,6 +28,28 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const router = useRouter();
+
+  const handleAddCart = async () => {
+    try {
+      setIsLoading(true);
+
+      const res = await axios.post("/api/cart", {
+        productSlug: product.slug,
+        quantity: 1,
+      });
+
+      toast.success(res.data.message);
+
+      router.refresh();
+    } catch (error: any) {
+      toast.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="w-full h-fit mb-6 hover:shadow">
       <Link href={`/collections/${product.slug}`}>
@@ -83,7 +109,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             />
           </Link>
         ) : null}
-        <ShoppingCart width={30} height={30} />
+        {isLoading ? (
+          <LoadingGif />
+        ) : (
+          <ShoppingCart
+            width={30}
+            height={30}
+            className="cursor-pointer"
+            onClick={() => handleAddCart()}
+          />
+        )}
       </div>
     </div>
   );

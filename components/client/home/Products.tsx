@@ -5,6 +5,7 @@ import { Alegreya_SC, Lugrasimo } from "next/font/google";
 import ProductCard from "../ProductCard";
 import { ClientProductType } from "@/types/ProductType";
 import Link from "next/link";
+import { ToastContainer } from "react-toastify";
 
 const lugrasimo = Lugrasimo({
   weight: "400",
@@ -38,35 +39,38 @@ const Products: React.FC<ProductProps> = ({ products }) => {
   }, [setLimit]);
 
   return (
-    <section className="w-full flex justify-center md:mt-[100px] mt-16">
-      <div className="lg:w-[80%] sm:w-[90%] w-[80%]">
-        <div
-          className={`w-full text-sm text-center text-yellow-600 ${lugrasimo.className}`}
-        >
-          Best of the Best
-        </div>
-        <div
-          className={`md:text-5xl text-4xl w-full text-center mb-14 ${alegreya.className}`}
-        >
-          Which Your
-        </div>
-
-        <div className="w-full grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
-          {productsLimit.map((product) => (
-            <ProductCard product={product} key={product.slug} />
-          ))}
-        </div>
-
-        <div className="w-full flex justify-center mt-5">
-          <Link
-            href="/collections"
-            className="px-20 py-2 rounded bg-yellow-600 text-white font-serif"
+    <React.Fragment>
+      <ToastContainer />
+      <section className="w-full flex justify-center md:mt-[100px] mt-16">
+        <div className="lg:w-[80%] sm:w-[90%] w-[80%]">
+          <div
+            className={`w-full text-sm text-center text-yellow-600 ${lugrasimo.className}`}
           >
-            View All Products
-          </Link>
+            Best of the Best
+          </div>
+          <div
+            className={`md:text-5xl text-4xl w-full text-center mb-14 ${alegreya.className}`}
+          >
+            Which Your
+          </div>
+
+          <div className="w-full grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
+            {productsLimit.map((product) => (
+              <ProductCard product={product} key={product.slug} />
+            ))}
+          </div>
+
+          <div className="w-full flex justify-center mt-5">
+            <Link
+              href="/collections"
+              className="px-20 py-2 rounded bg-yellow-600 text-white font-serif"
+            >
+              View All Products
+            </Link>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </React.Fragment>
   );
 };
 
