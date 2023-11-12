@@ -5,11 +5,17 @@ import Topbar from "@/components/client/Topbar";
 import RegisterForm from "@/components/client/register/RegisterForm";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import React from "react";
 
 const Register = async () => {
+  let isSuccess = false;
   try {
     const session = await getServerSession(authOptions);
+
+    if (session) {
+      isSuccess = true;
+    }
 
     return (
       <section className="w-full">
@@ -22,6 +28,10 @@ const Register = async () => {
     );
   } catch (error) {
     console.log(error);
+  } finally {
+    if (isSuccess === true) {
+      redirect("/");
+    }
   }
 };
 
