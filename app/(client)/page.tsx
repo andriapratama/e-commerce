@@ -3,39 +3,43 @@ import Navbar from "@/components/client/Navbar";
 import Topbar from "@/components/client/Topbar";
 import Hero from "@/components/client/home/Hero";
 import Products from "@/components/client/home/Products";
+import { useCountCartsHook } from "@/hooks/client/CartHook";
+import { useGetSpecialProductsHook } from "@/hooks/client/ProductHook";
 import { authOptions } from "@/lib/auth";
 import axios from "axios";
 import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 
 const Home = async () => {
   try {
     const session = await getServerSession(authOptions);
 
-    if (session) {
-      await axios.get(`${process.env.WEB_URL}/api/users/${session.user.email}`);
-    }
+    await axios.get(`${process.env.WEB_URL}/api/users/${session?.user.email}`);
 
-    const productsRes = await axios.get(
-      `${process.env.WEB_URL}/api/products/special`
-    );
-    const products = productsRes.data.data;
+    const { products } = await useGetSpecialProductsHook();
+
+    const { countCarts } = await useCountCartsHook();
 
     return (
       <main className="min-h-screen w-full">
         <Topbar role={session?.user.role} />
+        <Navbar countCarts={countCarts} />
+        <Hero />
+        <Products products={products} />
+        <Footer />
+      </main>
+    );
+  } catch (error) {
+    const { products } = await useGetSpecialProductsHook();
+
+    return (
+      <main className="min-h-screen w-full">
+        <Topbar role={undefined} />
         <Navbar />
         <Hero />
         <Products products={products} />
         <Footer />
       </main>
     );
-  } catch (error: any) {
-    if (error.response.data.data === false) {
-      return redirect(process.env.WEB_URL + "/announcement");
-    } else {
-      console.log(error);
-    }
   }
 };
 

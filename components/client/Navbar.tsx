@@ -26,10 +26,15 @@ const menus: MenuType[] = [
   },
 ];
 
-const Navbar = () => {
+interface NavbarProps {
+  countCarts?: number;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ countCarts }) => {
   const [isActive, setIsActive] = useState<boolean>(false);
   const [positionY, setPositionY] = useState<number>(0);
   const [isShowMenu, setIsShowMenu] = useState<boolean>(false);
+
   useEffect(() => {
     const widhtScreen = window.innerWidth;
 
@@ -107,7 +112,16 @@ const Navbar = () => {
           </DialogContent>
         </Dialog>
         <div>
-          <ShoppingBag width={25} height={25} />
+          <Link href="/cart">
+            <div className="relative h-fit w-fit">
+              {countCarts ? (
+                <div className="absolute w-5 h-5 flex justify-center items-center rounded-full bg-red-500 text-xs -right-2 -top-2 text-white">
+                  {countCarts}
+                </div>
+              ) : null}
+              <ShoppingBag width={25} height={25} />
+            </div>
+          </Link>
         </div>
       </div>
     </nav>
