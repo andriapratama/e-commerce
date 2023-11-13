@@ -14,4 +14,6 @@ export interface CartType {
   total: number;
   product: ProductInCartType;
   createdAt: string;
+  status: boolean;
+  isLoading?: boolean;
 }

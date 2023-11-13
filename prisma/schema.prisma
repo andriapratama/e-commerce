@@ -185,6 +185,7 @@ model Cart {
   id          String @id @default(uuid())
   quantity    Int @db.SmallInt
   total       Int
+  status      Boolean @default(false)
 
   productId   String
   product     Product @relation("ProductToCart", fields: [productId], references: [id])

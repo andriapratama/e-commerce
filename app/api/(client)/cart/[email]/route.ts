@@ -35,6 +35,7 @@ export const GET = async (
         id: true,
         quantity: true,
         total: true,
+        status: true,
         product: {
           select: {
             name: true,
