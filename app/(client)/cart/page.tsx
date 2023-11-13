@@ -3,9 +3,11 @@ import Navbar from "@/components/client/Navbar";
 import TitlePage from "@/components/client/TitlePage";
 import Topbar from "@/components/client/Topbar";
 import CartTable from "@/components/client/cart/CartTable";
-import { useCountCartsHook } from "@/hooks/client/CartHook";
+import {
+  useCountCartsHook,
+  useGetAllCartsByEmail,
+} from "@/hooks/client/CartHook";
 import { authOptions } from "@/lib/auth";
-import axios from "axios";
 import { getServerSession } from "next-auth";
 import React from "react";
 
@@ -13,11 +15,7 @@ const Cart = async () => {
   try {
     const session = await getServerSession(authOptions);
 
-    const resCarts = await axios.get(
-      `${process.env.WEB_URL}/api/cart/${session?.user.email}`
-    );
-
-    const carts = resCarts.data.data;
+    const { carts } = await useGetAllCartsByEmail();
 
     const { countCarts } = await useCountCartsHook();
 

@@ -13,3 +13,15 @@ export const useCountCartsHook = async () => {
 
   return { countCarts };
 };
+
+export const useGetAllCartsByEmail = async () => {
+  const session = await getServerSession(authOptions);
+
+  const resCarts = await axios.get(
+    `${process.env.WEB_URL}/api/cart/${session?.user.email}`
+  );
+
+  const carts = resCarts.data.data;
+
+  return { carts };
+};
