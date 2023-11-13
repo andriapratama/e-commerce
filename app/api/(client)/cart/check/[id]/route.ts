@@ -7,7 +7,7 @@ export const PATCH = async (
 ) => {
   try {
     if (!params.id) {
-      return NextResponse.json({ message: "Id is recuired" }, { status: 400 });
+      return NextResponse.json({ message: "Id is required" }, { status: 400 });
     }
 
     const cartId = params.id;
