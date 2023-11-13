@@ -187,7 +187,22 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
                     <TableCell className="capitalize">
                       {cart.product.name}
                     </TableCell>
-                    <TableCell>{ConvertIDR(cart.product.price)}</TableCell>
+                    <TableCell>
+                      {cart.product.status === "sale" ? (
+                        <div className="block">
+                          <div className="w-fit text-gray-600">
+                            {ConvertIDR(cart.product.price)}
+                            <div className="border -mt-3 border-black z-20"></div>
+                          </div>
+
+                          <div className="mt-3 text-red-700">
+                            {ConvertIDR(cart.product.salePrice)}
+                          </div>
+                        </div>
+                      ) : (
+                        ConvertIDR(cart.product.price)
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div className="flex gap-1 justify-center">
                         <Button
@@ -214,7 +229,22 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
                         </Button>
                       </div>
                     </TableCell>
-                    <TableCell>{ConvertIDR(cart.total)}</TableCell>
+                    <TableCell>
+                      {cart.product.status === "sale" ? (
+                        <div className="block">
+                          <div className="w-fit text-gray-600">
+                            {ConvertIDR(cart.product.price * cart.quantity)}
+                            <div className="border -mt-3 border-black z-20"></div>
+                          </div>
+
+                          <div className="mt-3 text-red-700">
+                            {ConvertIDR(cart.product.salePrice * cart.quantity)}
+                          </div>
+                        </div>
+                      ) : (
+                        ConvertIDR(cart.total)
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-center">
                         {cart.isLoading ? (
