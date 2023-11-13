@@ -1,6 +1,5 @@
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 export const DELETE = async (
   req: Request,
@@ -8,7 +7,7 @@ export const DELETE = async (
 ) => {
   try {
     if (!params.id) {
-      return NextResponse.json({ message: "Id is recuired" }, { status: 400 });
+      return NextResponse.json({ message: "Id is required" }, { status: 400 });
     }
 
     const cartId = params.id;
