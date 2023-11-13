@@ -20,6 +20,7 @@ import { ToastContainer, toast } from "react-toastify";
 import LoadingGif from "@/components/LoadingGif";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
+import CartTotal from "./CartTotal";
 
 interface CartTableProps {
   carts?: CartType[];
@@ -137,7 +138,14 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
     });
   };
 
-  const handleChecked = async (cartId: string) => {
+  const handleChecked = async (index: number) => {
+    const thisCarts = [...cartList];
+
+    const cartId = thisCarts[index].id;
+
+    thisCarts[index].status = !thisCarts[index].status;
+
+    setCartList(thisCarts);
     try {
       await axios.patch(`/api/cart/check/${cartId}`);
 
@@ -150,14 +158,15 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
   return (
     <React.Fragment>
       <ToastContainer />
+
       <div className="w-full flex justify-center mt-[50px] font-serif">
         <div className="w-[80%]">
           <Table className="bg-white rounded-md">
             <TableHeader>
               <TableRow>
                 <TableHead className="text-center">#</TableHead>
-                <TableHead className="text-center">Gambar</TableHead>
-                <TableHead>Nama</TableHead>
+                <TableHead className="text-center">Image</TableHead>
+                <TableHead>Name</TableHead>
                 <TableHead>Price</TableHead>
                 <TableHead className="text-center">Quantity</TableHead>
                 <TableHead>Total</TableHead>
@@ -171,7 +180,7 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
                     <TableCell className="text-center">
                       <Checkbox
                         checked={cart.status}
-                        onCheckedChange={() => handleChecked(cart.id)}
+                        onCheckedChange={() => handleChecked(index)}
                       />
                     </TableCell>
 
@@ -272,6 +281,8 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
           </Table>
         </div>
       </div>
+
+      <CartTotal carts={cartList} />
     </React.Fragment>
   );
 };
