@@ -30,8 +30,10 @@ model Employee {
   role      RoleEmployee
 
   productFinanceLog ProductFinanceLog[] @relation("EmployeeToProductFinanceLog")
-  productStockLog ProductStockLog[] @relation("EmployeeToProductStockLog")
-  productStatusLog ProductStatusLog[] @relation("EmployeeToProductStatusLog")
+  productStockLog   ProductStockLog[] @relation("EmployeeToProductStockLog")
+  productStatusLog  ProductStatusLog[] @relation("EmployeeToProductStatusLog")
+  order             Order[] @relation("EmployeeToOrder")
+  orderLog          OrderLog[] @relation("EmployeeToOrderLog")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -55,6 +57,7 @@ model User {
 
   activateToken ActivateToken[] @relation("UserToActivateToken")
   cart          Cart[] @relation("UserToCart")
+  order         Order[] @relation("UserToOrder")
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -102,6 +105,7 @@ model Product {
   productStockLog     ProductStockLog[] @relation("ProductToProductStockLog")
   productStatusLog    ProductStatusLog[] @relation("ProductToProductStatusLog")
   cart                Cart[] @relation("ProductToCart")
+  orderDetail         OrderDetail[] @relation("ProductToOrderDetail")
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -197,4 +201,101 @@ model Cart {
 
   @@index([productId])
   @@index([userId])
+}
+
+model Order {
+  id              String @id @default(uuid())
+  invoice         String
+  statusOrder     StatusOrder
+  paymentMethod   PaymentMethod
+  statuspayment   StatusPayment
+  subTotal        Int?
+  shipping        Int?
+  grandTotal      Int?
+  discount        Int?
+  tax             Int?
+  note            String? @db.Text
+
+  userName        String
+  userEmail       String
+
+  employeeName    String?
+
+  userId          String
+  user            User @relation("UserToOrder", fields: [userId], references: [id])
+  employeeId      String?
+  employee        Employee? @relation("EmployeeToOrder", fields: [employeeId], references: [id])
+
+  orderDetail     OrderDetail[] @relation("OrderToOrderDetail")
+  orderLog        OrderLog[] @relation("OrderToOrderLog")
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([employeeId])
+}
+
+model OrderDetail {
+  id          String @id @default(uuid())
+  name        String
+  price       Int
+  quantity    Int @db.TinyInt
+  total       Int
+
+  orderId     String
+  order       Order @relation("OrderToOrderDetail", fields: [orderId], references: [id])
+  productId   String
+  product     Product @relation("ProductToOrderDetail", fields: [productId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([productId])
+  @@index([orderId])
+}
+
+model OrderLog {
+  id            String @id @default(uuid())
+  status        StatusOrderLog
+
+  employeeName  String?
+
+  orderId       String
+  order         Order @relation("OrderToOrderLog", fields: [orderId], references: [id])
+  employeeId    String?
+  employee      Employee? @relation("EmployeeToOrderLog", fields: [employeeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([employeeId])
+}
+
+enum PaymentMethod {
+  cash
+  transfer
+}
+
+enum StatusOrder {
+  ongoing
+  done
+  cancel
+}
+
+enum StatusPayment {
+  pending
+  paid
+}
+
+enum StatusOrderLog {
+  entry
+  opened
+  invoice
+  paid
+  delivery
+  accepted
+  done
+  cancel
 }
