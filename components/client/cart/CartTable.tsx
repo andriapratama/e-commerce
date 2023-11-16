@@ -64,8 +64,8 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
   const handleDecrease = (index: number) => {
     const thisCarts = [...cartList];
 
-    if (thisCarts[index].quantity <= 0 || !thisCarts[index].quantity) {
-      thisCarts[index].quantity = 0;
+    if (thisCarts[index].quantity <= 1 || !thisCarts[index].quantity) {
+      thisCarts[index].quantity = 1;
     } else {
       thisCarts[index].quantity = thisCarts[index].quantity - 1;
     }
@@ -84,8 +84,8 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
 
     if (quantity >= total) {
       thisCarts[index].quantity = total;
-    } else if (quantity <= 0 || !quantity) {
-      thisCarts[index].quantity = 0;
+    } else if (quantity <= 1 || !quantity) {
+      thisCarts[index].quantity = 1;
     } else {
       thisCarts[index].quantity = quantity;
     }
@@ -102,7 +102,11 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
 
     const price = thisCarts[index].product.price;
 
-    const total = quantity * price;
+    const saleprice = thisCarts[index].product.salePrice;
+
+    const status = thisCarts[index].product.status;
+
+    const total = status === "sale" ? saleprice * quantity : price * quantity;
 
     thisCarts[index].total = total;
 
@@ -217,7 +221,11 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleDecrease(index)}
+                          onClick={() => {
+                            handleDecrease(index);
+                            console.log(cart);
+                          }}
+                          disabled={cart.quantity <= 1 ? true : false}
                         >
                           -
                         </Button>
@@ -233,6 +241,11 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
                           variant="outline"
                           size="sm"
                           onClick={() => handleIncrease(index)}
+                          disabled={
+                            cart.quantity >= cart.product.totalStock
+                              ? true
+                              : false
+                          }
                         >
                           +
                         </Button>
