@@ -7,6 +7,8 @@ import { transporter } from "@/lib/nodemailer";
 import { TemplateEmailVerify } from "@/utils/TemplateEmailVerify";
 
 export const POST = async (req: Request) => {
+  let newUserId = "";
+
   try {
     const body = await req.json();
 
@@ -61,6 +63,8 @@ export const POST = async (req: Request) => {
       },
     });
 
+    newUserId = user.id;
+
     const token = await prismadb.activateToken.create({
       data: {
         token: `${randomUUID()}`,
@@ -83,6 +87,21 @@ export const POST = async (req: Request) => {
     return NextResponse.json({ message: "User Created" }, { status: 201 });
   } catch (error) {
     console.log("[USER_POST]", error);
+
+    if (newUserId) {
+      await prismadb.activateToken.deleteMany({
+        where: {
+          userId: newUserId,
+        },
+      });
+
+      await prismadb.user.delete({
+        where: {
+          id: newUserId,
+        },
+      });
+    }
+
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };
