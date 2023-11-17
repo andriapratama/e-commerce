@@ -51,7 +51,7 @@ model User {
   email     String @unique
   password  String
   role      RoleUser
-  addres    String? @db.Text
+  address   String? @db.Text
   phone     String?
   active    Boolean @default(false)
 
