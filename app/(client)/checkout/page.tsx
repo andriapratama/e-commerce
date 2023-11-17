@@ -4,33 +4,30 @@ import TitlePage from "@/components/client/TitlePage";
 import Topbar from "@/components/client/Topbar";
 import CheckoutContent from "@/components/client/checkout/CheckoutContent";
 import { useCountCartsHook } from "@/hooks/client/CartHook";
+import { useGetAllDataCheckoutByEmail } from "@/hooks/client/CheckoutHook";
+import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
 import { authOptions } from "@/lib/auth";
-import axios from "axios";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
 
 const Checkout = async () => {
-  let isSuccess = true;
+  let isEmptyData: boolean = false;
 
   try {
     const session = await getServerSession(authOptions);
 
+    const { user } = await useGetUserByEmailHook();
+
     const { countCarts } = await useCountCartsHook();
 
-    const resCarts = await axios.get(
-      `${process.env.WEB_URL}/api/checkout/${session?.user.email}`
-    );
+    const { carts } = await useGetAllDataCheckoutByEmail();
 
-    const carts = resCarts.data.data;
-
-    if (carts.length <= 0) {
-      isSuccess = false;
-    }
+    carts.length <= 0 ? (isEmptyData = true) : (isEmptyData = false);
 
     return (
       <section className="w-full min-h-screen">
-        <Topbar role={session?.user.role} />
+        <Topbar role={session?.user.role} userName={user.firstName} />
         <Navbar countCarts={countCarts} />
         <TitlePage title="Checkout" />
         <CheckoutContent carts={carts} />
@@ -40,7 +37,7 @@ const Checkout = async () => {
   } catch (error) {
     return (
       <section className="w-full min-h-screen">
-        <Topbar role={undefined} />
+        <Topbar />
         <Navbar />
         <TitlePage title="Checkout" />
         <CheckoutContent />
@@ -48,7 +45,7 @@ const Checkout = async () => {
       </section>
     );
   } finally {
-    if (isSuccess === false) redirect("/cart");
+    isEmptyData === true && redirect("/cart");
   }
 };
 
