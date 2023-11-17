@@ -1,8 +1,6 @@
 "use client";
 
 import { MoreHorizontal } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -65,6 +63,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                       width={50}
                       height={50}
                       className="object-contain h-[50px] w-auto"
+                      priority
                     />
                   </TableCell>
                   <TableCell className="capitalize">{product.name}</TableCell>
