@@ -53,6 +53,8 @@ const LoginForm = () => {
       if (res?.ok) {
         router.push("/");
         router.refresh();
+      } else {
+        toast.error(res?.error);
       }
     } catch (error: any) {
       toast.error(error.response.data.message);
