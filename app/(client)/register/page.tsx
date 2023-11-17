@@ -13,7 +13,7 @@ const Register = async () => {
   try {
     const session = await getServerSession(authOptions);
 
-    if (session) {
+    if (session?.user.role === "member") {
       isSuccess = true;
     }
 
