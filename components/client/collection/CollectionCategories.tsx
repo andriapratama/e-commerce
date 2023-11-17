@@ -2,11 +2,13 @@ import { CategoryType } from "@/types/CategoryType";
 import { ChevronRight } from "lucide-react";
 import React from "react";
 
-interface CategoriesProps {
+interface CollectionCategoriesProps {
   categories: CategoryType[];
 }
 
-const Categories: React.FC<CategoriesProps> = ({ categories }) => {
+const CollectionCategories: React.FC<CollectionCategoriesProps> = ({
+  categories,
+}) => {
   return (
     <div className="w-[310px] h-fit hidden lg:block mt-[80px]">
       <div className="text-xl font-serif mb-5">Categories</div>
@@ -23,4 +25,4 @@ const Categories: React.FC<CategoriesProps> = ({ categories }) => {
   );
 };
 
-export default Categories;
+export default CollectionCategories;

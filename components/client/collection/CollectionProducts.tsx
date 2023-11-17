@@ -3,11 +3,13 @@ import React from "react";
 import ProductCard from "../ProductCard";
 import { ToastContainer } from "react-toastify";
 
-interface ProductsProps {
+interface CollectionProductsProps {
   products: ClientProductType[];
 }
 
-const Products: React.FC<ProductsProps> = ({ products }) => {
+const CollectionProducts: React.FC<CollectionProductsProps> = ({
+  products,
+}) => {
   return (
     <React.Fragment>
       <ToastContainer />
@@ -20,4 +22,4 @@ const Products: React.FC<ProductsProps> = ({ products }) => {
   );
 };
 
-export default Products;
+export default CollectionProducts;
