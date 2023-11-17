@@ -11,9 +11,33 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 const Checkout = async () => {
-  const session = await getServerSession(authOptions);
+  let isSuccess = true;
 
-  if (!session) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    const { countCarts } = await useCountCartsHook();
+
+    const resCarts = await axios.get(
+      `${process.env.WEB_URL}/api/checkout/${session?.user.email}`
+    );
+
+    const carts = resCarts.data.data;
+
+    if (carts.length <= 0) {
+      isSuccess = false;
+    }
+
+    return (
+      <section className="w-full min-h-screen">
+        <Topbar role={session?.user.role} />
+        <Navbar countCarts={countCarts} />
+        <TitlePage title="Checkout" />
+        <CheckoutContent carts={carts} />
+        <Footer />
+      </section>
+    );
+  } catch (error) {
     return (
       <section className="w-full min-h-screen">
         <Topbar role={undefined} />
@@ -23,29 +47,9 @@ const Checkout = async () => {
         <Footer />
       </section>
     );
+  } finally {
+    if (isSuccess === false) redirect("/cart");
   }
-
-  const { countCarts } = await useCountCartsHook();
-
-  const resCarts = await axios.get(
-    `${process.env.WEB_URL}/api/checkout/${session?.user.email}`
-  );
-
-  const carts = resCarts.data.data;
-
-  if (carts.length <= 0) {
-    return redirect("/cart");
-  }
-
-  return (
-    <section className="w-full min-h-screen">
-      <Topbar role={session?.user.role} />
-      <Navbar countCarts={countCarts} />
-      <TitlePage title="Checkout" />
-      <CheckoutContent carts={carts} />
-      <Footer />
-    </section>
-  );
 };
 
 export default Checkout;
