@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { Image as IconImage } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -39,6 +39,7 @@ import {
   ImageInputType,
   MAX_FILE_SIZE,
 } from "@/types/admin/Image";
+import AutosizeTextArea from "@/utils/AutosizeTextArea";
 
 const formSchema = z.object({
   name: z
@@ -99,6 +100,10 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  AutosizeTextArea(textAreaRef.current, description);
+
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -145,9 +150,9 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
 
       router.push(`/admin/products/${slug}`);
       router.refresh();
+      setIsLoading(false);
     } catch (error: any) {
       toast.error(error.response.data.message);
-    } finally {
       setIsLoading(false);
     }
   };
@@ -459,6 +464,8 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
                       {...field}
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
+                      ref={textAreaRef}
+                      rows={1}
                     />
                   </FormControl>
                   <FormMessage />
