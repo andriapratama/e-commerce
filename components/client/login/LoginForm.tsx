@@ -1,5 +1,6 @@
 "use client";
 
+import ButtonLoading from "@/components/ButtonLoading";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -108,7 +109,7 @@ const LoginForm = () => {
           />
 
           <Button className="w-full mb-3" disabled={isLoading}>
-            Login
+            {isLoading ? <ButtonLoading /> : "Login"}
           </Button>
         </form>
       </div>
