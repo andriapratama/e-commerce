@@ -218,6 +218,7 @@ model Order {
 
   userName        String
   userEmail       String
+  userPhone       String
 
   employeeName    String?
 
