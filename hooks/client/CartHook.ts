@@ -1,4 +1,5 @@
 import { authOptions } from "@/lib/auth";
+import { CartType } from "@/types/CartType";
 import axios from "axios";
 import { getServerSession } from "next-auth";
 
@@ -9,7 +10,7 @@ export const useCountCartsHook = async () => {
     `${process.env.WEB_URL}/api/cart/${session?.user.email}/count`
   );
 
-  const countCarts = resCountCarts.data.data;
+  const countCarts: number = resCountCarts.data.data;
 
   return { countCarts };
 };
@@ -21,7 +22,7 @@ export const useGetAllCartsByEmail = async () => {
     `${process.env.WEB_URL}/api/cart/${session?.user.email}`
   );
 
-  const carts = resCarts.data.data;
+  const carts: CartType[] = resCarts.data.data;
 
   return { carts };
 };

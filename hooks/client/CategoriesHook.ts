@@ -1,3 +1,4 @@
+import { CategoryType } from "@/types/CategoryType";
 import axios from "axios";
 
 export const useGetAllCategoriesHook = async () => {
@@ -5,7 +6,7 @@ export const useGetAllCategoriesHook = async () => {
     `${process.env.WEB_URL}/api/categories`
   );
 
-  const categories = categoriesRes.data.data;
+  const categories: CategoryType[] = categoriesRes.data.data;
 
   return { categories };
 };
