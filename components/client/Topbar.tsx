@@ -6,10 +6,11 @@ import Link from "next/link";
 import React from "react";
 
 interface TopbarProps {
-  role: string | undefined;
+  role?: string;
+  userName?: string;
 }
 
-const Topbar: React.FC<TopbarProps> = ({ role }) => {
+const Topbar: React.FC<TopbarProps> = ({ role, userName }) => {
   return (
     <section className="w-full flex justify-center bg-black absolute">
       <div className="lg:w-[80%] w-[90%] sm:h-[35px] h-[40px] flex justify-between items-center text-gray-200 text-xs">
@@ -24,8 +25,11 @@ const Topbar: React.FC<TopbarProps> = ({ role }) => {
           </div>
         </div>
         {role === "member" ? (
-          <div className="uppercase font-serif" onClick={() => signOut()}>
-            Logout
+          <div className="flex h-full items-center gap-4 uppercase font-serif">
+            <Link href="/profile">{userName}</Link>
+            <div className="cursor-pointer" onClick={() => signOut()}>
+              Logout
+            </div>
           </div>
         ) : (
           <div className="flex h-full items-center gap-4 uppercase font-serif">
