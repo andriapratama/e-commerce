@@ -6,17 +6,19 @@ import { ClientProductType } from "@/types/ProductType";
 import { ConvertIDR } from "@/utils/ConvertIDR";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import ShowImage from "./ShowImage";
+import ShowImage from "../ShowImage";
 import StatusProduct from "../StatusProduct";
 
-interface ProductProps {
+interface CollectionDetailContentProps {
   product: ClientProductType;
 }
 
-const Product: React.FC<ProductProps> = ({ product }) => {
+const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
+  product,
+}) => {
   const [quantity, setQuantity] = useState<number>(0);
   const [message, setMessage] = useState<string>("");
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpenImage, setIsOpenImage] = useState<boolean>(false);
 
   const handleDecrease = () => {
     if (quantity <= 0) {
@@ -29,7 +31,7 @@ const Product: React.FC<ProductProps> = ({ product }) => {
   };
 
   const handleIncrease = () => {
-    const total = product.totalStock;
+    const total: number = product.totalStock;
 
     if (quantity === total) {
       setQuantity(total);
@@ -41,7 +43,7 @@ const Product: React.FC<ProductProps> = ({ product }) => {
   };
 
   const handleSetQuantity = (value: string) => {
-    const total = product.totalStock;
+    const total: number = product.totalStock;
 
     if (value === "" || value === null || value === undefined) {
       setQuantity(0);
@@ -67,7 +69,7 @@ const Product: React.FC<ProductProps> = ({ product }) => {
               width={300}
               height={600}
               className="object-cover sm:h-[600px] h-[400px] w-auto rounded cursor-pointer"
-              onClick={() => setIsOpen(true)}
+              onClick={() => setIsOpenImage(true)}
             />
           </div>
           <div className="w-full">
@@ -113,14 +115,17 @@ const Product: React.FC<ProductProps> = ({ product }) => {
 
             <div className="flex w-full sm:w-[300px] gap-3">
               <Button className="w-full">Add to Cart</Button>
-              <Button className="w-full">Buy now</Button>
             </div>
           </div>
         </div>
       </div>
-      <ShowImage isOpen={isOpen} setIsOpen={setIsOpen} image={product.image} />
+      <ShowImage
+        isOpen={isOpenImage}
+        setIsOpen={setIsOpenImage}
+        image={product.image}
+      />
     </React.Fragment>
   );
 };
 
-export default Product;
+export default CollectionDetailContent;
