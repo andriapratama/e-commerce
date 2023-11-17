@@ -4,8 +4,8 @@ export const handleSetSlug = (
 ) => {
   if (value.match(/ /g)) {
     const replaceValue = value.replace(/ /g, "-");
-    setValue(replaceValue);
+    setValue(replaceValue.toLowerCase());
   } else {
-    setValue(value);
+    setValue(value.toLowerCase());
   }
 };
