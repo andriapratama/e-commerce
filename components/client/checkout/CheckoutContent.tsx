@@ -1,20 +1,36 @@
 "use client";
 
 import { CartType } from "@/types/CartType";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import CheckoutPayment from "./CheckoutPayment";
 import CheckoutTotal from "./CheckoutTotal";
 import CheckoutTable from "./CheckoutTable";
 import { Textarea } from "@/components/ui/textarea";
 import { ToastContainer } from "react-toastify";
+import { UserType } from "@/types/UserType";
+import CheckoutWarning from "./CheckoutWarning";
 
 interface CheckoutContentProps {
   carts?: CartType[];
+  user?: UserType;
 }
 
-const CheckoutContent: React.FC<CheckoutContentProps> = ({ carts }) => {
+const CheckoutContent: React.FC<CheckoutContentProps> = ({ carts, user }) => {
   const [note, setNote] = useState<string>("");
+  const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
+
+  const handleCheckPofileUser = () => {
+    if (!user?.address || !user.phone) {
+      setIsOpenWarning(true);
+    } else {
+      setIsOpenWarning(false);
+    }
+  };
+
+  useEffect(() => {
+    handleCheckPofileUser();
+  }, [user]);
 
   return (
     <React.Fragment>
@@ -36,6 +52,8 @@ const CheckoutContent: React.FC<CheckoutContentProps> = ({ carts }) => {
           </div>
         </div>
       </div>
+
+      <CheckoutWarning isOpen={isOpenWarning} />
     </React.Fragment>
   );
 };

@@ -30,7 +30,7 @@ const Checkout = async () => {
         <Topbar role={session?.user.role} userName={user.firstName} />
         <Navbar countCarts={countCarts} />
         <TitlePage title="Checkout" />
-        <CheckoutContent carts={carts} />
+        <CheckoutContent carts={carts} user={user} />
         <Footer />
       </section>
     );
