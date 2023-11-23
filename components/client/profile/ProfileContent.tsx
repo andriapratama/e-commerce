@@ -5,6 +5,7 @@ import { UserType } from "@/types/UserType";
 import React, { useState } from "react";
 import ProfileEditData from "./ProfileEditData";
 import { ToastContainer } from "react-toastify";
+import ProfileChangePassword from "./ProfileChangePassword";
 
 interface ProfileContentProps {
   user: UserType;
@@ -12,6 +13,8 @@ interface ProfileContentProps {
 
 const ProfileContent: React.FC<ProfileContentProps> = ({ user }) => {
   const [isOpenEditData, setIsOpenEditData] = useState<boolean>(false);
+  const [isOpenChangePassword, setIsOpenChangePassword] =
+    useState<boolean>(false);
   return (
     <React.Fragment>
       <ToastContainer />
@@ -36,13 +39,20 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user }) => {
             <div className="flex-1">{user.address}</div>
           </div>
 
-          <div className="w-full flex justify-end mt-3">
+          <div className="w-full flex justify-end mt-3 gap-3">
             <Button
               type="button"
               size="sm"
               onClick={() => setIsOpenEditData(true)}
             >
               Edit
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setIsOpenChangePassword(true)}
+            >
+              Change Password
             </Button>
           </div>
         </div>
@@ -52,6 +62,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user }) => {
         user={user}
         isOpen={isOpenEditData}
         setIsOpen={setIsOpenEditData}
+      />
+
+      <ProfileChangePassword
+        isOpen={isOpenChangePassword}
+        setIsOpen={setIsOpenChangePassword}
+        email={user.email}
       />
     </React.Fragment>
   );
