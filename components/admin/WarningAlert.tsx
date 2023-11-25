@@ -13,20 +13,20 @@ import {
 import ButtonLoading from "../ButtonLoading";
 
 interface WarningAlertProps {
-  isOpenWarning: boolean;
-  setIsOpenWarning: Dispatch<SetStateAction<boolean>>;
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
   isLoading: boolean;
-  handleSendData: () => void;
+  handleStoreData: () => void;
 }
 
 const WarningAlert: React.FC<WarningAlertProps> = ({
-  isOpenWarning,
-  setIsOpenWarning,
+  isOpen,
+  setIsOpen,
   isLoading,
-  handleSendData,
+  handleStoreData,
 }) => {
   return (
-    <AlertDialog open={isOpenWarning}>
+    <AlertDialog open={isOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
@@ -35,13 +35,13 @@ const WarningAlert: React.FC<WarningAlertProps> = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel
-            onClick={() => setIsOpenWarning(false)}
+            onClick={() => setIsOpen(false)}
             disabled={isLoading}
           >
             Batal
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={() => handleSendData()}
+            onClick={() => handleStoreData()}
             disabled={isLoading}
           >
             {isLoading ? <ButtonLoading /> : "Ya"}
