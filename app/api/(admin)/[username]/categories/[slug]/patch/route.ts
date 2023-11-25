@@ -1,14 +1,30 @@
 import prismadb from "@/lib/prismadb";
+import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 export const PATCH = async (
   req: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: { username: string; slug: string } }
 ) => {
   try {
+    if (params.username === "undefined") {
+      console.log(true);
+    }
+    const { validation } = await ApiAdminValidation(params.username);
+
+    if (validation.error) {
+      return NextResponse.json(
+        { message: validation.message },
+        { status: validation.status }
+      );
+    }
+
     if (!params.slug) {
-      return new NextResponse("Category slug is required", { status: 400 });
+      return NextResponse.json(
+        { message: "Category slug is required" },
+        { status: 400 }
+      );
     }
 
     const body = await req.json();
@@ -64,7 +80,7 @@ export const PATCH = async (
       );
     }
 
-    const category = await prismadb.category.update({
+    await prismadb.category.update({
       where: {
         slug: params.slug,
       },
@@ -82,6 +98,6 @@ export const PATCH = async (
     );
   } catch (error) {
     console.log("[CATEGORY_PATCH]", error);
-    return new NextResponse("Server error", { status: 500 });
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };

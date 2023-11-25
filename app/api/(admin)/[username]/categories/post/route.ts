@@ -1,9 +1,22 @@
 import prismadb from "@/lib/prismadb";
+import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-export const POST = async (req: Request) => {
+export const POST = async (
+  req: Request,
+  { params }: { params: { username: string } }
+) => {
   try {
+    const { validation } = await ApiAdminValidation(params.username);
+
+    if (validation.error) {
+      return NextResponse.json(
+        { message: validation.message },
+        { status: validation.status }
+      );
+    }
+
     const body = await req.json();
 
     const schema = z.object({
@@ -75,31 +88,6 @@ export const POST = async (req: Request) => {
     }
   } catch (error) {
     console.log("[CATEGORY_POST]", error);
-    return new NextResponse("Server error", { status: 500 });
-  }
-};
-
-export const GET = async (req: Request) => {
-  try {
-    const categories = await prismadb.category.findMany({
-      orderBy: {
-        name: "asc",
-      },
-      select: {
-        name: true,
-        slug: true,
-      },
-    });
-
-    return NextResponse.json(
-      {
-        message: "Successfully get all categories data",
-        data: categories,
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.log("[CATEGORY_GET]", error);
-    return new NextResponse("Server error", { status: 500 });
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };

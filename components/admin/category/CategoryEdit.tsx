@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import ButtonLoading from "@/components/ButtonLoading";
 import { handleSetSlug } from "@/utils/HandleSetSlug";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -30,19 +31,21 @@ const formSchema = z.object({
 });
 
 interface CategoryEditProps {
+  username?: string;
   editCategory: CategoryType;
   setEditCategory: Dispatch<SetStateAction<CategoryType>>;
-  showCategories: () => void;
 }
 
 const CategoryEdit: React.FC<CategoryEditProps> = ({
+  username,
   editCategory,
   setEditCategory,
-  showCategories,
 }) => {
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     setName(editCategory.name);
@@ -59,28 +62,31 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      setLoading(true);
+      setIsLoading(true);
 
-      await axios.patch(`/api/admin/categories/${editCategory.slug}`, {
-        name: values.name.toLowerCase(),
-        slug: values.slug.toLowerCase(),
-      });
+      await axios.patch(
+        `/api/${username}/categories/${editCategory.slug}/patch`,
+        {
+          name: values.name.toLowerCase(),
+          slug: values.slug.toLowerCase(),
+        }
+      );
 
       toast.success("Kategori berhasil diubah!");
 
       setName("");
       setSlug("");
 
-      showCategories();
-
       setEditCategory({
         name: "",
         slug: "",
       });
+
+      router.refresh();
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
   return (
@@ -144,12 +150,12 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({
                 slug: "",
               })
             }
-            disabled={loading}
+            disabled={isLoading}
           >
             Batal
           </Button>
-          <Button disabled={loading} size="sm" type="submit">
-            {loading ? <ButtonLoading /> : "Simpan"}
+          <Button disabled={isLoading} size="sm" type="submit">
+            {isLoading ? <ButtonLoading /> : "Simpan"}
           </Button>
         </div>
       </form>

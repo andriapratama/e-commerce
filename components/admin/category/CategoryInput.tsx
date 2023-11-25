@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import ButtonLoading from "@/components/ButtonLoading";
 import { handleSetSlug } from "@/utils/HandleSetSlug";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -29,13 +30,15 @@ const formSchema = z.object({
 });
 
 interface CategoryInputProps {
-  showCategories: () => void;
+  username?: string;
 }
 
-const CategoryInput: React.FC<CategoryInputProps> = ({ showCategories }) => {
+const CategoryInput: React.FC<CategoryInputProps> = ({ username }) => {
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,9 +50,9 @@ const CategoryInput: React.FC<CategoryInputProps> = ({ showCategories }) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      setLoading(true);
+      setIsLoading(true);
 
-      await axios.post("/api/admin/categories", {
+      await axios.post(`/api/${username}/categories/post`, {
         name: values.name.toLowerCase(),
         slug: values.slug.toLowerCase(),
       });
@@ -59,11 +62,11 @@ const CategoryInput: React.FC<CategoryInputProps> = ({ showCategories }) => {
 
       toast.success("Kategori berhasil dibuat!");
 
-      showCategories();
+      router.refresh();
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
   return (
@@ -116,8 +119,8 @@ const CategoryInput: React.FC<CategoryInputProps> = ({ showCategories }) => {
             </FormItem>
           )}
         />
-        <Button disabled={loading} type="submit">
-          {loading ? <ButtonLoading /> : "Simpan"}
+        <Button disabled={isLoading} type="submit">
+          {isLoading ? <ButtonLoading /> : "Simpan"}
         </Button>
       </form>
     </Form>
