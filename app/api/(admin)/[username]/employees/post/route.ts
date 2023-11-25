@@ -2,9 +2,22 @@ import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 
-export const POST = async (req: Request) => {
+export const POST = async (
+  req: Request,
+  { params }: { params: { username: string } }
+) => {
   try {
+    const { validation } = await ApiAdminValidation(params.username);
+
+    if (validation.error) {
+      return NextResponse.json(
+        { message: validation.error },
+        { status: validation.status }
+      );
+    }
+
     const body = await req.json();
 
     const schema = z.object({
@@ -44,8 +57,9 @@ export const POST = async (req: Request) => {
       );
     }
 
-    const password = "123456";
-    const passwordHash = bcrypt.hashSync(password, 10);
+    const password = Math.floor(100000 + Math.random() * 900000);
+
+    const passwordHash = bcrypt.hashSync(password.toString(), 10);
 
     const employee = await prismadb.employee.create({
       data: {
@@ -62,39 +76,13 @@ export const POST = async (req: Request) => {
         data: {
           name: employee.name,
           username: employee.username,
-          password: "123456",
+          password,
         },
       },
       { status: 201 }
     );
   } catch (error) {
     console.log("[EMPLOYEE_POST]", error);
-    return new NextResponse("Server error", { status: 500 });
-  }
-};
-
-export const GET = async (req: Request) => {
-  try {
-    const employees = await prismadb.employee.findMany({
-      select: {
-        name: true,
-        username: true,
-        role: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    return NextResponse.json(
-      {
-        message: "Successfully get all employees data",
-        data: employees,
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.log("[CATEGORY_GET]", error);
-    return new NextResponse("Server error", { status: 500 });
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };

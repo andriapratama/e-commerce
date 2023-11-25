@@ -1,14 +1,27 @@
 import prismadb from "@/lib/prismadb";
+import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 export const PATCH = async (
   req: Request,
-  { params }: { params: { username: string } }
+  { params }: { params: { username: string; id: string } }
 ) => {
   try {
-    if (!params.username) {
-      return new NextResponse("Employee username is required", { status: 400 });
+    const { validation } = await ApiAdminValidation(params.username);
+
+    if (validation.error) {
+      return NextResponse.json(
+        { message: validation.message },
+        { status: validation.status }
+      );
+    }
+
+    if (!params.id) {
+      return NextResponse.json(
+        { message: "Employee username is required" },
+        { status: 400 }
+      );
     }
 
     const body = await req.json();
@@ -35,7 +48,7 @@ export const PATCH = async (
 
     const findEmployee = await prismadb.employee.findUnique({
       where: {
-        username: params.username,
+        username: params.id,
       },
     });
 
@@ -67,9 +80,9 @@ export const PATCH = async (
       }
     }
 
-    const employee = await prismadb.employee.update({
+    await prismadb.employee.update({
       where: {
-        username: params.username,
+        username: params.id,
       },
       data: {
         name: name,
@@ -86,6 +99,6 @@ export const PATCH = async (
     );
   } catch (error) {
     console.log("[EMPLOYEE_PATCH]", error);
-    return new NextResponse("Server error", { status: 500 });
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };
