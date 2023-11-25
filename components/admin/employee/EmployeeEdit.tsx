@@ -24,7 +24,8 @@ import { toast } from "react-toastify";
 import { Input } from "@/components/ui/input";
 import ButtonLoading from "@/components/ButtonLoading";
 import axios from "axios";
-import { EditEmployeeType } from "@/types/admin/Employees";
+import { EmployeeType } from "@/types/admin/EmployeeType";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "Username minimal 3 karakter" }),
@@ -33,20 +34,22 @@ const formSchema = z.object({
 });
 
 interface EmployeeEditProps {
-  editEmployee: EditEmployeeType;
-  setEditEmployee: Dispatch<SetStateAction<EditEmployeeType>>;
-  ShowEmployees: () => void;
+  paramsUsername: string | undefined;
+  editEmployee: EmployeeType;
+  setEditEmployee: Dispatch<SetStateAction<EmployeeType>>;
 }
 
 const EmployeeEdit: React.FC<EmployeeEditProps> = ({
+  paramsUsername,
   editEmployee,
   setEditEmployee,
-  ShowEmployees,
 }) => {
   const [name, setName] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [role, setRole] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -65,23 +68,30 @@ const EmployeeEdit: React.FC<EmployeeEditProps> = ({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      setLoading(true);
+      setIsLoading(true);
 
-      await axios.patch(`/api/admin/employees/${editEmployee.username}`, {
-        name: values.name.toLowerCase(),
-        username: values.username.toLowerCase(),
-        role: values.role,
-      });
-
-      form.reset();
+      await axios.patch(
+        `/api/${paramsUsername}/employees/${editEmployee.username}/patch`,
+        {
+          name: values.name.toLowerCase(),
+          username: values.username.toLowerCase(),
+          role: values.role,
+        }
+      );
 
       toast.success("Data karyawan berhasil diubah!");
 
-      ShowEmployees();
+      setEditEmployee({
+        name: "",
+        username: "",
+        role: "",
+      });
+
+      router.refresh();
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
   return (
@@ -158,12 +168,12 @@ const EmployeeEdit: React.FC<EmployeeEditProps> = ({
                 role: "",
               })
             }
-            disabled={loading}
+            disabled={isLoading}
           >
             Batal
           </Button>
-          <Button disabled={loading} size="sm" type="submit">
-            {loading ? <ButtonLoading /> : "Simpan"}
+          <Button disabled={isLoading} size="sm" type="submit">
+            {isLoading ? <ButtonLoading /> : "Simpan"}
           </Button>
         </div>
       </form>

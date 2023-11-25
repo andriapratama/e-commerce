@@ -26,6 +26,7 @@ import axios from "axios";
 import React from "react";
 import WarningAlert from "../WarningAlert";
 import EmployeeAddResult from "./EmployeeAddResult";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "Username minimal 3 karakter" }),
@@ -34,18 +35,20 @@ const formSchema = z.object({
 });
 
 interface EmployeeAddProps {
-  ShowEmployees: () => void;
+  paramsUsername: string | undefined;
 }
 
-const EmployeeAdd: React.FC<EmployeeAddProps> = ({ ShowEmployees }) => {
+const EmployeeAdd: React.FC<EmployeeAddProps> = ({ paramsUsername }) => {
   const [name, setName] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [role, setRole] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpenAddResult, setIsOpenAddResult] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,11 +63,11 @@ const EmployeeAdd: React.FC<EmployeeAddProps> = ({ ShowEmployees }) => {
     setIsOpenWarning(true);
   };
 
-  const handleSendData = async () => {
+  const handleStoreData = async () => {
     try {
       setIsLoading(true);
 
-      const res = await axios.post("/api/admin/employees", {
+      const res = await axios.post(`/api/${paramsUsername}/employees/post`, {
         name: name.toLowerCase(),
         username: username.toLowerCase(),
         role: role,
@@ -76,11 +79,11 @@ const EmployeeAdd: React.FC<EmployeeAddProps> = ({ ShowEmployees }) => {
       setUsername(data.username);
       setRole("");
       setPassword(data.password);
-      setIsOpen(true);
+      setIsOpenAddResult(true);
 
       toast.success("Data karyawan berhasil disimpan!");
 
-      ShowEmployees();
+      router.refresh();
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {
@@ -161,15 +164,15 @@ const EmployeeAdd: React.FC<EmployeeAddProps> = ({ ShowEmployees }) => {
       </Form>
 
       <WarningAlert
-        isOpenWarning={isOpenWarning}
-        setIsOpenWarning={setIsOpenWarning}
+        isOpen={isOpenWarning}
+        setIsOpen={setIsOpenWarning}
         isLoading={isLoading}
-        handleSendData={handleSendData}
+        handleStoreData={handleStoreData}
       />
 
       <EmployeeAddResult
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
+        isOpen={isOpenAddResult}
+        setIsOpen={setIsOpenAddResult}
         name={name}
         setName={setName}
         username={username}

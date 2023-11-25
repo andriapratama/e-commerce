@@ -15,12 +15,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import { EditEmployeeType, EmployeeDataType } from "@/types/admin/Employees";
+import { EmployeeType } from "@/types/admin/EmployeeType";
 import { Dispatch, SetStateAction } from "react";
 
 interface EmployeeTableProps {
-  employees: EmployeeDataType[];
-  setEditEmployee: Dispatch<SetStateAction<EditEmployeeType>>;
+  employees: EmployeeType[];
+  setEditEmployee: Dispatch<SetStateAction<EmployeeType>>;
 }
 
 const EmployeeTable: React.FC<EmployeeTableProps> = ({

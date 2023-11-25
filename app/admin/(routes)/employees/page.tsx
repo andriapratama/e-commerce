@@ -1,59 +1,38 @@
-"use client";
-
 import Title from "@/components/admin/Title";
-import EmployeeAdd from "@/components/admin/employee/EmployeeAdd";
-import EmployeeEdit from "@/components/admin/employee/EmployeeEdit";
-import EmployeeTable from "@/components/admin/employee/EmployeeTable";
-import { EmployeeDataType } from "@/types/admin/Employees";
+import EmployeeContent from "@/components/admin/employee/EmployeeContent";
+import { authOptions } from "@/lib/auth";
+import { EmployeeType } from "@/types/admin/EmployeeType";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { getServerSession } from "next-auth";
+import React from "react";
 import { ToastContainer } from "react-toastify";
 
-const Employees = () => {
-  const [employees, setEmployees] = useState<EmployeeDataType[]>([]);
-  const [editEmployee, setEditEmployee] = useState({
-    name: "",
-    username: "",
-    role: "",
-  });
+const Employees = async () => {
+  try {
+    const session = await getServerSession(authOptions);
 
-  const showEmployees = async () => {
-    try {
-      const res = await axios.get("/api/admin/employees");
-      setEmployees(res.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    const username = session?.user.username;
 
-  useEffect(() => {
-    showEmployees();
-  }, []);
-  return (
-    <section className="admin__container">
-      <div className="admin__container-body">
-        <ToastContainer />
+    const resEmployees = await axios.get(
+      `${process.env.WEB_URL}/api/${username}/employees/get`
+    );
 
-        <Title title="Pegawai" />
+    const employees: EmployeeType[] = resEmployees.data.data;
 
-        <div className="flex justify-between md:flex-nowrap flex-wrap gap-3 w-full">
-          {editEmployee.name ? (
-            <EmployeeEdit
-              editEmployee={editEmployee}
-              setEditEmployee={setEditEmployee}
-              ShowEmployees={showEmployees}
-            />
-          ) : (
-            <EmployeeAdd ShowEmployees={showEmployees} />
-          )}
-          <EmployeeTable
-            employees={employees}
-            setEditEmployee={setEditEmployee}
-          />
+    return (
+      <section className="admin__container">
+        <div className="admin__container-body">
+          <ToastContainer />
+
+          <Title title="Pegawai" />
+
+          <EmployeeContent username={username} employees={employees} />
         </div>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export default Employees;
