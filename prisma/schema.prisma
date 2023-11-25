@@ -209,6 +209,7 @@ model Order {
   statusOrder     StatusOrder
   paymentMethod   PaymentMethod
   statuspayment   StatusPayment
+  totalItem       Int
   subTotal        Int?
   shipping        Int?
   grandTotal      Int?
@@ -280,6 +281,7 @@ enum PaymentMethod {
 }
 
 enum StatusOrder {
+  new
   ongoing
   done
   cancel
@@ -291,8 +293,8 @@ enum StatusPayment {
 }
 
 enum StatusOrderLog {
-  entry
-  opened
+  new
+  open
   invoice
   paid
   delivery
