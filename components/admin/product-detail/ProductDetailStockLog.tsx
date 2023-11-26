@@ -16,7 +16,7 @@ interface ProductStockLogType {
   previousStock: number;
   stock: number;
   stockNow: number;
-  status: string;
+  status: "first" | "update" | "decrease" | "increase";
   note: string;
   createdAt: string;
   employee: { name: string };
@@ -57,7 +57,13 @@ const ProductDetailStockLog: React.FC<ProductDetailStockLogProps> = ({
                 <TableCell className="text-center">{value.stock}</TableCell>
                 <TableCell className="text-center">{value.stockNow}</TableCell>
                 <TableCell className="capitalize text-center">
-                  {value.status}
+                  {value.status === "first"
+                    ? "baru"
+                    : value.status === "update"
+                    ? "Diubah"
+                    : value.status === "decrease"
+                    ? "Dikurang"
+                    : "Ditambah"}
                 </TableCell>
                 <TableCell className="text-center">
                   {!value.note ? (

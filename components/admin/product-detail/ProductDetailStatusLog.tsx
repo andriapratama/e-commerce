@@ -12,9 +12,10 @@ import {
 import { ConvertDate } from "@/utils/ConvertDate";
 import { ConvertIDR } from "@/utils/ConvertIDR";
 import ProductDetailShowNote from "./ProductDetailShowNote";
+import StatusProduct from "../StatusProduct";
 
 interface ProductStatusLogType {
-  status: string;
+  status: "new" | "active" | "best" | "sale" | "archive";
   salePrice: number;
   note: string;
   createdAt: string;
@@ -49,7 +50,7 @@ const ProductDetailStatusLog: React.FC<ProductDetailStatusLogProps> = ({
               <TableRow key={index}>
                 <TableCell>{ConvertDate(value.createdAt)}</TableCell>
                 <TableCell className="text-center capitalize">
-                  {value.status}
+                  <StatusProduct status={value.status} />
                 </TableCell>
                 <TableCell>{ConvertIDR(value.salePrice)}</TableCell>
                 <TableCell className="text-center">
