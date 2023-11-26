@@ -20,12 +20,14 @@ interface ProductEditButtonProps {
   product: AdminProductType;
   categories: CategoryType[];
   paramsSlug: string;
+  username: string | undefined;
 }
 
 const ProductEditButton: React.FC<ProductEditButtonProps> = ({
   product,
   categories,
   paramsSlug,
+  username,
 }) => {
   const [isOpenEditData, setIsOpenEditData] = useState<boolean>(false);
   const [isOpenEditFinance, setIsOpenEditFinance] = useState<boolean>(false);
@@ -78,6 +80,7 @@ const ProductEditButton: React.FC<ProductEditButtonProps> = ({
         product={product}
         categories={categories}
         paramsSlug={paramsSlug}
+        username={username}
       />
 
       <ProductEditFinance
@@ -85,12 +88,14 @@ const ProductEditButton: React.FC<ProductEditButtonProps> = ({
         setIsOpen={setIsOpenEditFinance}
         paramsSlug={paramsSlug}
         product={product}
+        username={username}
       />
 
       <ProductEditStock
         isOpen={isOpenEditStock}
         setIsOpen={setIsOpenEditStock}
         paramsSlug={paramsSlug}
+        username={username}
       />
 
       <ProductEditStatus
@@ -98,12 +103,14 @@ const ProductEditButton: React.FC<ProductEditButtonProps> = ({
         setIsOpen={setIsOpenEditStatus}
         product={product}
         paramsSlug={paramsSlug}
+        username={username}
       />
 
       <ProductEditImage
         isOpen={isOpenEditImage}
         setIsOpen={setIsOpenEditImage}
         paramsSlug={paramsSlug}
+        username={username}
       />
     </React.Fragment>
   );

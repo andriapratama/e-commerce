@@ -34,6 +34,7 @@ interface ProductEditFinanceProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   product: AdminProductType;
   paramsSlug: string;
+  username: string | undefined;
 }
 
 const formSchema = z.object({
@@ -53,6 +54,7 @@ const ProductEditFinance: React.FC<ProductEditFinanceProps> = ({
   setIsOpen,
   paramsSlug,
   product,
+  username,
 }) => {
   const [price, setPrice] = useState<string>("");
   const [cost, setCost] = useState<string>("");
@@ -90,15 +92,18 @@ const ProductEditFinance: React.FC<ProductEditFinanceProps> = ({
     }
   };
 
-  const handleSendData = async () => {
+  const handleStoreData = async () => {
     try {
       setIsLoading(true);
 
-      await axios.patch(`/api/admin/products/${paramsSlug}/finance`, {
-        price: parseInt(price),
-        cost: parseInt(cost),
-        note: note,
-      });
+      await axios.patch(
+        `/api/${username}/products/${paramsSlug}/finance/patch`,
+        {
+          price: parseInt(price),
+          cost: parseInt(cost),
+          note: note,
+        }
+      );
 
       router.refresh();
 
@@ -198,10 +203,10 @@ const ProductEditFinance: React.FC<ProductEditFinanceProps> = ({
       </Dialog>
 
       <WarningAlert
-        isOpenWarning={isOpenWarning}
-        setIsOpenWarning={setIsOpenWarning}
+        isOpen={isOpenWarning}
+        setIsOpen={setIsOpenWarning}
         isLoading={isLoading}
-        handleSendData={handleSendData}
+        handleStoreData={handleStoreData}
       />
     </React.Fragment>
   );

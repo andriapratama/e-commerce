@@ -41,6 +41,7 @@ interface ProductEditStatusProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   product: AdminProductType;
   paramsSlug: string;
+  username: string | undefined;
 }
 
 const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
@@ -48,6 +49,7 @@ const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
   setIsOpen,
   product,
   paramsSlug,
+  username,
 }) => {
   const [salePrice, setSalePrice] = useState<string>(
     product.salePrice.toString()
@@ -96,12 +98,12 @@ const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
     }
   };
 
-  const handleSendData = async () => {
+  const handleStoreData = async () => {
     try {
       setIsLoading(true);
 
       const res = await axios.patch(
-        `/api/admin/products/${paramsSlug}/status`,
+        `/api/${username}/products/${paramsSlug}/status/patch`,
         {
           salePrice: parseInt(salePrice),
           status: status,
@@ -215,10 +217,10 @@ const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
       </Dialog>
 
       <WarningAlert
-        isOpenWarning={isOpenWarning}
-        setIsOpenWarning={setIsOpenWarning}
+        isOpen={isOpenWarning}
+        setIsOpen={setIsOpenWarning}
         isLoading={isLoading}
-        handleSendData={handleSendData}
+        handleStoreData={handleStoreData}
       />
     </React.Fragment>
   );

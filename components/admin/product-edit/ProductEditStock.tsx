@@ -39,6 +39,7 @@ interface ProductEditStockProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   paramsSlug: string;
+  username: string | undefined;
 }
 
 const formSchema = z.object({
@@ -51,6 +52,7 @@ const ProductEditStock: React.FC<ProductEditStockProps> = ({
   isOpen,
   setIsOpen,
   paramsSlug,
+  username,
 }) => {
   const [stock, setStock] = useState<string>("");
   const [status, setStatus] = useState<string>("increase");
@@ -74,11 +76,11 @@ const ProductEditStock: React.FC<ProductEditStockProps> = ({
     setIsOpenWarning(true);
   };
 
-  const handleSendData = async () => {
+  const handleStoreData = async () => {
     try {
       setIsLoading(true);
 
-      await axios.patch(`/api/admin/products/${paramsSlug}/stock`, {
+      await axios.patch(`/api/${username}/products/${paramsSlug}/stock/patch`, {
         stock: parseInt(stock),
         status: status,
         note: note,
@@ -181,10 +183,10 @@ const ProductEditStock: React.FC<ProductEditStockProps> = ({
       </Dialog>
 
       <WarningAlert
-        isOpenWarning={isOpenWarning}
-        setIsOpenWarning={setIsOpenWarning}
+        isOpen={isOpenWarning}
+        setIsOpen={setIsOpenWarning}
         isLoading={isLoading}
-        handleSendData={handleSendData}
+        handleStoreData={handleStoreData}
       />
     </React.Fragment>
   );

@@ -45,6 +45,7 @@ interface ProductEditDataProps {
   product: AdminProductType;
   categories: CategoryType[];
   paramsSlug: string;
+  username: string | undefined;
 }
 
 const formSchema = z.object({
@@ -69,6 +70,7 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
   product,
   categories,
   paramsSlug,
+  username,
 }) => {
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
@@ -123,19 +125,22 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
     }
   };
 
-  const handleSendData = async () => {
+  const handleStoreData = async () => {
     try {
       setIsLoading(true);
 
-      const res = await axios.patch(`/api/admin/products/${paramsSlug}`, {
-        name: name,
-        slug: slug,
-        minimumStock: parseInt(minimumStock),
-        category: category,
-        linkGojek: linkGojek,
-        netFill: parseInt(netFill),
-        description: description,
-      });
+      const res = await axios.patch(
+        `/api/${username}/products/${paramsSlug}/data/patch`,
+        {
+          name: name,
+          slug: slug,
+          minimumStock: parseInt(minimumStock),
+          category: category,
+          linkGojek: linkGojek,
+          netFill: parseInt(netFill),
+          description: description,
+        }
+      );
 
       const resSlug = res.data.data;
 
@@ -342,10 +347,10 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
       </Dialog>
 
       <WarningAlert
-        isOpenWarning={isOpenWarning}
-        setIsOpenWarning={setIsOpenWarning}
+        isOpen={isOpenWarning}
+        setIsOpen={setIsOpenWarning}
         isLoading={isLoading}
-        handleSendData={handleSendData}
+        handleStoreData={handleStoreData}
       />
     </React.Fragment>
   );

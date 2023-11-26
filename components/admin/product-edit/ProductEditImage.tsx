@@ -48,12 +48,14 @@ interface ProductEditImageProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   paramsSlug: string;
+  username: string | undefined;
 }
 
 const ProductEditImage: React.FC<ProductEditImageProps> = ({
   isOpen,
   setIsOpen,
   paramsSlug,
+  username,
 }) => {
   const [image, setImage] = useState<ImageInputType>({
     image: undefined,
@@ -85,14 +87,17 @@ const ProductEditImage: React.FC<ProductEditImageProps> = ({
     setIsOpenWarning(true);
   };
 
-  const handleSendData = async () => {
+  const handleStoreData = async () => {
     try {
       setIsLoading(true);
 
       const formData: any = new FormData();
       formData.append("image", image.image);
 
-      await axios.patch(`/api/admin/products/${paramsSlug}/image`, formData);
+      await axios.patch(
+        `/api/${username}/products/${paramsSlug}/image/patch`,
+        formData
+      );
 
       router.refresh();
 
@@ -176,10 +181,10 @@ const ProductEditImage: React.FC<ProductEditImageProps> = ({
       </Dialog>
 
       <WarningAlert
-        isOpenWarning={isOpenWarning}
-        setIsOpenWarning={setIsOpenWarning}
+        isOpen={isOpenWarning}
+        setIsOpen={setIsOpenWarning}
         isLoading={isLoading}
-        handleSendData={handleSendData}
+        handleStoreData={handleStoreData}
       />
     </React.Fragment>
   );
