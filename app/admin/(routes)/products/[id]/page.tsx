@@ -3,36 +3,45 @@ import React from "react";
 import Image from "next/image";
 import axios from "axios";
 
+import { ToastContainer } from "react-toastify";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+
 import ProductDetailData from "@/components/admin/product-detail/ProductDetailData";
 import ProductDetailFinanceLog from "@/components/admin/product-detail/ProductDetailFinanceLog";
 import ProductDetailStockLog from "@/components/admin/product-detail/ProductDetailStockLog";
 import ProductDetailStatusLog from "@/components/admin/product-detail/ProductDetailStatusLog";
 import ProductEditButton from "@/components/admin/product-edit/ProductEditButton";
-import { ToastContainer } from "react-toastify";
 import { redirect } from "next/navigation";
 
 const ProductDetail = async ({ params }: { params: { id: string } }) => {
   try {
-    const api = `${process.env.WEB_URL}/api/admin/products/${params.id}`;
+    const session = await getServerSession(authOptions);
 
-    const productRes = await axios.get(api);
+    const username = session?.user.username;
+
+    const slug = params.id;
+
+    const api = `${process.env.WEB_URL}/api/${username}/products/${slug}`;
+
+    const productRes = await axios.get(api + "/data/get");
 
     const product = productRes.data.data;
 
-    const financeLog = await axios.get(api + "/finance");
+    const financeLog = await axios.get(api + "/finance/get");
 
     const financeList = financeLog.data.data;
 
-    const stockLog = await axios.get(api + "/stock");
+    const stockLog = await axios.get(api + "/stock/get");
 
     const stockList = stockLog.data.data;
 
-    const statusLog = await axios.get(api + "/status");
+    const statusLog = await axios.get(api + "/status/get");
 
     const statusList = statusLog.data.data;
 
     const categoryRes = await axios.get(
-      `${process.env.WEB_URL}/api/admin/categories`
+      `${process.env.WEB_URL}/api/${username}/categories/get`
     );
 
     const categories = categoryRes.data.data;
@@ -44,7 +53,7 @@ const ProductDetail = async ({ params }: { params: { id: string } }) => {
           <Title title="Detail Produk" />
 
           <div className="w-full flex justify-center mb-5">
-            <div className="xl:w-[90%] lg:flex block w-full gap-5">
+            <div className="lg:flex block w-full gap-3">
               <div className="w-full flex justify-center items-start">
                 <Image
                   src={product.image}
@@ -62,6 +71,7 @@ const ProductDetail = async ({ params }: { params: { id: string } }) => {
                     product={product}
                     categories={categories}
                     paramsSlug={params.id}
+                    username={username}
                   />
                 </div>
 
@@ -82,9 +92,7 @@ const ProductDetail = async ({ params }: { params: { id: string } }) => {
       </section>
     );
   } catch (error: any) {
-    if (error.response.status === 404) {
-      return redirect(process.env.WEB_URL + "/404");
-    }
+    if (error.response.status === 404) redirect("/404");
   }
 };
 
