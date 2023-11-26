@@ -6,7 +6,7 @@ export interface AdminProductType {
   price: number;
   cost: number;
   netFill: number;
-  status: string;
+  status: "new" | "active" | "best" | "sale" | "archive";
   linkGojek: string;
   description: string;
   salePrice: number;
@@ -23,7 +23,7 @@ export interface ClientProductType {
   price: number;
   cost: number;
   netFill: number;
-  status: string;
+  status: "new" | "active" | "best" | "sale" | "archive";
   linkGojek: string | null;
   description: string | null;
   salePrice: number;
