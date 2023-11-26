@@ -1,22 +1,31 @@
-import Title from "@/components/admin/Title";
-import ProductAddForm from "@/components/admin/product/ProductAddForm";
 import React from "react";
-import { useShowCategoriesHook } from "@/hooks/admin/CategoryHook";
 import axios from "axios";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import ProductAddContent from "@/components/admin/product-add/ProductAddContent";
 
 const ProductAdd = async () => {
-  const res = await axios.get(`${process.env.WEB_URL}/api/admin/categories`);
-  const categories = res.data.data;
+  try {
+    const session = await getServerSession(authOptions);
 
-  return (
-    <section className="admin__container">
-      <div className="admin__container-body">
-        <Title title="Tambah Produk" />
+    const username = session?.user.username;
 
-        <ProductAddForm categories={categories} />
-      </div>
-    </section>
-  );
+    const res = await axios.get(
+      `${process.env.WEB_URL}/api/${username}/categories/get`
+    );
+
+    const categories = res.data.data;
+
+    return (
+      <section className="admin__container">
+        <div className="admin__container-body">
+          <ProductAddContent username={username} categories={categories} />
+        </div>
+      </section>
+    );
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export default ProductAdd;

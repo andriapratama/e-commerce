@@ -1,14 +1,28 @@
 "use client";
 
-import { useRef, useState } from "react";
-import Image from "next/image";
-import { Image as IconImage } from "lucide-react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import Image from "next/image";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { Input } from "@/components/ui/input";
+import { Image as IconImage } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import ButtonLoading from "@/components/ButtonLoading";
+import { handleSetSlug } from "@/utils/HandleSetSlug";
+import { toast } from "react-toastify";
+import { CategoryType } from "@/types/CategoryType";
+import BackButton from "./BackButton";
+import { useRouter } from "next/navigation";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
+import AutosizeTextArea from "@/utils/AutosizeTextArea";
+import {
+  ACCEPTED_IMAGE_TYPES,
+  ImageInputType,
+  MAX_FILE_SIZE,
+} from "@/types/admin/Image";
 import {
   Form,
   FormControl,
@@ -17,8 +31,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -26,20 +38,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-import ButtonLoading from "@/components/ButtonLoading";
-import { handleSetSlug } from "@/utils/HandleSetSlug";
-import { ToastContainer, toast } from "react-toastify";
-import { CategoryType } from "@/types/CategoryType";
-import BackButton from "./BackButton";
-import { useRouter } from "next/navigation";
-import { handleSetNumber } from "@/utils/HandleSetNumber";
-import {
-  ACCEPTED_IMAGE_TYPES,
-  ImageInputType,
-  MAX_FILE_SIZE,
-} from "@/types/admin/Image";
-import AutosizeTextArea from "@/utils/AutosizeTextArea";
 
 const formSchema = z.object({
   name: z
@@ -78,10 +76,16 @@ const formSchema = z.object({
 });
 
 interface ProductAddFormProps {
+  username: string | undefined;
   categories: CategoryType[];
+  setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
 }
 
-const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
+const ProductAddForm: React.FC<ProductAddFormProps> = ({
+  categories,
+  username,
+  setIsLoadingPage,
+}) => {
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
   const [totalStock, setTotalStock] = useState<string>("");
@@ -142,7 +146,9 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
       formData.append("netFill", values.netFill);
       formData.append("description", values.description);
 
-      const res = await axios.post("/api/admin/products", formData);
+      const res = await axios.post(`/api/${username}/products/post`, formData);
+
+      setIsLoadingPage(true);
 
       toast.success("Data produk berhasil disimpan");
 
@@ -159,7 +165,6 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({ categories }) => {
 
   return (
     <Form {...form}>
-      <ToastContainer />
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full md:flex gap-3 block"
