@@ -1,31 +1,19 @@
-import { authOptions } from "@/lib/auth";
-import prismadb from "@/lib/prismadb";
 import axios from "axios";
-import { getServerSession } from "next-auth";
+import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
+import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 
 export const PATCH = async (
   req: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: { username: string; slug: string } }
 ) => {
   try {
-    const session = await getServerSession(authOptions);
+    const { validation } = await ApiAdminValidation(params.username);
 
-    if (!session) {
+    if (validation.error) {
       return NextResponse.json(
-        {
-          message: "You are not logged in",
-        },
-        { status: 401 }
-      );
-    }
-
-    if (session.user.role !== "superAdmin") {
-      return NextResponse.json(
-        {
-          message: "You are not have access",
-        },
-        { status: 401 }
+        { message: validation.message },
+        { status: validation.status }
       );
     }
 
@@ -54,24 +42,6 @@ export const PATCH = async (
     }
 
     const imagePathname = findProduct.imagePathname;
-
-    const username = session.user.username;
-
-    const findEmployee = await prismadb.employee.findUnique({
-      where: {
-        username: username,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!findEmployee) {
-      return NextResponse.json(
-        { message: "Employee not found" },
-        { status: 400 }
-      );
-    }
 
     const data = await req.formData();
     const image: File | null = data.get("image") as unknown as File;
