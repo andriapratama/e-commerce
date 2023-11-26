@@ -1,5 +1,11 @@
 "use client";
 
+import Link from "next/link";
+import Image from "next/image";
+import { Dispatch, SetStateAction } from "react";
+import StatusProduct from "../StatusProduct";
+import { ConvertIDR } from "@/utils/ConvertIDR";
+import { AdminProductType } from "@/types/ProductType";
 import { MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
@@ -7,7 +13,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -16,29 +21,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ConvertIDR } from "@/utils/ConvertIDR";
-import Link from "next/link";
-import { useState } from "react";
-import { AdminProductType } from "@/types/ProductType";
-import Image from "next/image";
-import StatusProduct from "../StatusProduct";
 
 interface ProductTableProps {
   products: AdminProductType[];
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
 
-const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
-  const [search, setSearch] = useState<string>("");
+const ProductTable: React.FC<ProductTableProps> = ({
+  products,
+  setIsLoading,
+}) => {
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Cari nama produk"
-          value={search}
-          className="max-w-sm"
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
       <div className="rounded-md border">
         <Table className="bg-white rounded-md">
           <TableHeader>
@@ -95,7 +89,10 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <Link href={`/admin/products/${product.slug}`}>
-                          <DropdownMenuItem className="cursor-pointer">
+                          <DropdownMenuItem
+                            className="cursor-pointer"
+                            onClick={() => setIsLoading(true)}
+                          >
                             Detail
                           </DropdownMenuItem>
                         </Link>
