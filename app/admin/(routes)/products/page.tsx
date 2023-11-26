@@ -1,9 +1,8 @@
-import Title from "@/components/admin/Title";
-import ProductTable from "@/components/admin/product/ProductTable";
-import { authOptions } from "@/lib/auth";
+import React from "react";
 import axios from "axios";
 import { getServerSession } from "next-auth";
-import React from "react";
+import { authOptions } from "@/lib/auth";
+import ProductContent from "@/components/admin/product/ProductContent";
 
 const Product = async () => {
   try {
@@ -19,12 +18,7 @@ const Product = async () => {
     return (
       <section className="admin__container">
         <div className="admin__container-body">
-          <Title
-            title="Produk"
-            nameBtn="Tambah Produk"
-            link="/admin/products/add"
-          />
-          <ProductTable products={products} />
+          <ProductContent products={products} />
         </div>
       </section>
     );
