@@ -1,12 +1,19 @@
 import Title from "@/components/admin/Title";
 import ProductTable from "@/components/admin/product/ProductTable";
+import { authOptions } from "@/lib/auth";
 import axios from "axios";
+import { getServerSession } from "next-auth";
 import React from "react";
-import { toast } from "react-toastify";
 
 const Product = async () => {
   try {
-    const res = await axios.get(`${process.env.WEB_URL}/api/admin/products`);
+    const session = await getServerSession(authOptions);
+
+    const username = session?.user.username;
+
+    const res = await axios.get(
+      `${process.env.WEB_URL}/api/${username}/products/get`
+    );
 
     const products = res.data.data;
     return (

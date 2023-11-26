@@ -21,6 +21,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { AdminProductType } from "@/types/ProductType";
 import Image from "next/image";
+import StatusProduct from "../StatusProduct";
 
 interface ProductTableProps {
   products: AdminProductType[];
@@ -44,10 +45,11 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
             <TableRow>
               <TableHead className="text-center">Gambar</TableHead>
               <TableHead>Nama</TableHead>
-              <TableHead className="text-center">Kategori</TableHead>
+              <TableHead className="text-center w-[15%]">Kategori</TableHead>
               <TableHead>Harga Pokok</TableHead>
               <TableHead>Harga Jual</TableHead>
-              <TableHead className="text-center">Stok</TableHead>
+              <TableHead>Harga Sale</TableHead>
+              <TableHead className="text-center w-[10%]">Stok</TableHead>
               <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-center">Aksi</TableHead>
             </TableRow>
@@ -72,11 +74,16 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                   </TableCell>
                   <TableCell>{ConvertIDR(product.cost)}</TableCell>
                   <TableCell>{ConvertIDR(product.price)}</TableCell>
+                  <TableCell className="text-red-600">
+                    {product.status === "sale"
+                      ? ConvertIDR(product.salePrice)
+                      : ""}
+                  </TableCell>
                   <TableCell className="text-center">
                     {product.totalStock}
                   </TableCell>
                   <TableCell className="text-center capitalize">
-                    {product.status}
+                    <StatusProduct status={product.status} />
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
