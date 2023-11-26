@@ -1,44 +1,20 @@
-import { authOptions } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 import axios from "axios";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-export const POST = async (req: Request) => {
+export const POST = async (
+  req: Request,
+  { params }: { params: { username: string } }
+) => {
   try {
-    const session = await getServerSession(authOptions);
+    const { validation } = await ApiAdminValidation(params.username);
 
-    if (!session) {
+    if (validation.error) {
       return NextResponse.json(
-        {
-          message: "You are not logged in",
-        },
-        { status: 401 }
-      );
-    }
-
-    if (session.user.role !== "superAdmin") {
-      return NextResponse.json(
-        {
-          message: "You are not have access",
-        },
-        { status: 401 }
-      );
-    }
-
-    const username = session.user.username;
-
-    const employee = await prismadb.employee.findUnique({
-      where: {
-        username: username,
-      },
-    });
-
-    if (!employee) {
-      return NextResponse.json(
-        { message: "Employee not found" },
-        { status: 400 }
+        { message: validation.message },
+        { status: validation.status }
       );
     }
 
@@ -200,37 +176,45 @@ export const POST = async (req: Request) => {
       },
     });
 
-    await prismadb.productFinanceLog.create({
-      data: {
-        price: parseInt(price),
-        cost: parseInt(cost),
-        productId: product.id,
-        employeeId: employee.id,
-        note: "Pertama kali dibuat",
+    const employee = await prismadb.employee.findUnique({
+      where: {
+        username: params.username,
       },
     });
 
-    await prismadb.productStockLog.create({
-      data: {
-        previousStock: 0,
-        stock: parseInt(totalStock),
-        stockNow: parseInt(totalStock),
-        status: "first",
-        note: "Pertama kali dibuat",
-        productId: product.id,
-        employeeId: employee.id,
-      },
-    });
+    if (employee) {
+      await prismadb.productFinanceLog.create({
+        data: {
+          price: parseInt(price),
+          cost: parseInt(cost),
+          productId: product.id,
+          employeeId: employee.id,
+          note: "Pertama kali dibuat",
+        },
+      });
 
-    await prismadb.productStatusLog.create({
-      data: {
-        status,
-        salePrice: 0,
-        note: "Pertama kali dibuat",
-        productId: product.id,
-        employeeId: employee.id,
-      },
-    });
+      await prismadb.productStockLog.create({
+        data: {
+          previousStock: 0,
+          stock: parseInt(totalStock),
+          stockNow: parseInt(totalStock),
+          status: "first",
+          note: "Pertama kali dibuat",
+          productId: product.id,
+          employeeId: employee.id,
+        },
+      });
+
+      await prismadb.productStatusLog.create({
+        data: {
+          status,
+          salePrice: 0,
+          note: "Pertama kali dibuat",
+          productId: product.id,
+          employeeId: employee.id,
+        },
+      });
+    }
 
     return NextResponse.json(
       {
@@ -241,47 +225,6 @@ export const POST = async (req: Request) => {
     );
   } catch (error) {
     console.log("[PRODUCT_POST", error);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
-  }
-};
-
-export const GET = async (req: Request) => {
-  try {
-    const products = await prismadb.product.findMany({
-      orderBy: {
-        name: "asc",
-      },
-      select: {
-        name: true,
-        slug: true,
-        totalStock: true,
-        minimumStock: true,
-        price: true,
-        cost: true,
-        netFill: true,
-        status: true,
-        linkGojek: true,
-        description: true,
-        image: true,
-        salePrice: true,
-        createdAt: true,
-        category: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    });
-
-    return NextResponse.json(
-      {
-        message: "Successfully get all products",
-        data: products,
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.log("[PRODUCT_GET]", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };
