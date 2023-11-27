@@ -1,13 +1,12 @@
+import { authOptions } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-export const GET = async (
-  req: Request,
-  { params }: { params: { username: string } }
-) => {
+export const GET = async (req: Request) => {
   try {
-    const { validation } = await ApiAdminValidation(params.username);
+    const { validation } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(
@@ -15,26 +14,6 @@ export const GET = async (
         { status: validation.status }
       );
     }
-
-    // if (!params.username) {
-    //   return NextResponse.json(
-    //     { message: "Username is required" },
-    //     { status: 400 }
-    //   );
-    // }
-
-    // const findEmployee = await prismadb.employee.findUnique({
-    //   where: {
-    //     username: params.username,
-    //   },
-    // });
-
-    // if (!findEmployee) {
-    //   return NextResponse.json(
-    //     { message: "Employee not found" },
-    //     { status: 404 }
-    //   );
-    // }
 
     const categories = await prismadb.category.findMany({
       orderBy: {

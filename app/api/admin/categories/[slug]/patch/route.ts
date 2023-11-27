@@ -3,17 +3,24 @@ import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-export const POST = async (
+export const PATCH = async (
   req: Request,
-  { params }: { params: { username: string } }
+  { params }: { params: { slug: string } }
 ) => {
   try {
-    const { validation } = await ApiAdminValidation(params.username);
+    const { validation } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(
         { message: validation.message },
         { status: validation.status }
+      );
+    }
+
+    if (!params.slug) {
+      return NextResponse.json(
+        { message: "Category slug is required" },
+        { status: 400 }
       );
     }
 
@@ -70,24 +77,24 @@ export const POST = async (
       );
     }
 
-    if (!findName && !findSlug) {
-      const category = await prismadb.category.create({
-        data: {
-          name,
-          slug,
-        },
-      });
+    await prismadb.category.update({
+      where: {
+        slug: params.slug,
+      },
+      data: {
+        name,
+        slug,
+      },
+    });
 
-      return NextResponse.json(
-        {
-          message: "Category successfully created!",
-          data: category,
-        },
-        { status: 201 }
-      );
-    }
+    return NextResponse.json(
+      {
+        message: "Category successfully updated!",
+      },
+      { status: 200 }
+    );
   } catch (error) {
-    console.log("[CATEGORY_POST]", error);
+    console.log("[CATEGORY_PATCH]", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };
