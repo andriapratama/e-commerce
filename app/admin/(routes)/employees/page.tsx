@@ -1,38 +1,73 @@
-import Title from "@/components/admin/Title";
-import EmployeeContent from "@/components/admin/employee/EmployeeContent";
-import { authOptions } from "@/lib/auth";
-import { EmployeeType } from "@/types/admin/EmployeeType";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { getServerSession } from "next-auth";
-import React from "react";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import Title from "@/components/admin/Title";
+import EmployeeAdd from "@/components/admin/employee/EmployeeAdd";
+import EmployeeEdit from "@/components/admin/employee/EmployeeEdit";
+import EmployeeTable from "@/components/admin/employee/EmployeeTable";
+import ContentLoading from "@/components/ContentLoading";
+import { EmployeeType } from "@/types/admin/EmployeeType";
 
-const Employees = async () => {
-  try {
-    const session = await getServerSession(authOptions);
+const Employees = () => {
+  const [employees, setEmployees] = useState<EmployeeType[]>([]);
 
-    const username = session?.user.username;
+  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
 
-    const resEmployees = await axios.get(
-      `${process.env.WEB_URL}/api/${username}/employees/get`
-    );
+  const [editEmployee, setEditEmployee] = useState({
+    name: "",
+    username: "",
+    role: "",
+  });
 
-    const employees: EmployeeType[] = resEmployees.data.data;
+  const getEmployees = async () => {
+    try {
+      const res = await axios.get(`/api/admin/employees/get`);
 
-    return (
-      <section className="admin__container">
-        <div className="admin__container-body">
-          <ToastContainer />
+      setEmployees(res.data.data);
 
-          <Title title="Pegawai" />
+      setIsLoadingContent(false);
+    } catch (error: any) {
+      toast.error(error.response.data.message);
+      setIsLoadingContent(false);
+    }
+  };
 
-          <EmployeeContent username={username} employees={employees} />
+  useEffect(() => {
+    getEmployees();
+  }, []);
+
+  return (
+    <section className="admin__container">
+      <div className="admin__container-body">
+        <ToastContainer />
+
+        <Title title="Pegawai" />
+
+        <div className="flex justify-between md:flex-nowrap flex-wrap gap-3 w-full">
+          {editEmployee.name ? (
+            <EmployeeEdit
+              getEmployees={getEmployees}
+              editEmployee={editEmployee}
+              setEditEmployee={setEditEmployee}
+            />
+          ) : (
+            <EmployeeAdd getEmployees={getEmployees} />
+          )}
+
+          {isLoadingContent ? (
+            <ContentLoading />
+          ) : (
+            <EmployeeTable
+              employees={employees}
+              setEditEmployee={setEditEmployee}
+            />
+          )}
         </div>
-      </section>
-    );
-  } catch (error) {
-    console.log(error);
-  }
+      </div>
+    </section>
+  );
 };
 
 export default Employees;

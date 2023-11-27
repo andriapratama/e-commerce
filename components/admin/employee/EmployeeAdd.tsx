@@ -1,9 +1,15 @@
 "use client";
 
+import axios from "axios";
+import React, { useState } from "react";
+import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
+import WarningAlert from "../WarningAlert";
+import EmployeeAddResult from "./EmployeeAddResult";
 import { Button } from "@/components/ui/button";
+import { toast } from "react-toastify";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -19,14 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
-import { toast } from "react-toastify";
-import { Input } from "@/components/ui/input";
-import axios from "axios";
-import React from "react";
-import WarningAlert from "../WarningAlert";
-import EmployeeAddResult from "./EmployeeAddResult";
-import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "Username minimal 3 karakter" }),
@@ -35,10 +33,10 @@ const formSchema = z.object({
 });
 
 interface EmployeeAddProps {
-  paramsUsername: string | undefined;
+  getEmployees: () => void;
 }
 
-const EmployeeAdd: React.FC<EmployeeAddProps> = ({ paramsUsername }) => {
+const EmployeeAdd: React.FC<EmployeeAddProps> = ({ getEmployees }) => {
   const [name, setName] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [role, setRole] = useState<string>("");
@@ -47,8 +45,6 @@ const EmployeeAdd: React.FC<EmployeeAddProps> = ({ paramsUsername }) => {
   const [isOpenAddResult, setIsOpenAddResult] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
-
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -67,7 +63,7 @@ const EmployeeAdd: React.FC<EmployeeAddProps> = ({ paramsUsername }) => {
     try {
       setIsLoading(true);
 
-      const res = await axios.post(`/api/${paramsUsername}/employees/post`, {
+      const res = await axios.post(`/api/admin/employees/post`, {
         name: name.toLowerCase(),
         username: username.toLowerCase(),
         role: role,
@@ -83,7 +79,7 @@ const EmployeeAdd: React.FC<EmployeeAddProps> = ({ paramsUsername }) => {
 
       toast.success("Data karyawan berhasil disimpan!");
 
-      router.refresh();
+      getEmployees();
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {

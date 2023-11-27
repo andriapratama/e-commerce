@@ -1,8 +1,14 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import axios from "axios";
 import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import ButtonLoading from "@/components/ButtonLoading";
+import { EmployeeType } from "@/types/admin/EmployeeType";
+import { toast } from "react-toastify";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,13 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import { Input } from "@/components/ui/input";
-import ButtonLoading from "@/components/ButtonLoading";
-import axios from "axios";
-import { EmployeeType } from "@/types/admin/EmployeeType";
-import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "Username minimal 3 karakter" }),
@@ -34,13 +33,13 @@ const formSchema = z.object({
 });
 
 interface EmployeeEditProps {
-  paramsUsername: string | undefined;
+  getEmployees: () => void;
   editEmployee: EmployeeType;
   setEditEmployee: Dispatch<SetStateAction<EmployeeType>>;
 }
 
 const EmployeeEdit: React.FC<EmployeeEditProps> = ({
-  paramsUsername,
+  getEmployees,
   editEmployee,
   setEditEmployee,
 }) => {
@@ -48,8 +47,6 @@ const EmployeeEdit: React.FC<EmployeeEditProps> = ({
   const [username, setUsername] = useState<string>("");
   const [role, setRole] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,14 +67,11 @@ const EmployeeEdit: React.FC<EmployeeEditProps> = ({
     try {
       setIsLoading(true);
 
-      await axios.patch(
-        `/api/${paramsUsername}/employees/${editEmployee.username}/patch`,
-        {
-          name: values.name.toLowerCase(),
-          username: values.username.toLowerCase(),
-          role: values.role,
-        }
-      );
+      await axios.patch(`/api/admin/employees/${editEmployee.username}/patch`, {
+        name: values.name.toLowerCase(),
+        username: values.username.toLowerCase(),
+        role: values.role,
+      });
 
       toast.success("Data karyawan berhasil diubah!");
 
@@ -87,7 +81,7 @@ const EmployeeEdit: React.FC<EmployeeEditProps> = ({
         role: "",
       });
 
-      router.refresh();
+      getEmployees();
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {
