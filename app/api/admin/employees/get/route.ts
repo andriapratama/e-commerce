@@ -2,12 +2,9 @@ import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 import { NextResponse } from "next/server";
 
-export const GET = async (
-  req: Request,
-  { params }: { params: { username: string } }
-) => {
+export const GET = async (req: Request) => {
   try {
-    const { validation } = await ApiAdminValidation(params.username);
+    const { validation } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(

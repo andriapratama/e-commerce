@@ -5,10 +5,10 @@ import { z } from "zod";
 
 export const PATCH = async (
   req: Request,
-  { params }: { params: { username: string; id: string } }
+  { params }: { params: { username: string } }
 ) => {
   try {
-    const { validation } = await ApiAdminValidation(params.username);
+    const { validation } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(
@@ -17,7 +17,7 @@ export const PATCH = async (
       );
     }
 
-    if (!params.id) {
+    if (!params.username) {
       return NextResponse.json(
         { message: "Employee username is required" },
         { status: 400 }
@@ -48,7 +48,7 @@ export const PATCH = async (
 
     const findEmployee = await prismadb.employee.findUnique({
       where: {
-        username: params.id,
+        username: params.username,
       },
     });
 
@@ -82,7 +82,7 @@ export const PATCH = async (
 
     await prismadb.employee.update({
       where: {
-        username: params.id,
+        username: params.username,
       },
       data: {
         name: name,

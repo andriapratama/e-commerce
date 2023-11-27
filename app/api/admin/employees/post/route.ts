@@ -4,12 +4,9 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 
-export const POST = async (
-  req: Request,
-  { params }: { params: { username: string } }
-) => {
+export const POST = async (req: Request) => {
   try {
-    const { validation } = await ApiAdminValidation(params.username);
+    const { validation } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(
