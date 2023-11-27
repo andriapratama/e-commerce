@@ -1,8 +1,14 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import * as z from "zod";
+import axios from "axios";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { toast } from "react-toastify";
+import ButtonLoading from "@/components/ButtonLoading";
+import { handleSetSlug } from "@/utils/HandleSetSlug";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,13 +18,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { toast } from "react-toastify";
-import axios from "axios";
-import ButtonLoading from "@/components/ButtonLoading";
-import { handleSetSlug } from "@/utils/HandleSetSlug";
-import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -30,15 +29,13 @@ const formSchema = z.object({
 });
 
 interface CategoryInputProps {
-  username?: string;
+  getCategories: () => void;
 }
 
-const CategoryInput: React.FC<CategoryInputProps> = ({ username }) => {
+const CategoryInput: React.FC<CategoryInputProps> = ({ getCategories }) => {
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,7 +49,7 @@ const CategoryInput: React.FC<CategoryInputProps> = ({ username }) => {
     try {
       setIsLoading(true);
 
-      await axios.post(`/api/${username}/categories/post`, {
+      await axios.post(`/api/admin/categories/post`, {
         name: values.name.toLowerCase(),
         slug: values.slug.toLowerCase(),
       });
@@ -62,7 +59,7 @@ const CategoryInput: React.FC<CategoryInputProps> = ({ username }) => {
 
       toast.success("Kategori berhasil dibuat!");
 
-      router.refresh();
+      getCategories();
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {

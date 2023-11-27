@@ -31,13 +31,13 @@ const formSchema = z.object({
 });
 
 interface CategoryEditProps {
-  username?: string;
+  getCategories: () => void;
   editCategory: CategoryType;
   setEditCategory: Dispatch<SetStateAction<CategoryType>>;
 }
 
 const CategoryEdit: React.FC<CategoryEditProps> = ({
-  username,
+  getCategories,
   editCategory,
   setEditCategory,
 }) => {
@@ -64,13 +64,10 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({
     try {
       setIsLoading(true);
 
-      await axios.patch(
-        `/api/${username}/categories/${editCategory.slug}/patch`,
-        {
-          name: values.name.toLowerCase(),
-          slug: values.slug.toLowerCase(),
-        }
-      );
+      await axios.patch(`/api/admin/categories/${editCategory.slug}/patch`, {
+        name: values.name.toLowerCase(),
+        slug: values.slug.toLowerCase(),
+      });
 
       toast.success("Kategori berhasil diubah!");
 
@@ -82,7 +79,7 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({
         slug: "",
       });
 
-      router.refresh();
+      getCategories();
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {

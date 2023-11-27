@@ -1,5 +1,8 @@
 "use client";
 
+import { Dispatch, SetStateAction } from "react";
+import { CategoryType } from "@/types/CategoryType";
+import { MoreHorizontal } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -14,9 +17,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
-import { CategoryType } from "@/types/CategoryType";
-import { Dispatch, SetStateAction } from "react";
 
 interface CategoryTableProps {
   categories: CategoryType[];
@@ -24,8 +24,8 @@ interface CategoryTableProps {
 }
 
 const CategoryTable: React.FC<CategoryTableProps> = ({
-  categories,
   setEditCategory,
+  categories,
 }) => {
   return (
     <div className="admin__card w-full">

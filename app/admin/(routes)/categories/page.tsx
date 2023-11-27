@@ -1,36 +1,69 @@
+"use client";
+
+import ContentLoading from "@/components/ContentLoading";
 import Title from "@/components/admin/Title";
-import CategoryContent from "@/components/admin/category/CategoryContent";
-import { authOptions } from "@/lib/auth";
+import CategoryEdit from "@/components/admin/category/CategoryEdit";
+import CategoryInput from "@/components/admin/category/CategoryInput";
+import CategoryTable from "@/components/admin/category/CategoryTable";
 import { CategoryType } from "@/types/CategoryType";
 import axios from "axios";
-import { getServerSession } from "next-auth";
-import React from "react";
-import { ToastContainer } from "react-toastify";
+import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 
-const Categories = async () => {
-  try {
-    const session = await getServerSession(authOptions);
+const Categories = () => {
+  const [categories, setCategories] = useState<CategoryType[]>([]);
 
-    const username = session?.user.username;
+  const [editCategory, setEditCategory] = useState<CategoryType>({
+    name: "",
+    slug: "",
+  });
 
-    const resCategories = await axios.get(
-      `${process.env.WEB_URL}/api/${username}/categories/get`
-    );
+  const [isLoadingPage, setIsLoadingPage] = useState(true);
 
-    const categories: CategoryType[] = resCategories.data.data;
+  const getCategories = async () => {
+    try {
+      const res = await axios.get(`/api/admin/categories/get`);
 
-    return (
-      <section className="admin__container">
-        <div className="admin__container-body">
-          <ToastContainer />
-          <Title title="Kategori" />
-          <CategoryContent username={username} categories={categories} />
+      setCategories(res.data.data);
+
+      setIsLoadingPage(false);
+    } catch (error: any) {
+      toast.error(error.response.data.message);
+      setIsLoadingPage(false);
+    }
+  };
+
+  useEffect(() => {
+    getCategories();
+  }, []);
+
+  return (
+    <section className="admin__container">
+      <div className="admin__container-body">
+        <ToastContainer />
+        <Title title="Kategori" />
+        <div className="flex justify-between md:flex-nowrap flex-wrap gap-3 w-full">
+          {editCategory.name ? (
+            <CategoryEdit
+              getCategories={getCategories}
+              editCategory={editCategory}
+              setEditCategory={setEditCategory}
+            />
+          ) : (
+            <CategoryInput getCategories={getCategories} />
+          )}
+          {isLoadingPage ? (
+            <ContentLoading />
+          ) : (
+            <CategoryTable
+              categories={categories}
+              setEditCategory={setEditCategory}
+            />
+          )}
         </div>
-      </section>
-    );
-  } catch (error) {
-    console.log(error);
-  }
+      </div>
+    </section>
+  );
 };
 
 export default Categories;
