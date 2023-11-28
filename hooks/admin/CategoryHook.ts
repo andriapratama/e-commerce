@@ -1,6 +1,6 @@
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CategoryType } from "@/types/CategoryType";
 
 export const useGetCategoriesHook = () => {
@@ -8,7 +8,7 @@ export const useGetCategoriesHook = () => {
 
   const [isLoadingContent, setIsLoadingContent] = useState(true);
 
-  const getCategories = async () => {
+  const getCategories = useCallback(async () => {
     try {
       const res = await axios.get(`/api/admin/categories/get`);
 
@@ -19,11 +19,11 @@ export const useGetCategoriesHook = () => {
       toast.error(error.response.data.message);
       setIsLoadingContent(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     getCategories();
-  }, []);
+  }, [getCategories]);
 
   return {
     categories,
