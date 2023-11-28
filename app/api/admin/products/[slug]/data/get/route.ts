@@ -4,10 +4,10 @@ import { NextResponse } from "next/server";
 
 export const GET = async (
   req: Request,
-  { params }: { params: { username: string } }
+  { params }: { params: { slug: string } }
 ) => {
   try {
-    const { validation } = await ApiAdminValidation(params.username);
+    const { validation } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(
@@ -16,9 +16,16 @@ export const GET = async (
       );
     }
 
-    const products = await prismadb.product.findMany({
-      orderBy: {
-        name: "asc",
+    if (!params.slug) {
+      return NextResponse.json(
+        { message: "Slug is required" },
+        { status: 400 }
+      );
+    }
+
+    const product = await prismadb.product.findUnique({
+      where: {
+        slug: params.slug,
       },
       select: {
         name: true,
@@ -42,15 +49,19 @@ export const GET = async (
       },
     });
 
+    if (!product) {
+      return NextResponse.json(
+        { message: "Product not found" },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json(
-      {
-        message: "Successfully get all products",
-        data: products,
-      },
+      { message: "Successfully to get one data by slug", data: product },
       { status: 200 }
     );
   } catch (error) {
-    console.log("[PRODUCT_GET]", error);
+    console.log("[PRODUCT_GET_BY_SLUG]", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };

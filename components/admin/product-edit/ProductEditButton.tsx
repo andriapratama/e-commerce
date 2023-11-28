@@ -20,14 +20,20 @@ interface ProductEditButtonProps {
   product: AdminProductType;
   categories: CategoryType[];
   paramsSlug: string;
-  username: string | undefined;
+  getProduct: () => void;
+  getFinanceLog: () => void;
+  getStatusLog: () => void;
+  getStockLog: () => void;
 }
 
 const ProductEditButton: React.FC<ProductEditButtonProps> = ({
   product,
   categories,
   paramsSlug,
-  username,
+  getProduct,
+  getFinanceLog,
+  getStatusLog,
+  getStockLog,
 }) => {
   const [isOpenEditData, setIsOpenEditData] = useState<boolean>(false);
   const [isOpenEditFinance, setIsOpenEditFinance] = useState<boolean>(false);
@@ -80,7 +86,7 @@ const ProductEditButton: React.FC<ProductEditButtonProps> = ({
         product={product}
         categories={categories}
         paramsSlug={paramsSlug}
-        username={username}
+        getProduct={getProduct}
       />
 
       <ProductEditFinance
@@ -88,14 +94,16 @@ const ProductEditButton: React.FC<ProductEditButtonProps> = ({
         setIsOpen={setIsOpenEditFinance}
         paramsSlug={paramsSlug}
         product={product}
-        username={username}
+        getFinanceLog={getFinanceLog}
+        getProduct={getProduct}
       />
 
       <ProductEditStock
         isOpen={isOpenEditStock}
         setIsOpen={setIsOpenEditStock}
         paramsSlug={paramsSlug}
-        username={username}
+        getProduct={getProduct}
+        getStockLog={getStockLog}
       />
 
       <ProductEditStatus
@@ -103,14 +111,15 @@ const ProductEditButton: React.FC<ProductEditButtonProps> = ({
         setIsOpen={setIsOpenEditStatus}
         product={product}
         paramsSlug={paramsSlug}
-        username={username}
+        getProduct={getProduct}
+        getStatusLog={getStatusLog}
       />
 
       <ProductEditImage
         isOpen={isOpenEditImage}
         setIsOpen={setIsOpenEditImage}
         paramsSlug={paramsSlug}
-        username={username}
+        getProduct={getProduct}
       />
     </React.Fragment>
   );

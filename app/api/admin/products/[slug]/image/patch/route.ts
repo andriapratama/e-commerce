@@ -5,10 +5,10 @@ import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 
 export const PATCH = async (
   req: Request,
-  { params }: { params: { username: string; slug: string } }
+  { params }: { params: { slug: string } }
 ) => {
   try {
-    const { validation } = await ApiAdminValidation(params.username);
+    const { validation } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(

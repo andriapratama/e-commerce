@@ -1,14 +1,16 @@
+import { authOptions } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 export const PATCH = async (
   req: Request,
-  { params }: { params: { username: string; slug: string } }
+  { params }: { params: { slug: string } }
 ) => {
   try {
-    const { validation } = await ApiAdminValidation(params.username);
+    const { validation } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(
@@ -27,8 +29,8 @@ export const PATCH = async (
     const body = await req.json();
 
     const schema = z.object({
-      stock: z.number().min(1).min(3),
-      status: z.string().min(1),
+      salePrice: z.number().optional(),
+      status: z.enum(["new", "active", "best", "sale", "archive"]),
       note: z.string().optional(),
     });
 
@@ -46,7 +48,7 @@ export const PATCH = async (
       );
     }
 
-    const { stock, status, note } = response.data;
+    const { salePrice, status, note } = response.data;
 
     const findProduct = await prismadb.product.findUnique({
       where: {
@@ -54,20 +56,23 @@ export const PATCH = async (
       },
       select: {
         id: true,
-        totalStock: true,
       },
     });
 
     if (!findProduct) {
       return NextResponse.json(
         { message: "Product not found" },
-        { status: 400 }
+        { status: 404 }
       );
     }
 
+    const session = await getServerSession(authOptions);
+
+    const username = session?.user.username;
+
     const findEmployee = await prismadb.employee.findUnique({
       where: {
-        username: params.username,
+        username,
       },
       select: {
         id: true,
@@ -79,34 +84,35 @@ export const PATCH = async (
         slug: params.slug,
       },
       data: {
-        totalStock:
-          status === "increase" ? findProduct.totalStock + stock : stock,
+        status,
+        salePrice: status === "sale" ? salePrice : 0,
       },
     });
 
     if (findEmployee) {
-      await prismadb.productStockLog.create({
+      const sale = await prismadb.productStatusLog.create({
         data: {
-          previousStock: findProduct.totalStock,
-          stock,
-          stockNow:
-            status === "increase" ? findProduct.totalStock + stock : stock,
-          status: status === "increase" ? "increase" : "update",
+          status,
+          salePrice: status === "sale" ? salePrice : 0,
           note,
           productId: findProduct.id,
-          employeeId: findEmployee.id,
+          employeeId: findEmployee?.id,
         },
       });
-    }
 
-    return NextResponse.json(
-      {
-        message: "Finance successfully updated!",
-      },
-      { status: 200 }
-    );
+      return NextResponse.json(
+        {
+          message: "Status product successfully updated!",
+          data: {
+            sale: sale.status,
+            salePrice: sale.salePrice,
+          },
+        },
+        { status: 200 }
+      );
+    }
   } catch (error) {
-    console.log("[FINANCE_UPDATE_BY_SLUG]", error);
+    console.log("[STATUS_UPDATE_BY_SLUG]", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };

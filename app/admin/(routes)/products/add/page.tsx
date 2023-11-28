@@ -1,30 +1,31 @@
-import React from "react";
-import axios from "axios";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import ProductAddContent from "@/components/admin/product-add/ProductAddContent";
+"use client";
 
-const ProductAdd = async () => {
-  try {
-    const session = await getServerSession(authOptions);
+import React, { useState } from "react";
+import Title from "@/components/admin/Title";
+import ProductAddForm from "@/components/admin/product-add/ProductAddForm";
+import PageLoading from "@/components/PageLoading";
+import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
 
-    const username = session?.user.username;
+const ProductAdd = () => {
+  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
 
-    const res = await axios.get(
-      `${process.env.WEB_URL}/api/${username}/categories/get`
-    );
+  const { categories } = useGetCategoriesHook();
 
-    const categories = res.data.data;
-
+  if (isLoadingPage) {
+    return <PageLoading />;
+  } else {
     return (
       <section className="admin__container">
         <div className="admin__container-body">
-          <ProductAddContent username={username} categories={categories} />
+          <Title title="Tambah Produk" />
+
+          <ProductAddForm
+            categories={categories}
+            setIsLoadingPage={setIsLoadingPage}
+          />
         </div>
       </section>
     );
-  } catch (error) {
-    console.log(error);
   }
 };
 

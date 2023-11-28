@@ -4,10 +4,10 @@ import { NextResponse } from "next/server";
 
 export const GET = async (
   req: Request,
-  { params }: { params: { username: string; slug: string } }
+  { params }: { params: { slug: string } }
 ) => {
   try {
-    const { validation } = await ApiAdminValidation(params.username);
+    const { validation } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(
@@ -41,13 +41,13 @@ export const GET = async (
       );
     }
 
-    const financeLog = await prismadb.productFinanceLog.findMany({
+    const statusLog = await prismadb.productStatusLog.findMany({
       where: {
         productId: product.id,
       },
       select: {
-        price: true,
-        cost: true,
+        status: true,
+        salePrice: true,
         note: true,
         createdAt: true,
         employee: {
@@ -63,13 +63,13 @@ export const GET = async (
 
     return NextResponse.json(
       {
-        message: "Successfully to get all finance log by product slug",
-        data: financeLog,
+        message: "Successfully to get all status log by product slug",
+        data: statusLog,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.log("[FINANCE_LOG_GET]", error);
+    console.log("[STATUS_LOG_GET]", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };

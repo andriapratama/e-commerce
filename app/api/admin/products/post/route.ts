@@ -1,15 +1,14 @@
+import { authOptions } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 import axios from "axios";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-export const POST = async (
-  req: Request,
-  { params }: { params: { username: string } }
-) => {
+export const POST = async (req: Request) => {
   try {
-    const { validation } = await ApiAdminValidation(params.username);
+    const { validation } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(
@@ -101,7 +100,7 @@ export const POST = async (
         {
           message: "Category not found",
         },
-        { status: 400 }
+        { status: 404 }
       );
     }
 
@@ -176,9 +175,13 @@ export const POST = async (
       },
     });
 
+    const session = await getServerSession(authOptions);
+
+    const username = session?.user.username;
+
     const employee = await prismadb.employee.findUnique({
       where: {
-        username: params.username,
+        username,
       },
     });
 

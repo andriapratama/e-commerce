@@ -1,29 +1,81 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import ProductContent from "@/components/admin/product/ProductContent";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { Input } from "@/components/ui/input";
+import { AdminProductType } from "@/types/ProductType";
+import Title from "@/components/admin/Title";
+import ProductTable from "@/components/admin/product/ProductTable";
+import PageLoading from "@/components/PageLoading";
+import ContentLoading from "@/components/ContentLoading";
 
-const Product = async () => {
-  try {
-    const session = await getServerSession(authOptions);
+const Product = () => {
+  const [products, setProducts] = useState<AdminProductType[]>([]);
 
-    const username = session?.user.username;
+  const [search, setSearch] = useState<string>("");
 
-    const res = await axios.get(
-      `${process.env.WEB_URL}/api/${username}/products/get`
-    );
+  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
 
-    const products = res.data.data;
+  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
+
+  const router = useRouter();
+
+  const getProducts = async () => {
+    try {
+      const res = await axios.get(`/api/admin/products/get`);
+
+      setProducts(res.data.data);
+
+      setIsLoadingContent(false);
+    } catch (error: any) {
+      toast.error(error.response.data.message);
+
+      setIsLoadingContent(false);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  const handleAddProduct = () => {
+    setIsLoadingPage(true);
+    router.push("/admin/products/add");
+  };
+
+  if (isLoadingPage) {
+    <PageLoading />;
+  } else {
     return (
       <section className="admin__container">
         <div className="admin__container-body">
-          <ProductContent products={products} />
+          <Title
+            title="Produk"
+            nameBtn="Tambah Produk"
+            handleClick={handleAddProduct}
+          />
+          <div className="flex items-center py-4">
+            <Input
+              placeholder="Cari nama produk"
+              value={search}
+              className="max-w-sm"
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          {isLoadingContent ? (
+            <ContentLoading className="mt-10" />
+          ) : (
+            <ProductTable
+              products={products}
+              setIsLoadingPage={setIsLoadingPage}
+            />
+          )}
         </div>
       </section>
     );
-  } catch (error: any) {
-    return console.log(error.response.data.message);
   }
 };
 

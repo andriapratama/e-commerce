@@ -24,12 +24,12 @@ import {
 
 interface ProductTableProps {
   products: AdminProductType[];
-  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
 }
 
 const ProductTable: React.FC<ProductTableProps> = ({
   products,
-  setIsLoading,
+  setIsLoadingPage,
 }) => {
   return (
     <div className="w-full">
@@ -91,7 +91,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
                         <Link href={`/admin/products/${product.slug}`}>
                           <DropdownMenuItem
                             className="cursor-pointer"
-                            onClick={() => setIsLoading(true)}
+                            onClick={() => setIsLoadingPage(true)}
                           >
                             Detail
                           </DropdownMenuItem>

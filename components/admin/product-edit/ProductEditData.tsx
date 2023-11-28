@@ -1,6 +1,20 @@
 "use client";
 
+import { z } from "zod";
+import axios from "axios";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { CategoryType } from "@/types/CategoryType";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
+import { handleSetSlug } from "@/utils/HandleSetSlug";
+import WarningAlert from "../WarningAlert";
+import { Input } from "@/components/ui/input";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { AdminProductType } from "@/types/ProductType";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +30,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -24,20 +37,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { AdminProductType } from "@/types/ProductType";
-import { CategoryType } from "@/types/CategoryType";
-import { handleSetNumber } from "@/utils/HandleSetNumber";
-import { handleSetSlug } from "@/utils/HandleSetSlug";
-import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
-import WarningAlert from "../WarningAlert";
 
 interface ProductEditDataProps {
   isOpen: boolean;
@@ -45,7 +44,7 @@ interface ProductEditDataProps {
   product: AdminProductType;
   categories: CategoryType[];
   paramsSlug: string;
-  username: string | undefined;
+  getProduct: () => void;
 }
 
 const formSchema = z.object({
@@ -70,7 +69,7 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
   product,
   categories,
   paramsSlug,
-  username,
+  getProduct,
 }) => {
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
@@ -130,7 +129,7 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
       setIsLoading(true);
 
       const res = await axios.patch(
-        `/api/${username}/products/${paramsSlug}/data/patch`,
+        `/api/admin/products/${paramsSlug}/data/patch`,
         {
           name: name,
           slug: slug,
@@ -147,16 +146,16 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
       if (resSlug !== paramsSlug) {
         router.push(`/admin/products/${resSlug}`);
       } else {
-        router.refresh();
+        getProduct();
       }
 
       setIsOpenWarning(false);
       setIsOpen(false);
+      setIsLoading(false);
 
       toast.success("Data produk berhasil diubah");
     } catch (error: any) {
       toast.error(error.response.data.message);
-    } finally {
       setIsLoading(false);
     }
   };

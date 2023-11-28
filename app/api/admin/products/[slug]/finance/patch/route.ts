@@ -1,14 +1,16 @@
+import { authOptions } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 export const PATCH = async (
   req: Request,
-  { params }: { params: { username: string; slug: string } }
+  { params }: { params: { slug: string } }
 ) => {
   try {
-    const { validation } = await ApiAdminValidation(params.username);
+    const { validation } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(
@@ -27,8 +29,8 @@ export const PATCH = async (
     const body = await req.json();
 
     const schema = z.object({
-      salePrice: z.number().optional(),
-      status: z.enum(["new", "active", "best", "sale", "archive"]),
+      price: z.number().min(1).min(3),
+      cost: z.number().min(1).min(3),
       note: z.string().optional(),
     });
 
@@ -46,7 +48,7 @@ export const PATCH = async (
       );
     }
 
-    const { salePrice, status, note } = response.data;
+    const { price, cost, note } = response.data;
 
     const findProduct = await prismadb.product.findUnique({
       where: {
@@ -60,13 +62,17 @@ export const PATCH = async (
     if (!findProduct) {
       return NextResponse.json(
         { message: "Product not found" },
-        { status: 404 }
+        { status: 400 }
       );
     }
 
+    const session = await getServerSession(authOptions);
+
+    const username = session?.user.username;
+
     const findEmployee = await prismadb.employee.findUnique({
       where: {
-        username: params.username,
+        username,
       },
       select: {
         id: true,
@@ -78,35 +84,31 @@ export const PATCH = async (
         slug: params.slug,
       },
       data: {
-        status,
-        salePrice: status === "sale" ? salePrice : 0,
+        price,
+        cost,
       },
     });
 
     if (findEmployee) {
-      const sale = await prismadb.productStatusLog.create({
+      await prismadb.productFinanceLog.create({
         data: {
-          status,
-          salePrice: status === "sale" ? salePrice : 0,
+          price,
+          cost,
           note,
           productId: findProduct.id,
-          employeeId: findEmployee?.id,
+          employeeId: findEmployee.id,
         },
       });
-
-      return NextResponse.json(
-        {
-          message: "Status product successfully updated!",
-          data: {
-            sale: sale.status,
-            salePrice: sale.salePrice,
-          },
-        },
-        { status: 200 }
-      );
     }
+
+    return NextResponse.json(
+      {
+        message: "Finance successfully updated!",
+      },
+      { status: 200 }
+    );
   } catch (error) {
-    console.log("[STATUS_UPDATE_BY_SLUG]", error);
+    console.log("[FINANCE_UPDATE_BY_SLUG]", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };

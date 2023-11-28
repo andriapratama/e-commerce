@@ -1,14 +1,16 @@
+import { authOptions } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 export const PATCH = async (
   req: Request,
-  { params }: { params: { username: string; slug: string } }
+  { params }: { params: { slug: string } }
 ) => {
   try {
-    const { validation } = await ApiAdminValidation(params.username);
+    const { validation } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(
@@ -27,8 +29,8 @@ export const PATCH = async (
     const body = await req.json();
 
     const schema = z.object({
-      price: z.number().min(1).min(3),
-      cost: z.number().min(1).min(3),
+      stock: z.number().min(1).min(3),
+      status: z.string().min(1),
       note: z.string().optional(),
     });
 
@@ -46,7 +48,7 @@ export const PATCH = async (
       );
     }
 
-    const { price, cost, note } = response.data;
+    const { stock, status, note } = response.data;
 
     const findProduct = await prismadb.product.findUnique({
       where: {
@@ -54,6 +56,7 @@ export const PATCH = async (
       },
       select: {
         id: true,
+        totalStock: true,
       },
     });
 
@@ -64,9 +67,13 @@ export const PATCH = async (
       );
     }
 
+    const session = await getServerSession(authOptions);
+
+    const username = session?.user.username;
+
     const findEmployee = await prismadb.employee.findUnique({
       where: {
-        username: params.username,
+        username: username,
       },
       select: {
         id: true,
@@ -78,16 +85,19 @@ export const PATCH = async (
         slug: params.slug,
       },
       data: {
-        price,
-        cost,
+        totalStock:
+          status === "increase" ? findProduct.totalStock + stock : stock,
       },
     });
 
     if (findEmployee) {
-      await prismadb.productFinanceLog.create({
+      await prismadb.productStockLog.create({
         data: {
-          price,
-          cost,
+          previousStock: findProduct.totalStock,
+          stock,
+          stockNow:
+            status === "increase" ? findProduct.totalStock + stock : stock,
+          status: status === "increase" ? "increase" : "update",
           note,
           productId: findProduct.id,
           employeeId: findEmployee.id,

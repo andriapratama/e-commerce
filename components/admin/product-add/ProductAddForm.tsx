@@ -1,23 +1,23 @@
 "use client";
 
-import { Dispatch, SetStateAction, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { z } from "zod";
 import axios from "axios";
 import Image from "next/image";
-import { z } from "zod";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { toast } from "react-toastify";
+import { handleSetSlug } from "@/utils/HandleSetSlug";
+import { useRouter } from "next/navigation";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
 import { Input } from "@/components/ui/input";
 import { Image as IconImage } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import ButtonLoading from "@/components/ButtonLoading";
-import { handleSetSlug } from "@/utils/HandleSetSlug";
-import { toast } from "react-toastify";
 import { CategoryType } from "@/types/CategoryType";
-import BackButton from "./BackButton";
-import { useRouter } from "next/navigation";
-import { handleSetNumber } from "@/utils/HandleSetNumber";
 import AutosizeTextArea from "@/utils/AutosizeTextArea";
+import ButtonLoading from "@/components/ButtonLoading";
+import BackButton from "./BackButton";
 import {
   ACCEPTED_IMAGE_TYPES,
   ImageInputType,
@@ -76,14 +76,12 @@ const formSchema = z.object({
 });
 
 interface ProductAddFormProps {
-  username: string | undefined;
   categories: CategoryType[];
   setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
 }
 
 const ProductAddForm: React.FC<ProductAddFormProps> = ({
   categories,
-  username,
   setIsLoadingPage,
 }) => {
   const [name, setName] = useState<string>("");
@@ -146,7 +144,7 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({
       formData.append("netFill", values.netFill);
       formData.append("description", values.description);
 
-      const res = await axios.post(`/api/${username}/products/post`, formData);
+      const res = await axios.post(`/api/admin/products/post`, formData);
 
       setIsLoadingPage(true);
 
@@ -155,7 +153,7 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({
       const slug = res.data.data;
 
       router.push(`/admin/products/${slug}`);
-      router.refresh();
+
       setIsLoading(false);
     } catch (error: any) {
       toast.error(error.response.data.message);

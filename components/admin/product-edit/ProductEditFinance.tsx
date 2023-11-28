@@ -1,6 +1,16 @@
 "use client";
 
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { Input } from "@/components/ui/input";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
+import { Textarea } from "@/components/ui/textarea";
+import WarningAlert from "../WarningAlert";
+import { AdminProductType } from "@/types/ProductType";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,9 +19,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -20,21 +27,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { handleSetNumber } from "@/utils/HandleSetNumber";
-import { Textarea } from "@/components/ui/textarea";
-import WarningAlert from "../WarningAlert";
-import axios from "axios";
-import { AdminProductType } from "@/types/ProductType";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 
 interface ProductEditFinanceProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   product: AdminProductType;
   paramsSlug: string;
-  username: string | undefined;
+  getProduct: () => void;
+  getFinanceLog: () => void;
 }
 
 const formSchema = z.object({
@@ -54,7 +54,8 @@ const ProductEditFinance: React.FC<ProductEditFinanceProps> = ({
   setIsOpen,
   paramsSlug,
   product,
-  username,
+  getProduct,
+  getFinanceLog,
 }) => {
   const [price, setPrice] = useState<string>("");
   const [cost, setCost] = useState<string>("");
@@ -62,8 +63,6 @@ const ProductEditFinance: React.FC<ProductEditFinanceProps> = ({
 
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const router = useRouter();
 
   useEffect(() => {
     setPrice(product.price.toString());
@@ -96,24 +95,22 @@ const ProductEditFinance: React.FC<ProductEditFinanceProps> = ({
     try {
       setIsLoading(true);
 
-      await axios.patch(
-        `/api/${username}/products/${paramsSlug}/finance/patch`,
-        {
-          price: parseInt(price),
-          cost: parseInt(cost),
-          note: note,
-        }
-      );
+      await axios.patch(`/api/admin/products/${paramsSlug}/finance/patch`, {
+        price: parseInt(price),
+        cost: parseInt(cost),
+        note: note,
+      });
 
-      router.refresh();
+      getProduct();
+      getFinanceLog();
 
       setIsOpenWarning(false);
       setIsOpen(false);
 
       toast.success("Harga berhasil diubah");
+      setIsLoading(false);
     } catch (error: any) {
       toast.error(error.response.data.message);
-    } finally {
       setIsLoading(false);
     }
   };

@@ -1,6 +1,15 @@
 "use client";
 
 import React, { Dispatch, SetStateAction, useState } from "react";
+import axios from "axios";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/ui/input";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
+import { Textarea } from "@/components/ui/textarea";
+import WarningAlert from "../WarningAlert";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,9 +18,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -20,13 +26,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { handleSetNumber } from "@/utils/HandleSetNumber";
-import { Textarea } from "@/components/ui/textarea";
-import WarningAlert from "../WarningAlert";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import {
   Select,
   SelectContent,
@@ -41,7 +40,8 @@ interface ProductEditStatusProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   product: AdminProductType;
   paramsSlug: string;
-  username: string | undefined;
+  getProduct: () => void;
+  getStatusLog: () => void;
 }
 
 const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
@@ -49,7 +49,8 @@ const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
   setIsOpen,
   product,
   paramsSlug,
-  username,
+  getProduct,
+  getStatusLog,
 }) => {
   const [salePrice, setSalePrice] = useState<string>(
     product.salePrice.toString()
@@ -59,8 +60,6 @@ const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
 
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const router = useRouter();
 
   const formSchema =
     status === "sale"
@@ -103,13 +102,15 @@ const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
       setIsLoading(true);
 
       const res = await axios.patch(
-        `/api/${username}/products/${paramsSlug}/status/patch`,
+        `/api/admin/products/${paramsSlug}/status/patch`,
         {
           salePrice: parseInt(salePrice),
           status: status,
           note: note,
         }
       );
+
+      toast.success("Status produk berhasil diubah");
 
       setIsOpenWarning(false);
       setIsOpen(false);
@@ -120,12 +121,12 @@ const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
       setStatus(saleRes.sale);
       setNote("");
 
-      router.refresh();
+      getProduct();
+      getStatusLog();
 
-      toast.success("Status produk berhasil diubah");
+      setIsLoading(false);
     } catch (error: any) {
       toast.error(error.response.data.message);
-    } finally {
       setIsLoading(false);
     }
   };

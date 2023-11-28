@@ -1,7 +1,12 @@
 "use client";
 
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import Image from "next/image";
+import WarningAlert from "../WarningAlert";
+import axios from "axios";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -19,17 +24,11 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import WarningAlert from "../WarningAlert";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import {
   ImageInputType,
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE,
 } from "@/types/admin/Image";
-import Image from "next/image";
 
 const formSchema = z.object({
   image: z
@@ -48,14 +47,14 @@ interface ProductEditImageProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   paramsSlug: string;
-  username: string | undefined;
+  getProduct: () => void;
 }
 
 const ProductEditImage: React.FC<ProductEditImageProps> = ({
   isOpen,
   setIsOpen,
   paramsSlug,
-  username,
+  getProduct,
 }) => {
   const [image, setImage] = useState<ImageInputType>({
     image: undefined,
@@ -65,8 +64,6 @@ const ProductEditImage: React.FC<ProductEditImageProps> = ({
 
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -95,11 +92,13 @@ const ProductEditImage: React.FC<ProductEditImageProps> = ({
       formData.append("image", image.image);
 
       await axios.patch(
-        `/api/${username}/products/${paramsSlug}/image/patch`,
+        `/api/admin/products/${paramsSlug}/image/patch`,
         formData
       );
 
-      router.refresh();
+      toast.success("Gambar produk berhasil diubah");
+
+      getProduct();
 
       setIsOpenWarning(false);
       setIsOpen(false);
@@ -110,10 +109,9 @@ const ProductEditImage: React.FC<ProductEditImageProps> = ({
         pathName: "",
       });
 
-      toast.success("Gambar produk berhasil diubah");
+      setIsLoading(false);
     } catch (error: any) {
       toast.error(error.response.data.message);
-    } finally {
       setIsLoading(false);
     }
   };
