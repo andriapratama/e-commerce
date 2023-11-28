@@ -1,4 +1,6 @@
+import { authOptions } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { getServerSession } from "next-auth";
 
 interface ValidationType {
   error: boolean;
@@ -6,22 +8,26 @@ interface ValidationType {
   status: number | undefined;
 }
 
-export const ApiAdminValidation = async (username: string | undefined) => {
+export const ApiAdminValidation = async () => {
   let validation: ValidationType = {
     error: false,
     message: "",
     status: undefined,
   };
 
-  let findEmployee = null;
+  const session = await getServerSession(authOptions);
 
-  if (username === "undefined") {
+  if (!session || !session.user) {
     (validation.error = true),
-      (validation.message = "Username is required"),
-      (validation.status = 400);
+      (validation.message = "You not login"),
+      (validation.status = 401);
   }
 
-  if (username !== "undefined") {
+  let findEmployee = null;
+
+  if (session?.user) {
+    const username = session.user.username;
+
     findEmployee = await prismadb.employee.findUnique({
       where: {
         username,
