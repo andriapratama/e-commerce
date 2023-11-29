@@ -30,6 +30,7 @@ yarn-error.log*
 gojek.svg
 hero-1.webp
 hero-2.webp
+loading.webp
 
 # vercel
 .vercel
