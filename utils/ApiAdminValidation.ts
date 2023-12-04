@@ -1,5 +1,5 @@
-import { authOptions } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 
 interface ValidationType {
@@ -23,12 +23,10 @@ export const ApiAdminValidation = async () => {
       (validation.status = 401);
   }
 
-  let findEmployee = null;
-
   if (session?.user) {
     const username = session.user.username;
 
-    findEmployee = await prismadb.employee.findUnique({
+    const findEmployee = await prismadb.employee.findUnique({
       where: {
         username,
       },
@@ -39,6 +37,8 @@ export const ApiAdminValidation = async () => {
         (validation.message = "Employee is not found"),
         (validation.status = 404);
     }
+
+    return { validation, findEmployee };
   }
 
   return { validation };
