@@ -10,3 +10,51 @@ export interface OrdersType {
   totalItem: number;
   createdAt: string;
 }
+
+export interface OrderDetailType {
+  name: string;
+  price: number;
+  quantity: number;
+  total: number;
+  product: {
+    image: string;
+  };
+}
+
+export interface OrderType {
+  discount: number | null;
+  employeeName: string | null;
+  grandTotal: number;
+  invoice: string;
+  note: string;
+  paymentMethod: "cash" | "transfer";
+  shipping: number | null;
+  statusOrder: "new" | "ongoing" | "done" | "cancel";
+  statuspayment: "pending" | "paid";
+  subTotal: number;
+  tax: number;
+  totalItem: number;
+  user: {
+    address: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+  };
+  orderDetail: OrderDetailType[];
+  createdAt: string;
+}
+
+export interface OrderLogType {
+  status:
+    | "new"
+    | "open"
+    | "invoice"
+    | "paid"
+    | "delivery"
+    | "accepted"
+    | "done"
+    | "cancel";
+  employeeName: string;
+  createdAt: string;
+}
