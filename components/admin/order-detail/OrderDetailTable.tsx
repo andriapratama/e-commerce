@@ -1,4 +1,7 @@
 import React from "react";
+import Image from "next/image";
+import { ConvertIDR } from "@/utils/ConvertIDR";
+import { OrderDetailType, OrderType } from "@/types/admin/OrderType";
 import {
   Table,
   TableBody,
@@ -7,50 +10,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Image from "next/image";
-import { ConvertIDR } from "@/utils/ConvertIDR";
 
 interface OrderDetailTableProps {
-  image: string;
-  name: string;
-  price: number;
-  quantity: number;
-  subTotal: number;
+  order: OrderType;
 }
 
-const _data: OrderDetailTableProps[] = [
-  {
-    image: "wine.webp",
-    name: "Carbenet Suvignon",
-    price: 1000000,
-    quantity: 2,
-    subTotal: 2000000,
-  },
-  {
-    image: "wine.webp",
-    name: "Carbenet Suvignon 1",
-    price: 1000000,
-    quantity: 2,
-    subTotal: 2000000,
-  },
-  {
-    image: "wine.webp",
-    name: "Carbenet Suvignon 2",
-    price: 1000000,
-    quantity: 2,
-    subTotal: 2000000,
-  },
-];
-
-const OrderDetailTable = () => {
+const OrderDetailTable: React.FC<OrderDetailTableProps> = ({ order }) => {
+  const orderDetail: OrderDetailType[] = order.orderDetail;
   return (
     <>
       <div className="w-full h-10 flex justify-center items-center bg-gray-200">
-        <span className="font-medium md:text-sm text-gray-800">
+        <span className="font-medium text-base text-gray-800">
           Detail Produk
         </span>
       </div>
-      <Table className="bg-white rounded-md mb-5">
+      <Table className="bg-white rounded-md mb-5 text-base">
         <TableHeader>
           <TableRow>
             <TableHead>#</TableHead>
@@ -62,24 +36,32 @@ const OrderDetailTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {_data.map((data, index) => (
-            <TableRow key={data.name}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>
-                <Image
-                  src={`/${data.image}`}
-                  alt={data.name}
-                  width={50}
-                  height={50}
-                  className="object-contain"
-                />
+          {orderDetail.length > 0 ? (
+            orderDetail.map((data: OrderDetailType, index) => (
+              <TableRow key={data.name}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>
+                  <Image
+                    src={data.product.image}
+                    alt={data.name}
+                    width={50}
+                    height={50}
+                    className="object-contain"
+                  />
+                </TableCell>
+                <TableCell>{data.name}</TableCell>
+                <TableCell>{ConvertIDR(data.price)}</TableCell>
+                <TableCell>{data.quantity}</TableCell>
+                <TableCell>{ConvertIDR(data.total)}</TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={6} className="h-24 text-center">
+                Data kosong
               </TableCell>
-              <TableCell>{data.name}</TableCell>
-              <TableCell>{ConvertIDR(data.price)}</TableCell>
-              <TableCell>{data.quantity}</TableCell>
-              <TableCell>{ConvertIDR(data.subTotal)}</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </>

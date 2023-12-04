@@ -38,6 +38,7 @@ export const POST = async (req: Request) => {
         firstName: true,
         lastName: true,
         email: true,
+        phone: true,
       },
     });
 
@@ -106,25 +107,29 @@ export const POST = async (req: Request) => {
     const order = await prismadb.order.create({
       data: {
         invoice,
-        statusOrder: "ongoing",
+        statusOrder: "new",
         paymentMethod: paymentMethod === "cash" ? "cash" : "transfer",
         statuspayment: "pending",
         note,
         userName: `${findUser.firstName} ${findUser.lastName}`,
         userEmail: findUser.email,
         userId: findUser.id,
+        userPhone: findUser.phone ? findUser.phone : "",
+        totalItem: 0,
       },
     });
 
     let subTotal: number = 0;
     let tax: number = 0;
     let total: number = 0;
+    let totalItem: number = 0;
 
     for (let i = 0; i < findCart.length; i++) {
       const product = findCart[i].product;
       const cart = findCart[i];
 
       subTotal += cart.total;
+      totalItem += cart.quantity;
 
       await prismadb.orderDetail.create({
         data: {
@@ -155,8 +160,17 @@ export const POST = async (req: Request) => {
 
     await prismadb.orderLog.create({
       data: {
-        status: "entry",
+        status: "new",
         orderId: order.id,
+      },
+    });
+
+    await prismadb.order.update({
+      where: {
+        id: order.id,
+      },
+      data: {
+        totalItem,
       },
     });
 

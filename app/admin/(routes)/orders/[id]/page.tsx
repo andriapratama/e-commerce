@@ -1,61 +1,91 @@
 "use client";
 
+import React from "react";
+import Title from "@/components/admin/Title";
+import { ToastContainer } from "react-toastify";
+import { ConvertTime } from "@/utils/ConvertTime";
+import PageLoading from "@/components/PageLoading";
+import { ConvertDateId } from "@/utils/ConvertDateId";
+import { useGetOrderHook } from "@/hooks/admin/GetOrderHook";
 import OrderDetailInfo from "@/components/admin/order-detail/OrderDetailInfo";
 import OrderDetailCard from "@/components/admin/order-detail/OrderDetailCard";
 import OrderDetailTable from "@/components/admin/order-detail/OrderDetailTable";
-import Title from "@/components/admin/Title";
-import { Button } from "@/components/ui/button";
-import React from "react";
+import OrderDetailLog from "@/components/admin/order-detail/OrderDetailLog";
+import OrderDetailButton from "@/components/admin/order-detail/OrderDetailButton";
 
-import OrderDetailInputShipping from "@/components/admin/order-detail/OrderDetailInputShipping";
-import OrderDetailChangePayment from "@/components/admin/order-detail/OrderDetailChangePayment";
+const OrderDetail = async () => {
+  const { order, isLoadingContent, getOrder, orderLogs, setIsLoadingContent } =
+    useGetOrderHook();
 
-const OrderDetail = () => {
   return (
     <section className="admin__container">
       <div className="admin__container-body">
-        <Title title="Detail Order" noInvoice="#20231006001" />
+        <ToastContainer />
 
-        <div className="flex flex-wrap gap-4 justify-center">
-          <OrderDetailCard title="Pelanggan">
-            <div>Jhon Doe</div>
-            <div>jhondoen@mail.com</div>
-            <div>03239432932</div>
-          </OrderDetailCard>
-          <OrderDetailCard title="Dikirim ke">
-            <div className="text-capitalize">
-              Jlan Kusuma Negara, Kuta, Bali Indonesia
+        {isLoadingContent ? (
+          <PageLoading />
+        ) : (
+          <React.Fragment>
+            <Title
+              title="Detail Order"
+              invoice={"#" + order.invoice}
+              statusOrder={order.statusOrder}
+            />
+            <div className="grid grid-cols-3 gap-4">
+              <OrderDetailCard title="Pelanggan">
+                <div>
+                  {order.user.firstName} {order.user.lastName}
+                </div>
+                <div>{order.user.email}</div>
+                <div>{order.user.phone}</div>
+              </OrderDetailCard>
+              <OrderDetailCard title="Dikirim ke">
+                <div className="text-capitalize">{order.user.address}</div>
+              </OrderDetailCard>
+              <OrderDetailCard title="Tanggal pesan & Pembayaran">
+                <div>{ConvertTime(order.createdAt)}</div>
+                <div>{ConvertDateId(order.createdAt)}</div>
+                <div className="capitalize">
+                  {order.paymentMethod === "cash" ? "tunai" : "transfer"}
+                </div>
+              </OrderDetailCard>
             </div>
-            <div>Villa punya saya</div>
-          </OrderDetailCard>
-          <OrderDetailCard title="Pesan">
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias
-              quo corrupti
-            </p>
-          </OrderDetailCard>
-          <OrderDetailCard title="Tanggal pesan & Pembayaran">
-            <div>2:30AM,</div>
-            <div>Kamis, 3 Oktober 2023</div>
-            <div>Tunai</div>
-          </OrderDetailCard>
 
-          <div className="bg-white rounded-md shadow-md w-full p-7 mt-10">
-            <OrderDetailTable />
+            <div className="bg-white rounded-md shadow-md w-full p-7 mt-10">
+              <OrderDetailTable order={order} />
 
-            <OrderDetailInfo name="Tax" value={0} />
-            <OrderDetailInfo name="Shipping" value={40000} />
-            <OrderDetailInfo name="Dicount" value={0} />
-            <OrderDetailInfo name="Total" value={3000000} />
-            <OrderDetailInfo name="Status Pembayaran" status="Belum Dibayar" />
+              <div className="w-full flex justify-between">
+                <div className="w-[400px]">
+                  <div className="font-semibold text-gray-800">Catatan</div>
+                  <p className="text-gray-600">{order.note}</p>
+                </div>
+                <div className="w-fit">
+                  <OrderDetailInfo name="Total" value={order.subTotal} />
+                  <OrderDetailInfo name="Tax" value={order.tax} />
+                  <OrderDetailInfo name="Pengiriman" value={order.shipping} />
+                  <OrderDetailInfo name="Diskon" value={order.discount} />
+                  <OrderDetailInfo
+                    name="Grand Total"
+                    value={order.grandTotal}
+                  />
+                  <OrderDetailInfo
+                    name="Status Pembayaran"
+                    statusPayment={order.statuspayment}
+                  />
+                </div>
+              </div>
 
-            <div className="w-full gap-3 flex justify-end mt-5">
-              <OrderDetailChangePayment />
-              <OrderDetailInputShipping />
-              <Button className="rounded-full">Lihat Invoice</Button>
+              <OrderDetailButton
+                order={order}
+                getOrder={getOrder}
+                orderLogs={orderLogs}
+                setIsLoadingContent={setIsLoadingContent}
+              />
             </div>
-          </div>
-        </div>
+
+            <OrderDetailLog orderLogs={orderLogs} />
+          </React.Fragment>
+        )}
       </div>
     </section>
   );
