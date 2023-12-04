@@ -1,7 +1,5 @@
-import { authOptions } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -10,7 +8,7 @@ export const PATCH = async (
   { params }: { params: { slug: string } }
 ) => {
   try {
-    const { validation } = await ApiAdminValidation();
+    const { validation, findEmployee } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(
@@ -66,19 +64,6 @@ export const PATCH = async (
       );
     }
 
-    const session = await getServerSession(authOptions);
-
-    const username = session?.user.username;
-
-    const findEmployee = await prismadb.employee.findUnique({
-      where: {
-        username,
-      },
-      select: {
-        id: true,
-      },
-    });
-
     await prismadb.product.update({
       where: {
         slug: params.slug,
@@ -96,7 +81,7 @@ export const PATCH = async (
           salePrice: status === "sale" ? salePrice : 0,
           note,
           productId: findProduct.id,
-          employeeId: findEmployee?.id,
+          employeeId: findEmployee.id,
         },
       });
 
