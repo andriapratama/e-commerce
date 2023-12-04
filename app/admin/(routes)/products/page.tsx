@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -22,7 +22,7 @@ const Product = () => {
 
   const router = useRouter();
 
-  const getProducts = async () => {
+  const getProducts = useCallback(async () => {
     try {
       const res = await axios.get(`/api/admin/products/get`);
 
@@ -34,11 +34,11 @@ const Product = () => {
 
       setIsLoadingContent(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     getProducts();
-  }, []);
+  }, [getProducts]);
 
   const handleAddProduct = () => {
     setIsLoadingPage(true);
@@ -46,7 +46,7 @@ const Product = () => {
   };
 
   if (isLoadingPage) {
-    <PageLoading />;
+    return <PageLoading />;
   } else {
     return (
       <section className="admin__container">
