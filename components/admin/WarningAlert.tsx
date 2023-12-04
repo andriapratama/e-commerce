@@ -17,6 +17,7 @@ interface WarningAlertProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   isLoading: boolean;
   handleStoreData: () => void;
+  title?: string;
 }
 
 const WarningAlert: React.FC<WarningAlertProps> = ({
@@ -24,13 +25,14 @@ const WarningAlert: React.FC<WarningAlertProps> = ({
   setIsOpen,
   isLoading,
   handleStoreData,
+  title,
 }) => {
   return (
     <AlertDialog open={isOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Apakah anda yakin ingin menyiman data?
+            {title ? title : "Apakah anda yakin ingin menyiman data?"}
           </AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogFooter>
