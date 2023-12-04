@@ -1,6 +1,16 @@
 "use client";
 
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ToastContainer, toast } from "react-toastify";
+import ButtonLoading from "@/components/ButtonLoading";
+import AdminLoading from "@/app/admin/(routes)/loading";
 import {
   Form,
   FormControl,
@@ -9,15 +19,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import React, { useState } from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { ToastContainer, toast } from "react-toastify";
-import ButtonLoading from "@/components/ButtonLoading";
 
 const formSchema = z.object({
   username: z
@@ -39,7 +40,11 @@ const formSchema = z.object({
 });
 
 const LoginContent = () => {
+  const session = useSession();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(true);
 
   const router = useRouter();
 
@@ -50,6 +55,12 @@ const LoginContent = () => {
       password: "",
     },
   });
+
+  useEffect(() => {
+    if (session.status === "unauthenticated") {
+      setIsLoadingPage(false);
+    }
+  }, [session]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -73,61 +84,66 @@ const LoginContent = () => {
       setIsLoading(false);
     }
   };
-  return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-[300px] h-auto p-5 border rounded-md"
-      >
-        <ToastContainer />
-        <h1 className="text-2xl font-bold mb-5">Admin Login</h1>
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input
-                  className="!rounded-lg"
-                  type="text"
-                  placeholder="Username"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem className="!mt-2">
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input
-                  className="!rounded-lg"
-                  type="password"
-                  placeholder="Password"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button
-          className="w-full mt-5 !rounded-full"
-          type="submit"
-          size="sm"
-          disabled={isLoading}
+
+  if (isLoadingPage) {
+    return <AdminLoading />;
+  } else {
+    return (
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-[300px] h-auto p-5 border rounded-md"
         >
-          {isLoading ? <ButtonLoading /> : "Login"}
-        </Button>
-      </form>
-    </Form>
-  );
+          <ToastContainer />
+          <h1 className="text-2xl font-bold mb-5">Admin Login</h1>
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input
+                    className="!rounded-lg"
+                    type="text"
+                    placeholder="Username"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem className="!mt-2">
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    className="!rounded-lg"
+                    type="password"
+                    placeholder="Password"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            className="w-full mt-5 !rounded-full"
+            type="submit"
+            size="sm"
+            disabled={isLoading}
+          >
+            {isLoading ? <ButtonLoading /> : "Login"}
+          </Button>
+        </form>
+      </Form>
+    );
+  }
 };
 
 export default LoginContent;
