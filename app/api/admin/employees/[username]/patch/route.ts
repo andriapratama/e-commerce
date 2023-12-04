@@ -8,7 +8,7 @@ export const PATCH = async (
   { params }: { params: { username: string } }
 ) => {
   try {
-    const { validation } = await ApiAdminValidation();
+    const { validation, findEmployee } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(
@@ -46,21 +46,6 @@ export const PATCH = async (
       );
     }
 
-    const findEmployee = await prismadb.employee.findUnique({
-      where: {
-        username: params.username,
-      },
-    });
-
-    if (!findEmployee) {
-      return NextResponse.json(
-        {
-          message: "Employee not found",
-        },
-        { status: 404 }
-      );
-    }
-
     const { name, username, role } = response.data;
 
     const findUsername = await prismadb.employee.findUnique({
@@ -70,7 +55,7 @@ export const PATCH = async (
     });
 
     if (findUsername) {
-      if (findUsername?.id !== findEmployee.id) {
+      if (findUsername?.id !== findEmployee?.id) {
         return NextResponse.json(
           {
             message: "Username sudah digunakan",
