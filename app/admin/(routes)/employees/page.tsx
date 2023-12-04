@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import Title from "@/components/admin/Title";
@@ -21,7 +21,7 @@ const Employees = () => {
     role: "",
   });
 
-  const getEmployees = async () => {
+  const getEmployees = useCallback(async () => {
     try {
       const res = await axios.get(`/api/admin/employees/get`);
 
@@ -32,11 +32,11 @@ const Employees = () => {
       toast.error(error.response.data.message);
       setIsLoadingContent(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     getEmployees();
-  }, []);
+  }, [getEmployees]);
 
   return (
     <section className="admin__container">
