@@ -1,16 +1,16 @@
 import React from "react";
-import LoginContent from "@/components/admin/login/LoginContent";
-import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import LoginContent from "@/components/admin/login/LoginContent";
 
 const AdminLogin = async () => {
-  let isSuccess = false;
+  let isAutehncticated = false;
   try {
     const session = await getServerSession(authOptions);
 
     if (session?.user.role === "superAdmin" || session?.user.role === "admin") {
-      isSuccess = true;
+      isAutehncticated = true;
     }
 
     return (
@@ -21,7 +21,7 @@ const AdminLogin = async () => {
   } catch (error) {
     console.log(error);
   } finally {
-    if (isSuccess === true) redirect("/admin/orders");
+    if (isAutehncticated === true) redirect("/admin/orders");
   }
 };
 
