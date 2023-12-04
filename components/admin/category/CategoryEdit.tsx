@@ -19,7 +19,6 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import ButtonLoading from "@/components/ButtonLoading";
 import { handleSetSlug } from "@/utils/HandleSetSlug";
-import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -44,8 +43,6 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const router = useRouter();
 
   useEffect(() => {
     setName(editCategory.name);
