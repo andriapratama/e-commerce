@@ -1,20 +1,17 @@
 "use client";
 
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import React, { useState } from "react";
 import Title from "@/components/admin/Title";
+import { ToastContainer } from "react-toastify";
 import { SubCategoryType } from "@/types/CategoryType";
 import ContentLoading from "@/components/ContentLoading";
-import React, { useCallback, useEffect, useState } from "react";
-import SubCategoryAdd from "@/components/admin/sub-category/SubCategoryAdd";
-import SubCategoryTable from "@/components/admin/sub-category/SubCategoryTable";
-import SubCategoryEdit from "@/components/admin/sub-category/SubCategoryEdit";
 import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
+import { useGetSubCategoryHook } from "@/hooks/admin/GetSubCategoryHook";
+import SubCategoryAdd from "@/components/admin/sub-category/SubCategoryAdd";
+import SubCategoryEdit from "@/components/admin/sub-category/SubCategoryEdit";
+import SubCategoryTable from "@/components/admin/sub-category/SubCategoryTable";
 
 const SubCategories = () => {
-  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
-  const [subCategories, setSubCategories] = useState<SubCategoryType[]>([]);
-
   const [editData, setEditData] = useState<SubCategoryType>({
     name: "",
     slug: "",
@@ -24,24 +21,8 @@ const SubCategories = () => {
     },
   });
 
-  const getSubCategories = useCallback(async () => {
-    try {
-      const res = await axios.get("/api/admin/sub-categories/get");
-
-      const subCategories: SubCategoryType[] = res.data.data;
-
-      setSubCategories(subCategories);
-
-      setIsLoadingContent(false);
-    } catch (error: any) {
-      toast.error(error.response.data.error);
-      setIsLoadingContent(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    getSubCategories();
-  }, [getSubCategories]);
+  const { subCategories, getSubCategories, isLoadingContent } =
+    useGetSubCategoryHook();
 
   const { categories } = useGetCategoriesHook();
 
