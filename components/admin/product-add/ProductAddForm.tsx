@@ -3,21 +3,23 @@
 import { z } from "zod";
 import axios from "axios";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import BackButton from "./BackButton";
 import { toast } from "react-toastify";
-import { handleSetSlug } from "@/utils/HandleSetSlug";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { handleSetNumber } from "@/utils/HandleSetNumber";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Image as IconImage } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { CategoryType } from "@/types/CategoryType";
-import AutosizeTextArea from "@/utils/AutosizeTextArea";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { handleSetSlug } from "@/utils/HandleSetSlug";
+import { SubCategoryType } from "@/types/CategoryType";
 import ButtonLoading from "@/components/ButtonLoading";
-import BackButton from "./BackButton";
+import AutosizeTextArea from "@/utils/AutosizeTextArea";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
+import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
+import { useGetSubCategoryHook } from "@/hooks/admin/GetSubCategoryHook";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import {
   ACCEPTED_IMAGE_TYPES,
   ImageInputType,
@@ -39,49 +41,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Nama produk harus diisi.")
-    .min(3, { message: "Nama minimal 3 karakter" }),
-  slug: z
-    .string()
-    .min(1, "Slug produk harus diisi.")
-    .min(3, { message: "Slug minimal 3 karakter." }),
-  totalStock: z.string().min(1, "Stok total harus diisi."),
-  minimumStock: z.string().min(1, "Stok minimal harus diisi."),
-  price: z
-    .string()
-    .min(1, "Harga jual harus diisi.")
-    .min(3, { message: "Harga jual minimal 100." }),
-  cost: z
-    .string()
-    .min(1, "Harga pokok harus diisi.")
-    .min(3, { message: "Harga pokok minimal 100." }),
-  category: z.string().min(1, "Category harus diisi."),
-  status: z.string().min(1, "Status harus diisi."),
-  linkGojek: z.string(),
-  netFill: z.string().min(1, "Isi bersih harus diisi"),
-  description: z.string(),
-  image: z
-    .any()
-    .refine(
-      (file) => file?.size <= MAX_FILE_SIZE,
-      `Maksimal ukuran gambar 5MB.`
-    )
-    .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-      "Format gambar harus .jpg, .jpeg, .png dan .webp"
-    ),
-});
-
 interface ProductAddFormProps {
-  categories: CategoryType[];
   setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
 }
 
 const ProductAddForm: React.FC<ProductAddFormProps> = ({
-  categories,
   setIsLoadingPage,
 }) => {
   const [name, setName] = useState<string>("");
@@ -92,6 +56,7 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({
   const [cost, setCost] = useState<string>("");
   const [netFill, setNetFill] = useState<string>("");
   const [category, setCategory] = useState<string>("");
+  const [subCategory, setSubCategory] = useState<string>("");
   const [status, setStatus] = useState<string>("new");
   const [linkGojek, setLinkGojek] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -106,7 +71,60 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({
 
   AutosizeTextArea(textAreaRef.current, description);
 
+  const { categories } = useGetCategoriesHook();
+
+  const { subCategories } = useGetSubCategoryHook();
+
+  const [subCategoryList, setSubCategoryList] = useState<SubCategoryType[]>([]);
+
+  const [isSubCategoryDisable, setIsSubCategoryDisable] =
+    useState<boolean>(true);
+
   const router = useRouter();
+
+  const formSchema = z.object({
+    name: z
+      .string()
+      .min(1, "Nama produk harus diisi.")
+      .min(3, "Nama minimal 3 karakter"),
+    slug: z
+      .string()
+      .min(1, "Slug produk harus diisi.")
+      .min(3, "Slug minimal 3 karakter."),
+    totalStock: z.string().min(1, "Stok total harus diisi."),
+    minimumStock: z.string().min(1, "Stok minimal harus diisi."),
+    price: z
+      .string()
+      .min(1, "Harga jual harus diisi.")
+      .min(3, "Harga jual minimal 100."),
+    cost: z
+      .string()
+      .min(1, "Harga pokok harus diisi.")
+      .min(3, "Harga pokok minimal 100."),
+    category: z.string().min(1, "Kategori harus diisi."),
+    subCategory: z.string().superRefine((val, ctx) => {
+      if (subCategoryList.length > 0 && val === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Sub Kategori harus diisi",
+        });
+      }
+    }),
+    status: z.string().min(1, "Status harus diisi."),
+    linkGojek: z.string(),
+    netFill: z.string().min(1, "Isi bersih harus diisi"),
+    description: z.string(),
+    image: z
+      .any()
+      .refine(
+        (file) => file?.size <= MAX_FILE_SIZE,
+        `Maksimal ukuran gambar 5MB.`
+      )
+      .refine(
+        (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+        "Format gambar harus .jpg, .jpeg, .png dan .webp"
+      ),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -118,6 +136,7 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({
       price: price,
       cost: cost,
       category: category,
+      subCategory: subCategory,
       status: status,
       linkGojek: linkGojek,
       netFill: netFill,
@@ -139,6 +158,7 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({
       formData.append("price", values.price);
       formData.append("cost", values.cost);
       formData.append("category", values.category);
+      formData.append("subCategory", values.subCategory);
       formData.append("status", values.status);
       formData.append("linkGojek", values.linkGojek);
       formData.append("netFill", values.netFill);
@@ -160,6 +180,22 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const filterSubCategories = subCategories.filter(
+      (item) => item.category.slug === category
+    );
+
+    setSubCategory("");
+
+    if (filterSubCategories.length > 0) {
+      setIsSubCategoryDisable(false);
+      setSubCategoryList(filterSubCategories);
+    } else {
+      setIsSubCategoryDisable(true);
+      setSubCategoryList([]);
+    }
+  }, [category, setIsSubCategoryDisable, setSubCategoryList, setSubCategory]);
 
   return (
     <Form {...form}>
@@ -369,13 +405,13 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categories.map((category) => (
+                      {categories.map((categoryValue) => (
                         <SelectItem
-                          value={category.slug}
-                          key={category.name}
+                          value={categoryValue.slug}
+                          key={categoryValue.name}
                           className="capitalize"
                         >
-                          {category.name}
+                          {categoryValue.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -384,6 +420,41 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="subCategory"
+              render={({ field }) => (
+                <FormItem className="mb-3 w-full">
+                  <FormLabel className="text-gray-700">Sub Kategori</FormLabel>
+                  <Select
+                    onValueChange={setSubCategory}
+                    value={field.value}
+                    disabled={isSubCategoryDisable}
+                  >
+                    <FormControl className="capitalize">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Pilih sub kategori" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {subCategoryList.map((subCategoryValue) => (
+                        <SelectItem
+                          value={subCategoryValue.slug}
+                          key={subCategoryValue.name}
+                          className="capitalize"
+                        >
+                          {subCategoryValue.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage className="!mt-1" />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="lg:flex block gap-3 w-full">
             <FormField
               control={form.control}
               name="status"
@@ -403,28 +474,6 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({
                     </SelectContent>
                   </Select>
                   <FormMessage className="!mt-1" />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="lg:flex block gap-3 w-full">
-            <FormField
-              control={form.control}
-              name="linkGojek"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel className="text-gray-700">Link Gojek</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="mb-3"
-                      placeholder="Link gojek"
-                      {...field}
-                      value={linkGojek}
-                      onChange={(e) => setLinkGojek(e.target.value)}
-                    />
-                  </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -451,31 +500,49 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({
             />
           </div>
 
-          <div className="lg:flex block gap-3 w-full">
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel className="text-gray-700">
-                    Deskripsi Produk
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      className="mb-3 resize-none"
-                      placeholder="Isi deskripsi produk"
-                      {...field}
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      ref={textAreaRef}
-                      rows={1}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="linkGojek"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel className="text-gray-700">Link Gojek</FormLabel>
+                <FormControl>
+                  <Input
+                    className="mb-3"
+                    placeholder="Link gojek"
+                    {...field}
+                    value={linkGojek}
+                    onChange={(e) => setLinkGojek(e.target.value)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel className="text-gray-700">
+                  Deskripsi Produk
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    className="mb-3 resize-none"
+                    placeholder="Isi deskripsi produk"
+                    {...field}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    ref={textAreaRef}
+                    rows={1}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <div className="flex justify-end gap-4">
             <BackButton

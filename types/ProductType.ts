@@ -11,6 +11,7 @@ export interface AdminProductType {
   description: string;
   salePrice: number;
   category: { name: string };
+  subCategory: { name: string } | null;
   image: string;
   createdAt: string;
 }
@@ -28,6 +29,7 @@ export interface ClientProductType {
   description: string | null;
   salePrice: number;
   category: { name: string };
+  subCategory: { name: string } | null;
   image: string;
   createdAt: string | Date;
 }

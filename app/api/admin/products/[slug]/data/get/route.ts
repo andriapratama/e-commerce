@@ -46,6 +46,11 @@ export const GET = async (
             name: true,
           },
         },
+        subCategory: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 

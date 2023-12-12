@@ -1,14 +1,12 @@
-import { authOptions } from "@/lib/auth";
-import prismadb from "@/lib/prismadb";
-import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
-import axios from "axios";
-import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
 import { z } from "zod";
+import axios from "axios";
+import prismadb from "@/lib/prismadb";
+import { NextResponse } from "next/server";
+import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 
 export const POST = async (req: Request) => {
   try {
-    const { validation } = await ApiAdminValidation();
+    const { validation, findEmployee } = await ApiAdminValidation();
 
     if (validation.error) {
       return NextResponse.json(
@@ -28,6 +26,7 @@ export const POST = async (req: Request) => {
       price: z.string().min(1).min(3),
       cost: z.string().min(1).min(3),
       category: z.string().min(1),
+      subCategory: z.string().optional(),
       status: z.enum(["new", "active", "best", "sale", "archive"]),
       linkGojek: z.string().optional(),
       netFill: z.string().min(1),
@@ -54,6 +53,7 @@ export const POST = async (req: Request) => {
       price,
       cost,
       category,
+      subCategory,
       status,
       linkGojek,
       netFill,
@@ -102,6 +102,25 @@ export const POST = async (req: Request) => {
         },
         { status: 404 }
       );
+    }
+
+    let subCategoryId: string | null = null;
+
+    if (subCategory) {
+      const findSubCategory = await prismadb.subCategory.findUnique({
+        where: {
+          slug: subCategory,
+        },
+      });
+
+      if (!findSubCategory) {
+        return NextResponse.json(
+          { message: "Sub category not found" },
+          { status: 404 }
+        );
+      }
+
+      subCategoryId = findSubCategory.id;
     }
 
     const image: File | null = data.get("image") as unknown as File;
@@ -172,26 +191,17 @@ export const POST = async (req: Request) => {
         image: imageLink + "&raw=1",
         imagePathname: pathDisplay,
         categoryId: findCategory.id,
+        subCategoryId: subCategoryId,
       },
     });
 
-    const session = await getServerSession(authOptions);
-
-    const username = session?.user.username;
-
-    const employee = await prismadb.employee.findUnique({
-      where: {
-        username,
-      },
-    });
-
-    if (employee) {
+    if (findEmployee) {
       await prismadb.productFinanceLog.create({
         data: {
           price: parseInt(price),
           cost: parseInt(cost),
           productId: product.id,
-          employeeId: employee.id,
+          employeeId: findEmployee.id,
           note: "Pertama kali dibuat",
         },
       });
@@ -204,7 +214,7 @@ export const POST = async (req: Request) => {
           status: "first",
           note: "Pertama kali dibuat",
           productId: product.id,
-          employeeId: employee.id,
+          employeeId: findEmployee.id,
         },
       });
 
@@ -214,7 +224,7 @@ export const POST = async (req: Request) => {
           salePrice: 0,
           note: "Pertama kali dibuat",
           productId: product.id,
-          employeeId: employee.id,
+          employeeId: findEmployee.id,
         },
       });
     }

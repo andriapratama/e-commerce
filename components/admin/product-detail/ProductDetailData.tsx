@@ -59,6 +59,15 @@ const ProductDetailData: React.FC<ProductDetailDataProps> = ({ product }) => {
           </div>
         </div>
 
+        {product.subCategory ? (
+          <div className="admin-product-detail__content">
+            <div className="admin-product-detail__title">Sub Kategori</div>
+            <div className="admin-product-detail__value capitalize">
+              {product.subCategory.name}
+            </div>
+          </div>
+        ) : null}
+
         <div className="admin-product-detail__content">
           <div className="admin-product-detail__title">Status</div>
           <div className="admin-product-detail__value capitalize">

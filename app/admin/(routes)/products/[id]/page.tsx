@@ -1,46 +1,23 @@
 "use client";
 
-import Title from "@/components/admin/Title";
-import React, { useCallback, useEffect, useState } from "react";
-import Image from "next/image";
 import axios from "axios";
-
+import Image from "next/image";
+import Title from "@/components/admin/Title";
 import { ToastContainer, toast } from "react-toastify";
+import { useParams, useRouter } from "next/navigation";
+import { AdminProductType } from "@/types/ProductType";
+import ContentLoading from "@/components/ContentLoading";
+import { StockLogType } from "@/types/admin/StockLogType";
+import { StatusLogType } from "@/types/admin/StatusLogType";
+import { FinanceLogType } from "@/types/admin/FianceLogType";
+import React, { useCallback, useEffect, useState } from "react";
+import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
+import { useGetSubCategoryHook } from "@/hooks/admin/GetSubCategoryHook";
+import ProductEditButton from "@/components/admin/product-edit/ProductEditButton";
 import ProductDetailData from "@/components/admin/product-detail/ProductDetailData";
 import ProductDetailFinanceLog from "@/components/admin/product-detail/ProductDetailFinanceLog";
 import ProductDetailStockLog from "@/components/admin/product-detail/ProductDetailStockLog";
 import ProductDetailStatusLog from "@/components/admin/product-detail/ProductDetailStatusLog";
-import ProductEditButton from "@/components/admin/product-edit/ProductEditButton";
-import { useParams, useRouter } from "next/navigation";
-import { AdminProductType } from "@/types/ProductType";
-import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
-import ContentLoading from "@/components/ContentLoading";
-
-interface FinanceLogType {
-  cost: number;
-  createdAt: string;
-  employee: { name: string };
-  note: string;
-  price: number;
-}
-
-interface StatusLogType {
-  createdAt: string;
-  employee: { name: string };
-  note: string;
-  salePrice: number;
-  status: "new" | "active" | "sale" | "best" | "archive";
-}
-
-interface StockLogType {
-  createdAt: string;
-  employee: { name: string };
-  note: string;
-  previousStock: number;
-  status: "first" | "update" | "decrease" | "increase";
-  stock: number;
-  stockNow: number;
-}
 
 const ProductDetail = () => {
   const [product, setProduct] = useState<AdminProductType>({
@@ -56,9 +33,11 @@ const ProductDetail = () => {
     description: "",
     salePrice: 0,
     category: { name: "" },
+    subCategory: null,
     image: "",
     createdAt: "",
   });
+
   const [financeList, setFinanceList] = useState<FinanceLogType[]>([]);
   const [statusList, setStatusList] = useState<StatusLogType[]>([]);
   const [stockList, setStockList] = useState<StockLogType[]>([]);
@@ -130,6 +109,8 @@ const ProductDetail = () => {
 
   const { categories } = useGetCategoriesHook();
 
+  const { subCategories } = useGetSubCategoryHook();
+
   return (
     <section className="admin__container">
       <div className="admin__container-body">
@@ -158,6 +139,7 @@ const ProductDetail = () => {
                     <ProductEditButton
                       product={product}
                       categories={categories}
+                      subCategories={subCategories}
                       paramsSlug={product.slug}
                       getProduct={getProduct}
                       getFinanceLog={getFinanceLog}
@@ -170,12 +152,10 @@ const ProductDetail = () => {
                 </div>
               </div>
             </div>
-            <div className="lg:flex block gap-3">
-              <ProductDetailFinanceLog financeList={financeList} />
-              <ProductDetailStatusLog statusList={statusList} />
-            </div>
             <div className="flex justify-center">
               <div className="lg:w-[80%] w-full">
+                <ProductDetailFinanceLog financeList={financeList} />
+                <ProductDetailStatusLog statusList={statusList} />
                 <ProductDetailStockLog stockList={stockList} />
               </div>
             </div>

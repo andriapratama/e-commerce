@@ -2,19 +2,19 @@
 
 import { z } from "zod";
 import axios from "axios";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { CategoryType } from "@/types/CategoryType";
-import { handleSetNumber } from "@/utils/HandleSetNumber";
-import { handleSetSlug } from "@/utils/HandleSetSlug";
-import WarningAlert from "../WarningAlert";
-import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
+import WarningAlert from "../WarningAlert";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { handleSetSlug } from "@/utils/HandleSetSlug";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AdminProductType } from "@/types/ProductType";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
+import { CategoryType, SubCategoryType } from "@/types/CategoryType";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -43,31 +43,17 @@ interface ProductEditDataProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   product: AdminProductType;
   categories: CategoryType[];
+  subCategories: SubCategoryType[];
   paramsSlug: string;
   getProduct: () => void;
 }
-
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Nama produk harus diisi.")
-    .min(3, "Nama minimal 3 karakter"),
-  slug: z
-    .string()
-    .min(1, "Slug produk harus diisi.")
-    .min(3, "Slug minimal 3 karakter."),
-  minimumStock: z.string().min(1, "Stok minimal harus diisi."),
-  category: z.string().min(1, "Category harus diisi."),
-  linkGojek: z.string().optional(),
-  netFill: z.string().min(1, "Isi bersih harus diisi"),
-  description: z.string().optional(),
-});
 
 const ProductEditData: React.FC<ProductEditDataProps> = ({
   isOpen,
   setIsOpen,
   product,
   categories,
+  subCategories,
   paramsSlug,
   getProduct,
 }) => {
@@ -76,8 +62,14 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
   const [minimumStock, setMinimumStock] = useState<string>("");
   const [netFill, setNetFill] = useState<string>("");
   const [category, setCategory] = useState<string>("");
+  const [subCategory, setSubCategory] = useState<string>("");
   const [linkGojek, setLinkGojek] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+
+  const [subCategoryList, setSubCategoryList] = useState<SubCategoryType[]>([]);
+
+  const [isSubCategoryDisable, setIsSubCategoryDisable] =
+    useState<boolean>(true);
 
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
 
@@ -91,9 +83,34 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
     setMinimumStock(product.minimumStock.toString());
     setNetFill(product.netFill.toString());
     setCategory(product.category.name);
+    setSubCategory(product.subCategory ? product.subCategory.name : "");
     setLinkGojek(product.linkGojek);
     setDescription(product.description);
   }, [product, isOpen]);
+
+  const formSchema = z.object({
+    name: z
+      .string()
+      .min(1, "Nama produk harus diisi.")
+      .min(3, "Nama minimal 3 karakter"),
+    slug: z
+      .string()
+      .min(1, "Slug produk harus diisi.")
+      .min(3, "Slug minimal 3 karakter."),
+    minimumStock: z.string().min(1, "Stok minimal harus diisi."),
+    category: z.string().min(1, "Category harus diisi."),
+    subCategory: z.string().superRefine((val, ctx) => {
+      if (subCategoryList.length > 0 && val === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Sub Kategori harus diisi",
+        });
+      }
+    }),
+    linkGojek: z.string().optional(),
+    netFill: z.string().min(1, "Isi bersih harus diisi"),
+    description: z.string().optional(),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -102,6 +119,7 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
       slug: slug,
       minimumStock: minimumStock,
       category: category,
+      subCategory: subCategory,
       linkGojek: linkGojek,
       netFill: netFill,
       description: description,
@@ -109,11 +127,16 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    const productSubCategory = product.subCategory
+      ? product.subCategory.name
+      : null;
+
     if (
       values.name !== product.name ||
       values.slug !== product.slug ||
       parseInt(values.minimumStock) !== product.minimumStock ||
       values.category !== product.category.name ||
+      values.subCategory !== productSubCategory ||
       values.linkGojek !== product.linkGojek ||
       parseInt(values.netFill) !== product.netFill ||
       values.description !== product.description
@@ -135,6 +158,7 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
           slug: slug,
           minimumStock: parseInt(minimumStock),
           category: category,
+          subCategory: subCategory,
           linkGojek: linkGojek,
           netFill: parseInt(netFill),
           description: description,
@@ -159,6 +183,22 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const filterSubCategories = subCategories.filter(
+      (item) => item.category.slug === category
+    );
+
+    setSubCategory("");
+
+    if (filterSubCategories.length > 0) {
+      setIsSubCategoryDisable(false);
+      setSubCategoryList(filterSubCategories);
+    } else {
+      setIsSubCategoryDisable(true);
+      setSubCategoryList([]);
+    }
+  }, [category, setIsSubCategoryDisable, setSubCategoryList, setSubCategory]);
   return (
     <React.Fragment>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -295,26 +335,58 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
 
                 <FormField
                   control={form.control}
-                  name="linkGojek"
+                  name="subCategory"
                   render={({ field }) => (
-                    <FormItem className="w-full">
+                    <FormItem className="mb-3 w-full">
                       <FormLabel className="text-gray-700">
-                        Link Gojek
+                        Sub Kategori
                       </FormLabel>
-                      <FormControl>
-                        <Input
-                          className="mb-3"
-                          placeholder="Link gojek"
-                          {...field}
-                          value={linkGojek}
-                          onChange={(e) => setLinkGojek(e.target.value)}
-                        />
-                      </FormControl>
-                      <FormMessage />
+                      <Select
+                        onValueChange={setSubCategory}
+                        value={field.value}
+                        disabled={isSubCategoryDisable}
+                      >
+                        <FormControl className="capitalize">
+                          <SelectTrigger>
+                            <SelectValue placeholder="Pilih sub kategori" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {subCategoryList.map((subCategoryValue) => (
+                            <SelectItem
+                              value={subCategoryValue.slug}
+                              key={subCategoryValue.name}
+                              className="capitalize"
+                            >
+                              {subCategoryValue.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="!mt-1" />
                     </FormItem>
                   )}
                 />
               </div>
+              <FormField
+                control={form.control}
+                name="linkGojek"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel className="text-gray-700">Link Gojek</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="mb-3"
+                        placeholder="Link gojek"
+                        {...field}
+                        value={linkGojek}
+                        onChange={(e) => setLinkGojek(e.target.value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}

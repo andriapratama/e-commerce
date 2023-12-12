@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import ProductEditData from "./ProductEditData";
 import { AdminProductType } from "@/types/ProductType";
-import { CategoryType } from "@/types/CategoryType";
+import { CategoryType, SubCategoryType } from "@/types/CategoryType";
 import ProductEditFinance from "./ProductEditFinance";
 import ProductEditStock from "./ProductEditStock";
 import ProductEditStatus from "./ProductEditStatus";
@@ -19,6 +19,7 @@ import ProductEditImage from "./ProductEditImage";
 interface ProductEditButtonProps {
   product: AdminProductType;
   categories: CategoryType[];
+  subCategories: SubCategoryType[];
   paramsSlug: string;
   getProduct: () => void;
   getFinanceLog: () => void;
@@ -29,6 +30,7 @@ interface ProductEditButtonProps {
 const ProductEditButton: React.FC<ProductEditButtonProps> = ({
   product,
   categories,
+  subCategories,
   paramsSlug,
   getProduct,
   getFinanceLog,
@@ -85,6 +87,7 @@ const ProductEditButton: React.FC<ProductEditButtonProps> = ({
         setIsOpen={setIsOpenEditData}
         product={product}
         categories={categories}
+        subCategories={subCategories}
         paramsSlug={paramsSlug}
         getProduct={getProduct}
       />

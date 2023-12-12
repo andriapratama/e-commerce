@@ -1,7 +1,7 @@
-import prismadb from "@/lib/prismadb";
-import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
-import { NextResponse } from "next/server";
 import { z } from "zod";
+import prismadb from "@/lib/prismadb";
+import { NextResponse } from "next/server";
+import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 
 export const PATCH = async (
   req: Request,
@@ -31,6 +31,7 @@ export const PATCH = async (
       slug: z.string().min(1).min(3),
       minimumStock: z.number().min(1),
       category: z.string().min(1),
+      subCategory: z.string().optional(),
       linkGojek: z.string().optional(),
       netFill: z.number().min(1),
       description: z.string().optional(),
@@ -55,6 +56,7 @@ export const PATCH = async (
       slug,
       minimumStock,
       category,
+      subCategory,
       linkGojek,
       netFill,
       description,
@@ -112,6 +114,25 @@ export const PATCH = async (
       );
     }
 
+    let subCategoryId: string | null = null;
+
+    if (subCategory) {
+      const findSubCategory = await prismadb.subCategory.findUnique({
+        where: {
+          slug: subCategory,
+        },
+      });
+
+      if (!findSubCategory) {
+        return NextResponse.json(
+          { message: "Sub Category not found" },
+          { status: 404 }
+        );
+      }
+
+      subCategoryId = findSubCategory.id;
+    }
+
     const findProduct = await prismadb.product.findUnique({
       where: {
         slug: params.slug,
@@ -139,6 +160,7 @@ export const PATCH = async (
         slug: slug.toLowerCase(),
         minimumStock,
         categoryId: findCategory.id,
+        subCategoryId: subCategoryId,
         linkGojek,
         netFill,
         description,
