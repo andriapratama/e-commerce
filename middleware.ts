@@ -2,40 +2,41 @@ import { NextRequestWithAuth, withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
 export default withAuth(function middleware(request: NextRequestWithAuth) {
-  if (
-    request.nextUrl.pathname.startsWith("/admin") &&
-    request.nextauth.token?.role !== "superAdmin" &&
-    request.nextauth.token?.role !== "admin"
-  ) {
+  const superAdmin = request.nextauth.token?.role !== "superAdmin";
+  const admin = request.nextauth.token?.role !== "admin";
+
+  if (request.nextUrl.pathname.startsWith("/admin") && superAdmin && admin) {
     return NextResponse.rewrite(new URL("/denied", request.url));
   }
 
   if (
     request.nextUrl.pathname.startsWith("/admin/orders") &&
-    request.nextauth.token?.role !== "superAdmin" &&
-    request.nextauth.token?.role !== "admin"
+    superAdmin &&
+    admin
   ) {
     return NextResponse.rewrite(new URL("/denied", request.url));
   }
 
-  if (
-    request.nextUrl.pathname.startsWith("/admin/categories") &&
-    request.nextauth.token?.role !== "superAdmin"
-  ) {
+  if (request.nextUrl.pathname.startsWith("/admin/categories") && superAdmin) {
     return NextResponse.rewrite(new URL("/denied", request.url));
   }
 
   if (
-    request.nextUrl.pathname.startsWith("/admin/products") &&
-    request.nextauth.token?.role !== "superAdmin"
+    request.nextUrl.pathname.startsWith("/admin/sub-categories") &&
+    superAdmin
   ) {
     return NextResponse.rewrite(new URL("/denied", request.url));
   }
 
-  if (
-    request.nextUrl.pathname.startsWith("/admin/employees") &&
-    request.nextauth.token?.role !== "superAdmin"
-  ) {
+  if (request.nextUrl.pathname.startsWith("/admin/products") && superAdmin) {
+    return NextResponse.rewrite(new URL("/denied", request.url));
+  }
+
+  if (request.nextUrl.pathname.startsWith("/admin/employees") && superAdmin) {
+    return NextResponse.rewrite(new URL("/denied", request.url));
+  }
+
+  if (request.nextUrl.pathname.startsWith("/admin/heros") && superAdmin) {
     return NextResponse.rewrite(new URL("/denied", request.url));
   }
 });
@@ -44,11 +45,13 @@ export const config = {
   matcher: [
     "/admin",
     "/admin/categories",
+    "/admin/sub-categories",
     "/admin/employees",
     "/admin/orders",
     "/admin/orders/(.*)",
     "/admin/products",
     "/admin/products/add",
     "/admin/products/(.*)",
+    "/admin/heros",
   ],
 };

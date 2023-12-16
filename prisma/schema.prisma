@@ -322,3 +322,13 @@ enum StatusOrderLog {
   done
   cancel
 }
+
+model Hero {
+  id              String @id @default(uuid())
+  image           String
+  imagePathname   String
+  position        Int @db.SmallInt
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
