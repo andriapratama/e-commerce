@@ -7,6 +7,7 @@ import HeroTable from "@/components/admin/hero/HeroTable";
 import { ToastContainer, toast } from "react-toastify";
 import React, { useCallback, useEffect, useState } from "react";
 import { HeroType } from "@/types/HeroType";
+import ContentLoading from "@/components/ContentLoading";
 
 const Heros = () => {
   const [heros, setHeros] = useState<HeroType[]>([]);
@@ -37,7 +38,11 @@ const Heros = () => {
 
         <HeroAdd getHeros={getHeros} />
 
-        <HeroTable heros={heros} setHeros={setHeros} getHeros={getHeros} />
+        {isLoadingContent ? (
+          <ContentLoading />
+        ) : (
+          <HeroTable heros={heros} setHeros={setHeros} getHeros={getHeros} />
+        )}
       </div>
     </section>
   );
