@@ -1,9 +1,19 @@
-const LoadingGif = () => {
+"use client";
+
+import React from "react";
+
+interface Props {
+  className?: string;
+}
+
+const LoadingGif: React.FC<Props> = ({ className }) => {
   return (
     <svg
       aria-hidden="true"
       role="status"
-      className="inline w-4 h-4 text-black animate-spin"
+      className={`inline w-4 h-4 text-black animate-spin ${
+        className ? className : ""
+      }`}
       viewBox="0 0 100 101"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
