@@ -39,6 +39,10 @@ export default withAuth(function middleware(request: NextRequestWithAuth) {
   if (request.nextUrl.pathname.startsWith("/admin/heros") && superAdmin) {
     return NextResponse.rewrite(new URL("/denied", request.url));
   }
+
+  if (request.nextUrl.pathname.startsWith("/admin/promos") && superAdmin) {
+    return NextResponse.rewrite(new URL("/denied", request.url));
+  }
 });
 
 export const config = {
@@ -53,5 +57,7 @@ export const config = {
     "/admin/products/add",
     "/admin/products/(.*)",
     "/admin/heros",
+    "/admin/promos",
+    "/admin/promos/add",
   ],
 };

@@ -56,6 +56,11 @@ const menus: MenuType[] = [
     role: ["superAdmin"],
   },
   {
+    name: "Promo",
+    link: "/admin/promos",
+    role: ["superAdmin"],
+  },
+  {
     name: "pelanggan",
     link: "/admin/users",
     role: ["superAdmin", "admin"],

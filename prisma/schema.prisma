@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -125,12 +126,15 @@ model Product {
   productStatusLog    ProductStatusLog[] @relation("ProductToProductStatusLog")
   orderDetail         OrderDetail[] @relation("ProductToOrderDetail")
   cart                Cart[] @relation("ProductToCart")
+  promoProductProvision PromoProductProvision[] @relation("ProductToPromoProductProvision")
+  promoProductBonus PromoProductBonus[] @relation("ProductToPromoProductBonus")
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   @@index([categoryId])
   @@index([subCategoryId])
+  @@fulltext([name])
 }
 
 enum StatusProduct {
@@ -331,4 +335,65 @@ model Hero {
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+model Promo {
+  id              String @id @default(uuid())
+  image           String
+  imagePathname   String
+  name            String @unique
+  slug            String @unique
+  description     String @db.Text
+  firstPrice       Int
+  promoPrice      Int
+  status          PromoStatus
+
+  promoProductProvision   PromoProductProvision[] @relation("PromoToPromoProductProvision")
+  promoProductBonus       PromoProductBonus[] @relation("PromoToPromoProductBonus")
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PromoProductProvision {
+  id              String @id @default(uuid())
+  name            String
+  price           Int
+  quantity        Int
+  subTotal        Int
+
+  promoId         String
+  promo           Promo @relation("PromoToPromoProductProvision", fields: [promoId], references: [id])
+  productId       String
+  product         Product @relation("ProductToPromoProductProvision", fields: [productId], references: [id])
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([promoId])
+  @@index([productId])
+}
+
+model PromoProductBonus {
+  id              String @id @default(uuid())
+  name            String
+  price           Int
+  quantity        Int
+  subTotal        Int
+
+  promoId         String
+  promo           Promo @relation("PromoToPromoProductBonus", fields: [promoId], references: [id])
+  productId       String
+  product         Product @relation("ProductToPromoProductBonus", fields: [productId], references: [id])
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([promoId])
+  @@index([productId])
+}
+
+enum PromoStatus {
+  archive
+  active
 }
