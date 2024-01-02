@@ -14,7 +14,7 @@ export const ConvertDateId = (value: string) => {
   if (DD === 3) day = "Rabu";
   if (DD === 4) day = "Kamis";
   if (DD === 5) day = "Jumat";
-  if (DD === 5) day = "Sabtu";
+  if (DD === 6) day = "Sabtu";
 
   let mounth = "";
 
