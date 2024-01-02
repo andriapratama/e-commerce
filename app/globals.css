@@ -113,11 +113,25 @@
     @apply w-full md:w-[49%] lg:w-[48.5%] mb-3 md:mb-0 border rounded-md p-3 overflow-hidden;
   }
 
-  .admin-product-detail__title {
+  .admin-product-detail__title,
+  .admin-promo-detail__title {
     @apply text-sm font-medium text-gray-500;
   }
 
-  .admin-product-detail__value {
+  .admin-product-detail__value,
+  .admin-promo-detail__value {
     @apply text-base font-semibold h-max;
+  }
+
+  .admin-promo-detail__content {
+    @apply w-full border rounded-md p-3 bg-white overflow-hidden;
+  }
+
+  .admin-promo-detail__group {
+    @apply w-full grid grid-cols-3 gap-3 mb-3;
+  }
+
+  .admin-promo-detail-table__title {
+    @apply p-5 border-b font-semibold capitalize text-base;
   }
 }
