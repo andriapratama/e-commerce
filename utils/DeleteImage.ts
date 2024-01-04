@@ -1,14 +1,19 @@
-import axios from "axios";
+import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
+
+const Bucket = process.env.AMPLIFY_BUCKET;
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+  },
+});
 
 export const DeleteImage = async (imagePathname: string) => {
-  const pathDelete = '{"path": "' + imagePathname + '"}';
-
-  const urlDelete = "https://api.dropboxapi.com/2/files/delete_v2";
-
-  await axios.post(urlDelete, pathDelete, {
-    headers: {
-      Authorization: "Bearer " + process.env.DROPBOX_ACCESS_TOKEN,
-      "Content-Type": "application/json",
-    },
+  const deleteCommand = new DeleteObjectCommand({
+    Bucket,
+    Key: imagePathname,
   });
+
+  await s3.send(deleteCommand);
 };

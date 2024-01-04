@@ -1,9 +1,9 @@
-import { ProductInputType } from "@/components/admin/promo-add/PromoAddForm";
-import prismadb from "@/lib/prismadb";
-import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
-import { UploadImage } from "@/utils/UploadImage";
-import { NextResponse } from "next/server";
 import { z } from "zod";
+import prismadb from "@/lib/prismadb";
+import { NextResponse } from "next/server";
+import { UploadImage } from "@/utils/UploadImage";
+import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
+import { ProductInputType } from "@/components/admin/promo-add/PromoAddForm";
 
 export const POST = async (req: Request) => {
   try {
@@ -103,19 +103,12 @@ export const POST = async (req: Request) => {
       );
     }
 
-    const { imageUpload, imageLink, pathDisplay } = await UploadImage(image);
-
-    if (imageUpload.error) {
-      return NextResponse.json(
-        { message: imageUpload.message },
-        { status: imageUpload.status }
-      );
-    }
+    const { imageLink, imagePathname } = await UploadImage(image);
 
     const promo = await prismadb.promo.create({
       data: {
-        image: imageLink + "&raw=1",
-        imagePathname: pathDisplay,
+        image: imageLink,
+        imagePathname: imagePathname ? imagePathname : "",
         name,
         slug,
         description: description ? description : "",

@@ -1,68 +1,39 @@
-import axios from "axios";
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
 
-interface Error {
-  error: boolean;
-  message: string;
-  status: number | undefined;
-}
+const Bucket = process.env.AMPLIFY_BUCKET;
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+  },
+});
 
 export const UploadImage = async (image: File) => {
-  let imageUpload: Error = {
-    error: false,
-    message: "",
-    status: undefined,
-  };
-
-  let pathDisplay = "";
-  let imageLink = "";
-
-  const bytes = await image.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-
   const imageName = `${Date.now()}-${image.name}`;
 
-  const urlUpload = "https://content.dropboxapi.com/2/files/upload";
-  const pathUpload =
-    '{"path": "' +
-    "/test202310" +
-    "/" +
-    imageName +
-    '","mode": "add","autorename": true,"mute": false}';
+  const Body = (await image.arrayBuffer()) as Buffer;
 
-  const upload = await axios.post(urlUpload, buffer, {
-    headers: {
-      Authorization: "Bearer " + process.env.DROPBOX_ACCESS_TOKEN,
-      "Content-Type": "application/octet-stream",
-      "Dropbox-API-Arg": pathUpload,
-    },
-  });
+  const params = {
+    Bucket,
+    Key: `${imageName}`,
+    Body,
+    ContentType: "image/jpg",
+  };
 
-  pathDisplay = upload.data.path_display;
+  const putCommand = new PutObjectCommand(params);
 
-  if (!pathDisplay) {
-    (imageUpload.error = true),
-      (imageUpload.message = "Image failed to upload"),
-      (imageUpload.status = 400);
+  await s3.send(putCommand);
 
-    return { imageUpload, imageLink, pathDisplay };
-  } else {
-    const urlGet =
-      "https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings";
+  const getCommand = new GetObjectCommand({ Bucket, Key: imageName });
 
-    const pathGet =
-      '{"path":"' +
-      pathDisplay +
-      '","settings":{"access":"viewer","allow_download":true,"audience":"public","requested_visibility":"public"}}';
+  const imageLink: string = `https://${Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${getCommand.input.Key}`;
 
-    const getImageLink = await axios.post(urlGet, pathGet, {
-      headers: {
-        Authorization: "Bearer " + process.env.DROPBOX_ACCESS_TOKEN,
-        "Content-Type": "application/json",
-      },
-    });
+  const imagePathname: string | undefined = getCommand.input.Key;
 
-    imageLink = getImageLink.data.url;
-
-    return { imageUpload, imageLink, pathDisplay };
-  }
+  return { imageLink, imagePathname };
 };

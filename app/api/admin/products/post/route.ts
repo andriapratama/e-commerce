@@ -1,8 +1,8 @@
 import { z } from "zod";
-import axios from "axios";
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
+import { UploadImage } from "@/utils/UploadImage";
 
 export const POST = async (req: Request) => {
   try {
@@ -129,52 +129,7 @@ export const POST = async (req: Request) => {
       return NextResponse.json({ message: "Image required" }, { status: 400 });
     }
 
-    const bytes = await image.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    const imageName = `${Date.now()}-${image.name}`;
-
-    const urlUpload = "https://content.dropboxapi.com/2/files/upload";
-    const pathUpload =
-      '{"path": "' +
-      "/test202310" +
-      "/" +
-      imageName +
-      '","mode": "add","autorename": true,"mute": false}';
-
-    const upload = await axios.post(urlUpload, buffer, {
-      headers: {
-        Authorization: "Bearer " + process.env.DROPBOX_ACCESS_TOKEN,
-        "Content-Type": "application/octet-stream",
-        "Dropbox-API-Arg": pathUpload,
-      },
-    });
-
-    const pathDisplay = upload.data.path_display;
-
-    if (!pathDisplay) {
-      return NextResponse.json(
-        { message: "Image failed to upload" },
-        { status: 400 }
-      );
-    }
-
-    const urlGet =
-      "https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings";
-
-    const pathGet =
-      '{"path":"' +
-      pathDisplay +
-      '","settings":{"access":"viewer","allow_download":true,"audience":"public","requested_visibility":"public"}}';
-
-    const getImageLink = await axios.post(urlGet, pathGet, {
-      headers: {
-        Authorization: "Bearer " + process.env.DROPBOX_ACCESS_TOKEN,
-        "Content-Type": "application/json",
-      },
-    });
-
-    const imageLink = getImageLink.data.url;
+    const { imageLink, imagePathname } = await UploadImage(image);
 
     const product = await prismadb.product.create({
       data: {
@@ -188,45 +143,47 @@ export const POST = async (req: Request) => {
         linkGojek,
         netFill: parseInt(netFill),
         description,
-        image: imageLink + "&raw=1",
-        imagePathname: pathDisplay,
+        image: imageLink,
+        imagePathname: imagePathname ? imagePathname : "",
         categoryId: findCategory.id,
         subCategoryId: subCategoryId,
       },
     });
 
     if (findEmployee) {
-      await prismadb.productFinanceLog.create({
-        data: {
-          price: parseInt(price),
-          cost: parseInt(cost),
-          productId: product.id,
-          employeeId: findEmployee.id,
-          note: "Pertama kali dibuat",
-        },
-      });
+      await Promise.all([
+        prismadb.productFinanceLog.create({
+          data: {
+            price: parseInt(price),
+            cost: parseInt(cost),
+            productId: product.id,
+            employeeId: findEmployee.id,
+            note: "Pertama kali dibuat",
+          },
+        }),
 
-      await prismadb.productStockLog.create({
-        data: {
-          previousStock: 0,
-          stock: parseInt(totalStock),
-          stockNow: parseInt(totalStock),
-          status: "first",
-          note: "Pertama kali dibuat",
-          productId: product.id,
-          employeeId: findEmployee.id,
-        },
-      });
+        prismadb.productStockLog.create({
+          data: {
+            previousStock: 0,
+            stock: parseInt(totalStock),
+            stockNow: parseInt(totalStock),
+            status: "first",
+            note: "Pertama kali dibuat",
+            productId: product.id,
+            employeeId: findEmployee.id,
+          },
+        }),
 
-      await prismadb.productStatusLog.create({
-        data: {
-          status,
-          salePrice: 0,
-          note: "Pertama kali dibuat",
-          productId: product.id,
-          employeeId: findEmployee.id,
-        },
-      });
+        prismadb.productStatusLog.create({
+          data: {
+            status,
+            salePrice: 0,
+            note: "Pertama kali dibuat",
+            productId: product.id,
+            employeeId: findEmployee.id,
+          },
+        }),
+      ]);
     }
 
     return NextResponse.json(

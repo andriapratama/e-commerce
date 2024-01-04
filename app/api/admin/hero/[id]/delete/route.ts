@@ -1,7 +1,7 @@
-import axios from "axios";
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
+import { DeleteImage } from "@/utils/DeleteImage";
 
 export const DELETE = async (
   req: Request,
@@ -29,7 +29,7 @@ export const DELETE = async (
 
     const findOneHero = findHero.filter((hero) => hero.id === params.id);
 
-    const imagePathname = findOneHero[0].imagePathname;
+    const heroImagePathname = findOneHero[0].imagePathname;
 
     await prismadb.hero.delete({
       where: {
@@ -50,16 +50,7 @@ export const DELETE = async (
       }
     }
 
-    const pathDelete = '{"path": "' + imagePathname + '"}';
-
-    const urlDelete = "https://api.dropboxapi.com/2/files/delete_v2";
-
-    await axios.post(urlDelete, pathDelete, {
-      headers: {
-        Authorization: "Bearer " + process.env.DROPBOX_ACCESS_TOKEN,
-        "Content-Type": "application/json",
-      },
-    });
+    await DeleteImage(heroImagePathname);
 
     return NextResponse.json({ message: "Heros is deleted" }, { status: 200 });
   } catch (error) {

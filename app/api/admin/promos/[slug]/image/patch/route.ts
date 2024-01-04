@@ -1,8 +1,8 @@
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
-import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 import { UploadImage } from "@/utils/UploadImage";
 import { DeleteImage } from "@/utils/DeleteImage";
+import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 
 export const PATCH = async (
   req: Request,
@@ -42,7 +42,7 @@ export const PATCH = async (
       );
     }
 
-    const imagePathname = findPromo.imagePathname;
+    const promoImagePathname = findPromo.imagePathname;
 
     const data = await req.formData();
     const image: File | null = data.get("image") as unknown as File;
@@ -51,26 +51,19 @@ export const PATCH = async (
       return NextResponse.json({ message: "Image required" }, { status: 400 });
     }
 
-    const { imageUpload, imageLink, pathDisplay } = await UploadImage(image);
-
-    if (imageUpload.error) {
-      return NextResponse.json(
-        { message: imageUpload.message },
-        { status: imageUpload.status }
-      );
-    }
+    const { imageLink, imagePathname } = await UploadImage(image);
 
     await prismadb.promo.update({
       where: {
         slug: params.slug,
       },
       data: {
-        image: imageLink + "&raw=1",
-        imagePathname: pathDisplay,
+        image: imageLink,
+        imagePathname: imagePathname,
       },
     });
 
-    await DeleteImage(imagePathname);
+    await DeleteImage(promoImagePathname);
 
     return NextResponse.json(
       {
@@ -79,7 +72,6 @@ export const PATCH = async (
       { status: 200 }
     );
   } catch (error) {
-    console.log("[PRODUCT_EDIT_IMAGE", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };
