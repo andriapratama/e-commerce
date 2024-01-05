@@ -81,6 +81,18 @@
     appearance: textfield !important;
   }
 
+  .pagination {
+    @apply w-9 h-9 rounded text-sm flex justify-center items-center;
+  }
+
+  .pagination-disable {
+    @apply cursor-not-allowed bg-gray-200;
+  }
+
+  .pagination-enable {
+    @apply cursor-pointer hover:bg-gray-200 bg-white;
+  }
+
   .admin__container {
     @apply w-full xl:flex xl:justify-center min-h-[calc(100vh-48px)];
   }
