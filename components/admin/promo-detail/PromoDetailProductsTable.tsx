@@ -26,7 +26,7 @@ const PromoDetailProductsTable: React.FC<Props> = ({ products, title }) => {
         <TableHeader>
           <TableRow>
             <TableHead className="text-center">#</TableHead>
-            <TableHead>Gambar</TableHead>
+            <TableHead className="text-center">Gambar</TableHead>
             <TableHead>Nama</TableHead>
             <TableHead>Harga</TableHead>
             <TableHead className="text-center">Jumlah</TableHead>
