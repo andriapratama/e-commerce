@@ -27,8 +27,8 @@ const PromoDetailContent: React.FC<Props> = ({
         <Image
           src={promo.image}
           alt={promo.name}
-          width={600}
-          height={400}
+          width={800}
+          height={500}
           className="object-contain lg:w-auto lg:h-[500px] w-full h-auto rounded-md"
           priority
         />
