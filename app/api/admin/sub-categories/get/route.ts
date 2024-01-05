@@ -13,27 +13,51 @@ export const GET = async (req: Request) => {
       );
     }
 
-    const subCategories = await prismadb.subCategory.findMany({
-      select: {
-        name: true,
-        slug: true,
-        category: {
-          select: {
-            name: true,
-            slug: true,
+    const url = new URL(req.url);
+
+    const categoryParams = url.searchParams.get("category");
+
+    let subCategories = [];
+
+    const select = {
+      name: true,
+      slug: true,
+      category: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+    };
+
+    if (categoryParams) {
+      subCategories = await prismadb.subCategory.findMany({
+        where: {
+          category: {
+            name: categoryParams,
           },
         },
-      },
-      orderBy: {
-        category: {
+        select,
+        orderBy: {
           name: "asc",
         },
-      },
-    });
+      });
+    } else {
+      subCategories = await prismadb.subCategory.findMany({
+        select,
+        orderBy: {
+          category: {
+            name: "asc",
+          },
+        },
+      });
+    }
 
     return NextResponse.json(
       {
-        message: "Successfully get all sub categories data",
+        message: `Successfully get all sub categories data ${
+          categoryParams ? "by category name" : ""
+        }`,
         data: subCategories,
       },
       { status: 200 }
