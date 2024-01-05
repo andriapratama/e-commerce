@@ -6,6 +6,8 @@ import { CategoryType } from "@/types/CategoryType";
 export const useGetCategoriesHook = () => {
   const [categories, setCategories] = useState<CategoryType[]>([]);
 
+  const [category, setCategory] = useState<string>("");
+
   const [isLoadingContent, setIsLoadingContent] = useState(true);
 
   const getCategories = useCallback(async () => {
@@ -26,6 +28,8 @@ export const useGetCategoriesHook = () => {
   }, [getCategories]);
 
   return {
+    category,
+    setCategory,
     categories,
     setCategories,
     getCategories,
