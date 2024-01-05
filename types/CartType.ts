@@ -1,8 +1,10 @@
+type Status = "new" | "active" | "best" | "sale" | "archive";
+
 interface ProductInCartType {
   name: string;
   price: number;
   salePrice: number;
-  status: "new" | "active" | "best" | "sale" | "archive";
+  status: Status;
   totalStock: number;
   image: string;
   slug: string;
