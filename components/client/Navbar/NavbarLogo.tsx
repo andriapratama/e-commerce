@@ -11,7 +11,7 @@ const NavbarLogo = () => {
           alt="logo"
           height={45}
           width={45}
-          className="object-contain lg:w-[45px] lg:h-[45px] h-[30px] w-[30px]"
+          className="object-contain w-[45px] h-[45px]"
         />
       </Link>
       <div className="uppercase w-full text-center font-serif">

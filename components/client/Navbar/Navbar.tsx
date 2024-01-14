@@ -63,7 +63,7 @@ const Navbar: React.FC<NavbarProps> = ({ countCarts, role, categories }) => {
       <nav
         className={`w-full flex justify-center z-40 top-0 fixed bg-second-color text-primary-color text-sm font-semibold`}
       >
-        <div className="w-[90%] h-[50px] lg:h-[100px] flex justify-between items-center font-serif shadow-sm">
+        <div className="w-[90%] h-[60px] lg:h-[100px] flex justify-between items-center font-serif shadow-sm">
           <NavbarMobileMenu menus={menus} />
 
           <Link href="/" className="gap-3 h-full items-center flex">
