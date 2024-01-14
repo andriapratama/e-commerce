@@ -7,7 +7,6 @@ import { Lugrasimo, Junge } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
-import StatusProduct from "./StatusProduct";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -56,7 +55,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     <div className="w-full h-fit mb-6 hover:shadow">
       <Link href={`/collections/${product.slug}`}>
         <div className="w-full flex justify-center h-fit relative">
-          <StatusProduct status={product.status} />
           <Image
             src={product.image}
             alt={product.name}

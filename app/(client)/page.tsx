@@ -1,14 +1,17 @@
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
 import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar";
-import Topbar from "@/components/client/Topbar";
+import Navbar from "@/components/client/Navbar/Navbar";
 import Hero from "@/components/client/home/Hero";
 import Products from "@/components/client/home/Products";
 import { useCountCartsHook } from "@/hooks/client/CartHook";
-import { useGetSpecialProductsHook } from "@/hooks/client/ProductHook";
 import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
+import { useGetProductsByStatusHook } from "@/hooks/client/ProductHook";
+import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
+import { useGetAllHerosData } from "@/hooks/client/HeroHook";
+import { useGetAllPromoHook } from "@/hooks/client/PromoHook";
+import Promo from "@/components/client/home/Promo";
 
 const Home = async () => {
   let isActive: boolean = true;
@@ -20,28 +23,56 @@ const Home = async () => {
 
     isActive = user.active;
 
-    const { products } = await useGetSpecialProductsHook();
+    const { products: productsBest } = await useGetProductsByStatusHook("best");
+
+    const { products: productsSale } = await useGetProductsByStatusHook("sale");
+
+    const { products: productsNew } = await useGetProductsByStatusHook("new");
+
+    const { categories } = await useGetAllCategoriesHook();
 
     const { countCarts } = await useCountCartsHook();
 
+    const { heros } = await useGetAllHerosData();
+
+    const { promos } = await useGetAllPromoHook();
+
     return (
-      <main className="min-h-screen w-full">
-        <Topbar role={session?.user.role} userName={user.firstName} />
-        <Navbar countCarts={countCarts} />
-        <Hero />
-        <Products products={products} />
+      <main className="min-h-screen !w-full overflow-x-hidden">
+        <Navbar
+          countCarts={countCarts}
+          role={session?.user.role}
+          categories={categories}
+        />
+        <Hero heros={heros} />
+        <Products products={productsBest} title="best seller" />
+        <Products products={productsNew} title="new" />
+        <Products products={productsSale} title="sale" />
+        <Promo promos={promos} />
         <Footer />
       </main>
     );
   } catch (error) {
-    const { products } = await useGetSpecialProductsHook();
+    const { products: productsBest } = await useGetProductsByStatusHook("best");
+
+    const { products: productsSale } = await useGetProductsByStatusHook("sale");
+
+    const { products: productsNew } = await useGetProductsByStatusHook("new");
+
+    const { categories } = await useGetAllCategoriesHook();
+
+    const { heros } = await useGetAllHerosData();
+
+    const { promos } = await useGetAllPromoHook();
 
     return (
-      <main className="min-h-screen w-full">
-        <Topbar />
-        <Navbar />
-        <Hero />
-        <Products products={products} />
+      <main className="min-h-screen !w-full overflow-x-hidden">
+        <Navbar categories={categories} />
+        <Hero heros={heros} />
+        <Products products={productsBest} title="best seller" />
+        <Products products={productsNew} title="new" />
+        <Products products={productsSale} title="sale" />
+        <Promo promos={promos} />
         <Footer />
       </main>
     );

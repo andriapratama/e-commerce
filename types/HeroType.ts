@@ -4,3 +4,8 @@ export interface HeroType {
   position: number;
   isLoading?: boolean;
 }
+
+export interface HeroClientType {
+  image: string;
+  position: number;
+}

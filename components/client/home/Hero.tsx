@@ -1,35 +1,72 @@
-import React from "react";
-import { Alegreya_SC } from "next/font/google";
-import Link from "next/link";
+"use client";
 
-const alegreya = Alegreya_SC({
-  weight: "500",
-  style: "italic",
-  subsets: ["latin"],
-});
+import React, { useState } from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Image from "next/image";
+import Autoplay from "embla-carousel-autoplay";
+import { HeroClientType } from "@/types/HeroType";
 
-const Hero = () => {
+interface Props {
+  heros: HeroClientType[];
+}
+
+const Hero: React.FC<Props> = ({ heros }) => {
+  const [isActive, setIsActive] = useState<boolean>(false);
+
+  const plugin = React.useRef(
+    Autoplay({ delay: 10000, stopOnInteraction: true })
+  );
+
   return (
-    <section className="w-full h-screen overflow-hidden bg-hero bg-center">
-      <div className="w-full h-full bg-black/50 flex justify-center items-center">
-        <div className="block w-auto h-fit">
-          <div
-            className={`lg:text-[100px] md:text-7xl text-5xl lg:leading-[80px] md:leading-[60px] leading-[50px] text-gray-200 text-center ${alegreya.className}`}
+    <Carousel
+      className="w-full h-fit mt-[70px] md:mt-[100px] lg:mt-[150px] overflow-x-hidden"
+      opts={{
+        loop: true,
+      }}
+      plugins={[plugin.current]}
+      onMouseEnter={() => {
+        plugin.current.stop();
+        setIsActive(true);
+      }}
+      onMouseLeave={() => {
+        plugin.current.play();
+        setIsActive(false);
+      }}
+    >
+      <CarouselContent className="w-full !ml-0 h-[200px] md:h-[300px] lg:h-[600px] !relative">
+        {heros.map((hero, index) => (
+          <CarouselItem
+            className="w-full h-full flex justify-center items-center !pl-0"
+            key={index}
           >
-            Cheers
-            <br />
-            to the Good Times!
-          </div>
-          <div className="w-full flex justify-center mt-10">
-            <Link href="/collections">
-              <button className="bg-black px-7 py-3 rounded-full text-gray-200 font-serif cursor-pointer text-sm hover:bg-gray-200 hover:text-black duration-500 ease-in-out">
-                Shop Now
-              </button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    </section>
+            <Image
+              src={hero.image}
+              alt={`hero-${index}`}
+              width={1200}
+              height={600}
+              className="w-full h-auto object-cover"
+              priority
+            />
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious
+        className={`!absolute transition-all ease-in-out duration-300 ${
+          isActive ? "left-10" : "-left-10"
+        }`}
+      />
+      <CarouselNext
+        className={`!absolute transition-all ease-in-out duration-300 ${
+          isActive ? "right-10" : "-right-10"
+        }`}
+      />
+    </Carousel>
   );
 };
 

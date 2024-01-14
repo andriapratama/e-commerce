@@ -1,77 +1,86 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Alegreya_SC, Lugrasimo } from "next/font/google";
+import React from "react";
 import ProductCard from "../ProductCard";
+import Autoplay from "embla-carousel-autoplay";
 import { ClientProductType } from "@/types/ProductType";
-import Link from "next/link";
-import { ToastContainer } from "react-toastify";
-
-const lugrasimo = Lugrasimo({
-  weight: "400",
-  style: "normal",
-  subsets: ["latin"],
-});
-
-const alegreya = Alegreya_SC({
-  weight: "500",
-  style: "italic",
-  subsets: ["latin"],
-});
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 interface ProductProps {
   products: ClientProductType[];
+  title: string;
 }
 
-const Products: React.FC<ProductProps> = ({ products }) => {
-  const [limit, setLimit] = useState<number>(8);
-
-  const productsLimit = products.slice(0, limit);
-
-  useEffect(() => {
-    const widhtScreen = window.innerWidth;
-
-    if (widhtScreen > 640 && widhtScreen < 1024) {
-      setLimit(9);
-    } else {
-      setLimit(8);
-    }
-  }, [setLimit]);
-
-  return (
-    <React.Fragment>
-      <ToastContainer />
-      <section className="w-full flex justify-center md:mt-[100px] mt-16">
-        <div className="lg:w-[80%] sm:w-[90%] w-[80%]">
-          <div
-            className={`w-full text-sm text-center text-yellow-600 ${lugrasimo.className}`}
-          >
-            Best of the Best
-          </div>
-          <div
-            className={`md:text-5xl text-4xl w-full text-center mb-14 ${alegreya.className}`}
-          >
-            Which Your
-          </div>
-
-          <div className="w-full grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
-            {productsLimit.map((product) => (
-              <ProductCard product={product} key={product.slug} />
-            ))}
-          </div>
-
-          <div className="w-full flex justify-center mt-5">
-            <Link
-              href="/collections"
-              className="px-20 py-2 rounded bg-yellow-600 text-white font-serif"
-            >
-              View All Products
-            </Link>
-          </div>
-        </div>
-      </section>
-    </React.Fragment>
+const Products: React.FC<ProductProps> = ({ products, title }) => {
+  const plugin = React.useRef(
+    Autoplay({ delay: 5000, stopOnInteraction: true })
   );
+
+  if (products.length < 1) {
+    return null;
+  } else {
+    return (
+      <React.Fragment>
+        <section className="w-full flex justify-center md:mt-[100px] mt-14">
+          <div className="lg:w-[80%] sm:w-[90%] w-[80%]">
+            <div
+              className={`md:text-5xl text-3xl w-full text-center mb-10 md:mb-14 capitalize font-serif`}
+            >
+              {title}
+            </div>
+
+            <Carousel
+              className="w-full"
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              plugins={[plugin.current]}
+              onMouseEnter={plugin.current.stop}
+              onMouseLeave={plugin.current.play}
+            >
+              <CarouselContent className="-ml-1">
+                {products.map((product, index) => (
+                  <CarouselItem
+                    key={index}
+                    className={`pl-1 ${
+                      products.length === 3
+                        ? "lg:basis-1/3 md:basis-1/2"
+                        : products.length === 2
+                        ? "md:basis-1/2"
+                        : products.length === 1
+                        ? "md:basis-full"
+                        : "lg:basis-1/4 md:basis-1/2"
+                    }`}
+                  >
+                    <div className="p-1">
+                      <ProductCard product={product} key={product.slug} />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious
+                className={`invisible ${
+                  products.length < 5 ? "lg:invisible" : "lg:visible"
+                }`}
+              />
+              <CarouselNext
+                className={`invisible ${
+                  products.length < 5 ? "lg:invisible" : "lg:visible"
+                }`}
+              />
+            </Carousel>
+          </div>
+        </section>
+      </React.Fragment>
+    );
+  }
 };
 
 export default Products;

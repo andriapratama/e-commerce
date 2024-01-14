@@ -12,19 +12,21 @@ export const useGetProductDetailHook = async (id: string) => {
 };
 
 export const useGetAllProductsHook = async () => {
-  const productsRes = await axios.get(`${process.env.WEB_URL}/api/products`);
+  const productsRes = await axios.get(
+    `${process.env.WEB_URL}/api/products/get`
+  );
 
-  const products: ClientProductType[] = productsRes.data.data;
+  const products: ClientProductType[] = productsRes.data.data.products;
 
   return { products };
 };
 
-export const useGetSpecialProductsHook = async () => {
+export const useGetProductsByStatusHook = async (status: string) => {
   const productsRes = await axios.get(
-    `${process.env.WEB_URL}/api/products/special`
+    `${process.env.WEB_URL}/api/products/get?status=${status}`
   );
 
-  const products: ClientProductType[] = productsRes.data.data;
+  const products: ClientProductType[] = productsRes.data.data.products;
 
   return { products };
 };

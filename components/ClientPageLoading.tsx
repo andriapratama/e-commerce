@@ -17,7 +17,7 @@ const ClientPageLoading = () => {
           alt="loading"
           width={200}
           height={200}
-          className="object-contain"
+          className="object-contain md:w-[200px] md:h-[200px] w-[150px] h-[150px]"
           priority
         />
         <div className={`w-full text-center text-xl ${alegreya.className}`}>
