@@ -7,6 +7,7 @@ import CollectionProducts from "./CollectionProducts";
 import { ClientProductType } from "@/types/ProductType";
 import Pagination from "../Pagination";
 import { useSearchParams } from "next/navigation";
+import ClientPageLoading from "@/components/ClientPageLoading";
 
 interface CollectionContentProps {
   categories: CategoryType[];
@@ -20,6 +21,8 @@ const CollectionContent: React.FC<CollectionContentProps> = ({
   totalPage,
 }) => {
   const [title, setTitle] = useState<string>("All Products");
+
+  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
 
   const searchParams = useSearchParams();
 
@@ -42,21 +45,28 @@ const CollectionContent: React.FC<CollectionContentProps> = ({
   });
 
   return (
-    <div className="w-full flex justify-center mt-[80px] lg:mt-[150px]">
-      <div className="w-[90%] flex gap-5">
-        <div className="w-full">
-          <div className="w-full text-center text-2xl font-serif font-semibold mb-3 capitalize">
-            {title}
+    <React.Fragment>
+      <div className="w-full flex justify-center mt-[80px] lg:mt-[150px]">
+        <div className="w-[90%] flex gap-5">
+          <div className="w-full">
+            <div className="w-full text-center text-2xl font-serif font-semibold mb-3 capitalize">
+              {title}
+            </div>
+
+            <SearchByCategory categories={categories} />
+
+            <CollectionProducts
+              products={products}
+              setIsLoadingPage={setIsLoadingPage}
+            />
+
+            <Pagination totalPage={totalPage} />
           </div>
-
-          <SearchByCategory categories={categories} />
-
-          <CollectionProducts products={products} />
-
-          <Pagination totalPage={totalPage} />
         </div>
       </div>
-    </div>
+
+      {isLoadingPage ? <ClientPageLoading /> : null}
+    </React.Fragment>
   );
 };
 

@@ -6,7 +6,7 @@ import { ShoppingCart } from "lucide-react";
 import { Lugrasimo, Junge } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -26,9 +26,13 @@ const junge = Junge({
 
 interface ProductCardProps {
   product: ClientProductType;
+  setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  setIsLoadingPage,
+}) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const router = useRouter();
@@ -53,18 +57,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
   return (
     <div className="w-full h-fit mb-6 hover:shadow">
-      <Link href={`/collections/${product.slug}`}>
-        <div className="w-full flex justify-center h-fit relative">
-          <Image
-            src={product.image}
-            alt={product.name}
-            width={300}
-            height={300}
-            className="object-contain w-auto lg:h-[300px] md:h-[200px] h-[120px] rounded-md"
-            priority
-          />
-        </div>
-      </Link>
+      <div
+        className="w-full flex justify-center h-fit relative cursor-pointer"
+        onClick={() => {
+          router.push(`/collections/${product.slug}`);
+          setIsLoadingPage(true);
+        }}
+      >
+        <Image
+          src={product.image}
+          alt={product.name}
+          width={300}
+          height={300}
+          className="object-contain w-auto lg:h-[300px] md:h-[200px] h-[120px] rounded-md"
+          priority
+        />
+      </div>
 
       <div
         className={`w-full text-center ${lugrasimo.className} lg:text-sm text-xs text-yellow-600 mt-4`}

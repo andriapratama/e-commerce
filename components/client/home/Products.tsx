@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import ProductCard from "../ProductCard";
 import Autoplay from "embla-carousel-autoplay";
 import { ClientProductType } from "@/types/ProductType";
+import ClientPageLoading from "@/components/ClientPageLoading";
 import {
   Carousel,
   CarouselContent,
@@ -18,6 +19,8 @@ interface ProductProps {
 }
 
 const Products: React.FC<ProductProps> = ({ products, title }) => {
+  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
+
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   );
@@ -60,7 +63,11 @@ const Products: React.FC<ProductProps> = ({ products, title }) => {
                     }`}
                   >
                     <div className="p-1">
-                      <ProductCard product={product} key={product.slug} />
+                      <ProductCard
+                        product={product}
+                        key={product.slug}
+                        setIsLoadingPage={setIsLoadingPage}
+                      />
                     </div>
                   </CarouselItem>
                 ))}
@@ -78,6 +85,8 @@ const Products: React.FC<ProductProps> = ({ products, title }) => {
             </Carousel>
           </div>
         </section>
+
+        {isLoadingPage ? <ClientPageLoading /> : null}
       </React.Fragment>
     );
   }
