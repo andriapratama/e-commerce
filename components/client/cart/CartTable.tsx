@@ -1,14 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import Image from "next/image";
 import { ConvertIDR } from "@/utils/ConvertIDR";
 import { Button } from "@/components/ui/button";
@@ -21,6 +13,14 @@ import LoadingGif from "@/components/LoadingGif";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import CartTotal from "./CartTotal";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface CartTableProps {
   carts?: CartType[];
@@ -163,7 +163,7 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
     <React.Fragment>
       <ToastContainer />
 
-      <div className="w-full flex justify-center mt-[50px] font-serif">
+      <div className="w-full flex justify-center lg:mt-[150px] md:mt-[100px] mt-[80px] font-serif">
         <div className="w-[80%]">
           <Table className="bg-white rounded-md">
             <TableHeader>
@@ -223,7 +223,6 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
                           size="sm"
                           onClick={() => {
                             handleDecrease(index);
-                            console.log(cart);
                           }}
                           disabled={cart.quantity <= 1 ? true : false}
                         >

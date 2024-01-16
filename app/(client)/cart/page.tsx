@@ -1,13 +1,11 @@
 import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar";
-import TitlePage from "@/components/client/TitlePage";
-import Topbar from "@/components/client/Topbar";
+import Navbar from "@/components/client/Navbar/Navbar";
 import CartTable from "@/components/client/cart/CartTable";
 import {
   useCountCartsHook,
   useGetAllCartsByEmail,
 } from "@/hooks/client/CartHook";
-import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
+import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import React from "react";
@@ -16,27 +14,29 @@ const Cart = async () => {
   try {
     const session = await getServerSession(authOptions);
 
-    const { user } = await useGetUserByEmailHook();
-
     const { carts } = await useGetAllCartsByEmail();
 
     const { countCarts } = await useCountCartsHook();
 
+    const { categories } = await useGetAllCategoriesHook();
+
     return (
       <section className="w-full min-h-screen">
-        <Topbar role={session?.user.role} userName={user.firstName} />
-        <Navbar countCarts={countCarts} />
-        <TitlePage title="My Cart" />
+        <Navbar
+          countCarts={countCarts}
+          categories={categories}
+          role={session?.user.role}
+        />
         <CartTable carts={carts} />
         <Footer />
       </section>
     );
   } catch (error) {
+    const { categories } = await useGetAllCategoriesHook();
+
     return (
       <section className="w-full min-h-screen">
-        <Topbar />
-        <Navbar />
-        <TitlePage title="My Cart" />
+        <Navbar categories={categories} />
         <CartTable />
         <Footer />
       </section>
