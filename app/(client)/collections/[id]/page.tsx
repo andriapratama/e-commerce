@@ -1,11 +1,9 @@
 import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar";
-import TitlePage from "@/components/client/TitlePage";
-import Topbar from "@/components/client/Topbar";
+import Navbar from "@/components/client/Navbar/Navbar";
 import CollectionDetailContent from "@/components/client/collection-detail/CollectionDetailContent";
 import { useCountCartsHook } from "@/hooks/client/CartHook";
+import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { useGetProductDetailHook } from "@/hooks/client/ProductHook";
-import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import React from "react";
@@ -16,30 +14,32 @@ const CollectionDetail = async ({ params }: { params: { id: string } }) => {
   try {
     const session = await getServerSession(authOptions);
 
-    const { user } = await useGetUserByEmailHook();
-
     const { product } = await useGetProductDetailHook(slug);
 
     const { countCarts } = await useCountCartsHook();
 
+    const { categories } = await useGetAllCategoriesHook();
+
     return (
       <section className="w-full">
-        <Topbar role={session?.user.role} userName={user.firstName} />
-        <Navbar countCarts={countCarts} />
-        <TitlePage title="Collection Detail" />
-        <CollectionDetailContent product={product} />
+        <Navbar
+          countCarts={countCarts}
+          categories={categories}
+          role={session?.user.role}
+        />
+        <CollectionDetailContent product={product} slug={slug} />
         <Footer />
       </section>
     );
   } catch (error) {
     const { product } = await useGetProductDetailHook(slug);
 
+    const { categories } = await useGetAllCategoriesHook();
+
     return (
       <section className="w-full">
-        <Topbar />
-        <Navbar />
-        <TitlePage title="Collection Detail" />
-        <CollectionDetailContent product={product} />
+        <Navbar categories={categories} />
+        <CollectionDetailContent product={product} slug={slug} />
         <Footer />
       </section>
     );

@@ -8,17 +8,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ShowImage from "../ShowImage";
 import StatusProduct from "../StatusProduct";
+import { toast } from "react-toastify";
+import ButtonLoading from "@/components/ButtonLoading";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 interface CollectionDetailContentProps {
   product: ClientProductType;
+  slug: string;
 }
 
 const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
   product,
+  slug,
 }) => {
   const [quantity, setQuantity] = useState<number>(0);
   const [message, setMessage] = useState<string>("");
   const [isOpenImage, setIsOpenImage] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const handleDecrease = () => {
     if (quantity <= 0) {
@@ -57,43 +66,72 @@ const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
     }
   };
 
+  const handleAddCart = async () => {
+    try {
+      setIsLoading(true);
+
+      await axios.post("/api/cart", {
+        productSlug: slug,
+        quantity,
+      });
+
+      toast.success("Order saved in cart");
+
+      setQuantity(0);
+
+      router.refresh();
+
+      setIsLoading(false);
+    } catch (error: any) {
+      toast.error(error.response.data.message);
+      setIsLoading(true);
+    }
+  };
+
   return (
     <React.Fragment>
-      <div className="w-full flex justify-center mt-[50px] font-serif">
-        <div className="sm:w-[60%] w-[90%] grid sm:grid-cols-2 grid-cols-1 gap-5">
-          <div className="w-full justify-center relative">
+      <div className="w-full flex justify-center lg:mt-[150px] md:mt-[100px] mt-[80px] font-serif">
+        <div className="md:w-[60%] sm:w-[80%] w-[90%] grid sm:grid-cols-2 grid-cols-1 gap-5">
+          <div className="w-full flex justify-center relative">
             <StatusProduct status={product.status} />
             <Image
               src={product.image}
               alt={product.slug}
               width={300}
               height={600}
-              className="object-cover sm:h-[600px] h-[400px] w-auto rounded cursor-pointer"
+              className="object-cover sm:h-[500px] md:h-[400px] h-[300px] w-auto rounded cursor-pointer"
               onClick={() => setIsOpenImage(true)}
             />
           </div>
           <div className="w-full">
-            <h2 className="capitalize text-2xl mb-3">{product.name}</h2>
-            <div className="mb-5">100 sold</div>
+            <h2 className="capitalize lg:text-2xl text-xl mb-3">
+              {product.name}
+            </h2>
             {product.status === "sale" ? (
               <>
-                <div className="w-fit text-gray-600 text-xl mb-4">
+                <div className="w-fit text-gray-600 lg:text-xl text-base mb-4">
                   {ConvertIDR(product.price)}
                   <div className="border -mt-3 border-black z-20"></div>
                 </div>
 
-                <h2 className="text-3xl mb-5 text-red-500">
+                <h2 className="lg:text-3xl text-2xl mb-5 text-red-500">
                   {ConvertIDR(product.salePrice)}
                 </h2>
               </>
             ) : (
-              <h2 className="text-3xl mb-5">{ConvertIDR(product.price)}</h2>
+              <h2 className="lg:text-3xl text-2xl mb-5">
+                {ConvertIDR(product.price)}
+              </h2>
             )}
-            <p className="mb-5 leading-8 text-gray-600">
+            <p className="mb-5 leading-7 text-gray-600 lg:text-base text-sm">
               {product.description}
             </p>
 
-            <div className="flex mb-5 sm:w-[200px] w-full gap-2">
+            <div className="mb-5 lg:text-base text-sm">
+              {product.totalStock} piece available
+            </div>
+
+            <div className="flex mb-5 lg:w-[200px] md:w-[90%] w-[80%] md:mx-0 mx-auto gap-2">
               <Button variant="outline" onClick={() => handleDecrease()}>
                 -
               </Button>
@@ -111,10 +149,15 @@ const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
               <div className="text-sm text-red-500 mb-5 -mt-4">{message}</div>
             ) : null}
 
-            <div className="mb-5">{product.totalStock} piece available</div>
-
-            <div className="flex w-full sm:w-[300px] gap-3">
-              <Button className="w-full">Add to Cart</Button>
+            <div className="flex md:w-[90%] w-[80%] md:mx-0 mx-auto lg:w-[300px] gap-3">
+              <Button
+                className="w-full"
+                type="button"
+                onClick={() => handleAddCart()}
+                disabled={isLoading}
+              >
+                {isLoading ? <ButtonLoading /> : "Add to Cart"}
+              </Button>
             </div>
           </div>
         </div>
