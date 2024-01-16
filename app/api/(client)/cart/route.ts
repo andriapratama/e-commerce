@@ -1,45 +1,17 @@
-import { authOptions } from "@/lib/auth";
-import prismadb from "@/lib/prismadb";
-import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
 import { z } from "zod";
+import prismadb from "@/lib/prismadb";
+import { NextResponse } from "next/server";
+import { ApiClientValidation } from "@/utils/ApiClientValidation";
 
 export const POST = async (req: Request) => {
   try {
-    const session = await getServerSession(authOptions);
+    const { validation, findUser } = await ApiClientValidation();
 
-    if (!session) {
+    if (validation.error) {
       return NextResponse.json(
-        {
-          message: "Your are not logged in",
-        },
-        {
-          status: 401,
-        }
+        { message: validation.message },
+        { status: validation.status }
       );
-    }
-
-    if (session.user.role !== "member") {
-      return NextResponse.json(
-        { message: "You are not have access" },
-        { status: 401 }
-      );
-    }
-
-    const email = session.user.email;
-
-    const findUser = await prismadb.user.findUnique({
-      where: {
-        email,
-        role: "member",
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!findUser) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     const body = await req.json();
@@ -102,7 +74,7 @@ export const POST = async (req: Request) => {
           quantity,
           total,
           productId: findProduct.id,
-          userId: findUser.id,
+          userId: findUser ? findUser.id : "",
         },
       });
     }
