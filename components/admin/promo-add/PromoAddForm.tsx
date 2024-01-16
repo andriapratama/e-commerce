@@ -304,7 +304,7 @@ const PromoAddForm = () => {
       router.push(`/admin/promos/${slug}`);
 
       setTimeout(() => {
-        toast.success("Data produk berhasil disimpan");
+        toast.success("Data promo berhasil disimpan");
       }, 1000);
 
       setIsLoading(false);
