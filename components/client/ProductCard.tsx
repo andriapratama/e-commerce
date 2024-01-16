@@ -60,26 +60,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             alt={product.name}
             width={300}
             height={300}
-            className="object-contain w-auto lg:h-[300px] h-[150px] rounded-md"
+            className="object-contain w-auto lg:h-[300px] md:h-[200px] h-[120px] rounded-md"
             priority
           />
         </div>
       </Link>
 
       <div
-        className={`w-full text-center ${lugrasimo.className} text-sm text-yellow-600 mt-4`}
+        className={`w-full text-center ${lugrasimo.className} lg:text-sm text-xs text-yellow-600 mt-4`}
       >
         {product.category.name}
       </div>
 
       <div
-        className={`text-base lg:text-xl font-serif w-full text-center mt-2 px-7 ${junge.className}`}
+        className={`text-sm md:text-base lg:text-xl font-serif w-full text-center mt-2 px-7 ${junge.className}`}
       >
         {product.name}
       </div>
 
       <div
-        className={`w-full flex justify-center mt-2 relative ${junge.className}`}
+        className={` text-sm lg:text-base w-full flex justify-center mt-2 relative ${junge.className}`}
       >
         {product.status === "sale" ? (
           <div className="block">
@@ -97,7 +97,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         )}
       </div>
 
-      <div className="w-full flex justify-center items-center gap-5 my-5">
+      <div className="w-full flex justify-center items-center gap-5 my-3 lg:my-5 md:my-4">
         {product.linkGojek ? (
           <Link href={product.linkGojek} target="blank">
             <Image
@@ -105,7 +105,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               alt="gojek"
               width={35}
               height={35}
-              className="object-contain cursor-pointer"
+              className="object-contain cursor-pointer lg:w-[35px] lg:h-[35px] w-[25px] h-[25px]"
             />
           </Link>
         ) : null}
@@ -115,7 +115,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <ShoppingCart
             width={30}
             height={30}
-            className="cursor-pointer"
+            className="cursor-pointer lg:w-[30px] lg:h-[30px] w-[20px] h-[20px]"
             onClick={() => handleAddCart()}
           />
         )}

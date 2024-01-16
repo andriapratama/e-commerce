@@ -6,17 +6,18 @@ export const GET = async (req: Request) => {
   try {
     const url = new URL(req.url);
 
-    const searchParams = url.searchParams.get("search");
-    const pageParams = url.searchParams.get("page");
-    const categoryParams = url.searchParams.get("category");
-    const subCategoryParams = url.searchParams.get("subCategory");
-    const statusParams = url.searchParams.get("status");
+    const searchParams: string | null = url.searchParams.get("search");
+    const pageParams: string | null = url.searchParams.get("page");
+    const categoryParams: string | null = url.searchParams.get("category");
+    const subCategoryParams: string | null =
+      url.searchParams.get("subCategory");
+    const statusParams: string | null = url.searchParams.get("status");
 
-    const page: number = parseInt(pageParams ? pageParams : "0");
+    const page: number = parseInt(pageParams ? pageParams : "1");
 
     let total: number = 0;
 
-    const take: number = 10;
+    const take: number = 20;
 
     const skip: number = (page - 1) * take;
 
@@ -60,7 +61,7 @@ export const GET = async (req: Request) => {
         orderBy: {
           name: "asc",
         },
-        select: select,
+        select,
       });
 
       total = await prismadb.product.count({
@@ -82,7 +83,7 @@ export const GET = async (req: Request) => {
         orderBy: {
           name: "asc",
         },
-        select: select,
+        select,
       });
 
       total = await prismadb.product.count({

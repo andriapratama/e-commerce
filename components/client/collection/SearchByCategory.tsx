@@ -1,57 +1,84 @@
 "use client";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { CategoryType } from "@/types/CategoryType";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { LayoutGrid } from "lucide-react";
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import MobileLogo from "../MobileLogo";
+import Link from "next/link";
 
 interface SearchByCategoryProps {
   categories: CategoryType[];
 }
 
 const SearchByCategory: React.FC<SearchByCategoryProps> = ({ categories }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  const handleSetOpen = () => {
-    if (isOpen === false) {
-      setIsOpen(true);
-    } else if (isOpen === true) {
-      setTimeout(() => {
-        setIsOpen(false);
-      }, 50);
-    }
-  };
+  const [isOpenCategory, setIsOpenCategory] = useState<boolean>(false);
 
   return (
-    <div className="w-full mt-5 lg:hidden">
-      <Select open={isOpen} onOpenChange={handleSetOpen}>
-        <SelectTrigger className="w-full capitalize">
-          <SelectValue placeholder="Select category" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel className="capitalize">Categories</SelectLabel>
-            {categories.map((category) => (
-              <SelectItem
-                value={category.slug}
-                className="capitalize"
-                key={category.slug}
+    <React.Fragment>
+      <div
+        className="flex gap-2 items-center lg:hidden"
+        onClick={() => setIsOpenCategory(true)}
+      >
+        <LayoutGrid width={25} height={25} className="text-black" />
+        <div>Select Category</div>
+      </div>
+
+      <Dialog open={isOpenCategory} onOpenChange={setIsOpenCategory}>
+        <DialogContent className="!top-[50%] !p-0 !pb-5 font-serif max-h-[70vh] overflow-y-auto w-full">
+          <DialogHeader className="pt-5 px-5"></DialogHeader>
+          <DialogTitle>
+            <MobileLogo />
+          </DialogTitle>
+          <DialogTitle className="w-full text-center uppercase mt-2">
+            Categories
+          </DialogTitle>
+
+          <ul>
+            {categories.map((category: CategoryType) => (
+              <li
+                className="w-full text-center font-semibold capitalize mt-5"
+                key={category.name}
               >
-                {category.name}
-              </SelectItem>
+                <Link
+                  href={`collections?category=${category.name}&page=1`}
+                  onClick={() => {
+                    setIsOpenCategory(false);
+                  }}
+                >
+                  {category.name}
+                </Link>
+
+                <ul>
+                  {category.subCategories.map(
+                    (subCategory: { name: string; slug: string }) => (
+                      <li
+                        className="w-full text-center capitalize font-light mt-2"
+                        key={subCategory.name}
+                      >
+                        <Link
+                          href={`collections?category=${category.name}&subCategory=${subCategory.name}&page=1`}
+                          onClick={() => {
+                            setIsOpenCategory(false);
+                          }}
+                        >
+                          {subCategory.name}
+                        </Link>
+                      </li>
+                    )
+                  )}
+                </ul>
+              </li>
             ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    </div>
+          </ul>
+        </DialogContent>
+      </Dialog>
+    </React.Fragment>
   );
 };
 
