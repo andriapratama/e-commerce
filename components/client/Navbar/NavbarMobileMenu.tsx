@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import NavbarLogo from "./NavbarLogo";
+import MobileLogo from "../MobileLogo";
 
 interface Props {
   menus: MenuType[];
@@ -32,7 +32,7 @@ const NavbarMobileMenu: React.FC<Props> = ({ menus }) => {
         <DialogContent className="!top-[40%] !p-0 !pb-5 font-serif">
           <DialogHeader className="pt-5 px-5"></DialogHeader>
           <DialogTitle className="w-full text-center uppercase">
-            <NavbarLogo />
+            <MobileLogo />
           </DialogTitle>
           <DialogTitle className="w-full text-center uppercase mt-2">
             Menu

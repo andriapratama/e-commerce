@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import NavbarSearch from "./NavbarSearch";
-import NavbarLogo from "./NavbarLogo";
+import MobileLogo from "../MobileLogo";
 
 const NavbarMobileSearch = () => {
   const [isOpenSearch, setIsOpenSearch] = useState<boolean>(false);
@@ -26,7 +26,7 @@ const NavbarMobileSearch = () => {
         <DialogContent className="!top-[30%] !p-0 !pb-5 font-serif">
           <DialogHeader className="pt-5 px-5"></DialogHeader>
           <DialogTitle>
-            <NavbarLogo />
+            <MobileLogo />
           </DialogTitle>
           <DialogTitle className="w-full text-center uppercase mt-2">
             Search

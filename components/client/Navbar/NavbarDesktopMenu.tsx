@@ -19,7 +19,8 @@ const NavbarDesktopMenu: React.FC<Props> = ({ categories, menus }) => {
         <li className="w-fit text-center mx-10 capitalize" key={category.name}>
           <Link
             className="hover:border-b border-black"
-            href={`/collections/?category=${category.name}`}
+            href={`/collections/?category=${category.name}&page=1`}
+            onClick={() => setIsOpenCategories(false)}
           >
             {category.name}
           </Link>
@@ -30,9 +31,10 @@ const NavbarDesktopMenu: React.FC<Props> = ({ categories, menus }) => {
                 return (
                   <li className="mb-3" key={subCategory.name}>
                     <Link
-                      href={`/collections/?category=${category.name}&subCategory=${subCategory.name}`}
+                      href={`/collections/?category=${category.name}&subCategory=${subCategory.name}&page=1`}
                       className="font-normal hover:border-b border-black"
                       key={subCategory.name}
+                      onClick={() => setIsOpenCategories(false)}
                     >
                       {subCategory.name}
                     </Link>
