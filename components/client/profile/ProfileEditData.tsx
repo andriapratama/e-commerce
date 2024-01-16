@@ -89,6 +89,8 @@ const ProfileEditData: React.FC<ProfileEditDataProps> = ({
   const findPhoneNumber = () => {
     const userPhone = user.phone;
 
+    setValidPhone(true);
+
     if (userPhone) {
       let code = "";
 

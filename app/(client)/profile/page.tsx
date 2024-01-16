@@ -1,9 +1,8 @@
 import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar";
-import TitlePage from "@/components/client/TitlePage";
-import Topbar from "@/components/client/Topbar";
+import Navbar from "@/components/client/Navbar/Navbar";
 import ProfileContent from "@/components/client/profile/ProfileContent";
 import { useCountCartsHook } from "@/hooks/client/CartHook";
+import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
@@ -18,11 +17,15 @@ const Profil = async () => {
 
     const { countCarts } = await useCountCartsHook();
 
+    const { categories } = await useGetAllCategoriesHook();
+
     return (
-      <section className="w-full min-h-screen">
-        <Topbar role={session?.user.role} userName={user.firstName} />
-        <Navbar countCarts={countCarts} />
-        <TitlePage title="My Profile" />
+      <section className="w-full min-h-[calc(100vh-150px)]">
+        <Navbar
+          countCarts={countCarts}
+          categories={categories}
+          role={session?.user.role}
+        />
         <ProfileContent user={user} />
         <Footer />
       </section>
