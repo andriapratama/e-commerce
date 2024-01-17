@@ -1,8 +1,7 @@
 import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar";
-import TitlePage from "@/components/client/TitlePage";
-import Topbar from "@/components/client/Topbar";
+import Navbar from "@/components/client/Navbar/Navbar";
 import RegisterForm from "@/components/client/register/RegisterForm";
+import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -17,11 +16,11 @@ const Register = async () => {
       isSuccess = true;
     }
 
+    const { categories } = await useGetAllCategoriesHook();
+
     return (
       <section className="w-full">
-        <Topbar role={session?.user.role} />
-        <Navbar />
-        <TitlePage title="Register" />
+        <Navbar categories={categories} role={session?.user.role} />
         <RegisterForm />
         <Footer />
       </section>

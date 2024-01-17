@@ -1,8 +1,7 @@
 import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar";
-import TitlePage from "@/components/client/TitlePage";
-import Topbar from "@/components/client/Topbar";
+import Navbar from "@/components/client/Navbar/Navbar";
 import LoginForm from "@/components/client/login/LoginForm";
+import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -17,13 +16,16 @@ const Login = async () => {
       isSuccess = true;
     }
 
+    const { categories } = await useGetAllCategoriesHook();
+
     return (
       <section className="w-full">
-        <Topbar role={session?.user.role} />
-        <Navbar />
-        <TitlePage title="Login" />
+        <Navbar categories={categories} role={session?.user.role} />
         <LoginForm />
-        <Footer />
+
+        <div className="fixed bottom-0 left-0 right-0">
+          <Footer />
+        </div>
       </section>
     );
   } catch (error) {

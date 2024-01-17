@@ -66,10 +66,15 @@ const LoginForm = () => {
   return (
     <Form {...form}>
       <ToastContainer />
+
+      <div className="w-full text-center lg:mt-[150px] md:mt-[100px] mt-[80px] text-2xl font-semibold">
+        Login
+      </div>
+
       <div className="w-full flex justify-center">
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full sm:w-[300px] md:w-[400px] px-5 pt-3 h-fit rounded border mt-[50px]"
+          className="w-full sm:w-[300px] md:w-[400px] px-5 pt-3 h-fit rounded border mt-[20px]"
         >
           <FormField
             control={form.control}
