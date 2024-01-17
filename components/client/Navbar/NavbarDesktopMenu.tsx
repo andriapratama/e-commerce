@@ -2,6 +2,7 @@
 
 import { CategoryType } from "@/types/CategoryType";
 import { MenuType } from "@/types/MenuType";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import React, { useState } from "react";
 
@@ -76,6 +77,16 @@ const NavbarDesktopMenu: React.FC<Props> = ({ categories, menus }) => {
                     {CategoriesContent()}
                   </ul>
                 </div>
+              </div>
+            );
+          } else if (menu.name === "Logout") {
+            return (
+              <div
+                key={menu.name}
+                className={`cursor-pointer hover:border-b-2 px-1 capitalize border-primary-color`}
+                onClick={() => signOut()}
+              >
+                {menu.name}
               </div>
             );
           } else {
