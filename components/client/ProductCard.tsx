@@ -6,7 +6,7 @@ import { ShoppingCart } from "lucide-react";
 import { Lugrasimo, Junge } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -26,13 +26,9 @@ const junge = Junge({
 
 interface ProductCardProps {
   product: ClientProductType;
-  setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({
-  product,
-  setIsLoadingPage,
-}) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const router = useRouter();
@@ -61,7 +57,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
         className="w-full flex justify-center h-fit relative cursor-pointer"
         onClick={() => {
           router.push(`/collections/${product.slug}`);
-          setIsLoadingPage(true);
         }}
       >
         <Image

@@ -7,7 +7,6 @@ import CollectionProducts from "./CollectionProducts";
 import { ClientProductType } from "@/types/ProductType";
 import Pagination from "../Pagination";
 import { useSearchParams } from "next/navigation";
-import ClientPageLoading from "@/components/ClientPageLoading";
 
 interface CollectionContentProps {
   categories: CategoryType[];
@@ -21,8 +20,6 @@ const CollectionContent: React.FC<CollectionContentProps> = ({
   totalPage,
 }) => {
   const [title, setTitle] = useState<string>("All Products");
-
-  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
 
   const searchParams = useSearchParams();
 
@@ -55,17 +52,12 @@ const CollectionContent: React.FC<CollectionContentProps> = ({
 
             <SearchByCategory categories={categories} />
 
-            <CollectionProducts
-              products={products}
-              setIsLoadingPage={setIsLoadingPage}
-            />
+            <CollectionProducts products={products} />
 
             <Pagination totalPage={totalPage} />
           </div>
         </div>
       </div>
-
-      {isLoadingPage ? <ClientPageLoading /> : null}
     </React.Fragment>
   );
 };
