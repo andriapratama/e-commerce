@@ -67,6 +67,14 @@ const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
   };
 
   const handleAddCart = async () => {
+    if (quantity < 1) {
+      setMessage("Quantity cannot be 0");
+    } else {
+      storeData();
+    }
+  };
+
+  const storeData = async () => {
     try {
       setIsLoading(true);
 
@@ -114,14 +122,14 @@ const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
                   <div className="border -mt-3 border-black z-20"></div>
                 </div>
 
-                <h2 className="lg:text-3xl text-2xl mb-5 text-red-500">
+                <div className="lg:text-3xl text-2xl mb-5 text-red-500">
                   {ConvertIDR(product.salePrice)}
-                </h2>
+                </div>
               </>
             ) : (
-              <h2 className="lg:text-3xl text-2xl mb-5">
+              <div className="lg:text-3xl text-2xl mb-5">
                 {ConvertIDR(product.price)}
-              </h2>
+              </div>
             )}
             <p className="mb-5 leading-7 text-gray-600 lg:text-base text-sm">
               {product.description}
