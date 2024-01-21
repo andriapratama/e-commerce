@@ -1,18 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { ConvertIDR } from "@/utils/ConvertIDR";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Trash2 } from "lucide-react";
-import { CartType } from "@/types/CartType";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import LoadingGif from "@/components/LoadingGif";
-import { useRouter } from "next/navigation";
-import { Checkbox } from "@/components/ui/checkbox";
 import CartTotal from "./CartTotal";
+import { CartType } from "@/types/CartType";
+import { useRouter } from "next/navigation";
+import CartTablePromo from "./CartTablePromo";
+import CartTableProduct from "./CartTableProduct";
+import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import {
   Table,
   TableBody,
@@ -43,76 +38,6 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
     }
   }, [setCartList, carts]);
 
-  const handleIncrease = (index: number) => {
-    const thisCarts = [...cartList];
-
-    const total = thisCarts[index].product.totalStock;
-
-    if (thisCarts[index].quantity >= total) {
-      thisCarts[index].quantity = total;
-    } else {
-      thisCarts[index].quantity = thisCarts[index].quantity + 1;
-    }
-
-    setCartList(thisCarts);
-
-    handleTotal(thisCarts[index].quantity, index);
-
-    handelUpdate(thisCarts[index].id, thisCarts[index].quantity);
-  };
-
-  const handleDecrease = (index: number) => {
-    const thisCarts = [...cartList];
-
-    if (thisCarts[index].quantity <= 1 || !thisCarts[index].quantity) {
-      thisCarts[index].quantity = 1;
-    } else {
-      thisCarts[index].quantity = thisCarts[index].quantity - 1;
-    }
-
-    setCartList(thisCarts);
-
-    handleTotal(thisCarts[index].quantity, index);
-
-    handelUpdate(thisCarts[index].id, thisCarts[index].quantity);
-  };
-
-  const handleSetQuantity = (quantity: number, index: number) => {
-    const thisCarts = [...cartList];
-
-    const total = thisCarts[index].product.totalStock;
-
-    if (quantity >= total) {
-      thisCarts[index].quantity = total;
-    } else if (quantity <= 1 || !quantity) {
-      thisCarts[index].quantity = 1;
-    } else {
-      thisCarts[index].quantity = quantity;
-    }
-
-    setCartList(thisCarts);
-
-    handleTotal(thisCarts[index].quantity, index);
-
-    handelUpdate(thisCarts[index].id, thisCarts[index].quantity);
-  };
-
-  const handleTotal = (quantity: number, index: number) => {
-    const thisCarts = [...cartList];
-
-    const price = thisCarts[index].product.price;
-
-    const saleprice = thisCarts[index].product.salePrice;
-
-    const status = thisCarts[index].product.status;
-
-    const total = status === "sale" ? saleprice * quantity : price * quantity;
-
-    thisCarts[index].total = total;
-
-    setCartList(thisCarts);
-  };
-
   const handleDelete = async (index: number) => {
     const thisCarts = [...cartList];
 
@@ -135,13 +60,6 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
     }
   };
 
-  const handelUpdate = async (cartId: string, quantity: number) => {
-    await axios.patch("/api/cart/update", {
-      cartId,
-      quantity,
-    });
-  };
-
   const handleChecked = async (index: number) => {
     const thisCarts = [...cartList];
 
@@ -150,6 +68,7 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
     thisCarts[index].status = !thisCarts[index].status;
 
     setCartList(thisCarts);
+
     try {
       await axios.patch(`/api/cart/check/${cartId}`);
 
@@ -179,109 +98,33 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
             </TableHeader>
             <TableBody>
               {cartList.length > 0 ? (
-                cartList.map((cart: CartType, index) => (
-                  <TableRow key={cart.product.slug}>
-                    <TableCell className="text-center">
-                      <Checkbox
-                        checked={cart.status}
-                        onCheckedChange={() => handleChecked(index)}
+                cartList.map((cart: CartType, index) => {
+                  if (cart.product) {
+                    return (
+                      <CartTableProduct
+                        cart={cart}
+                        index={index}
+                        cartList={cartList}
+                        setCartList={setCartList}
+                        handleChecked={handleChecked}
+                        handleDelete={handleDelete}
                       />
-                    </TableCell>
+                    );
+                  }
 
-                    <TableCell className="flex justify-center items-center">
-                      <Image
-                        src={cart.product.image}
-                        alt={cart.product.name}
-                        width={50}
-                        height={50}
-                        className="object-contain h-[50px] w-auto"
+                  if (cart.promo) {
+                    return (
+                      <CartTablePromo
+                        cart={cart}
+                        index={index}
+                        cartList={cartList}
+                        setCartList={setCartList}
+                        handleChecked={handleChecked}
+                        handleDelete={handleDelete}
                       />
-                    </TableCell>
-                    <TableCell className="capitalize">
-                      {cart.product.name}
-                    </TableCell>
-                    <TableCell>
-                      {cart.product.status === "sale" ? (
-                        <div className="block">
-                          <div className="w-fit text-gray-600">
-                            {ConvertIDR(cart.product.price)}
-                            <div className="border -mt-3 border-black z-20"></div>
-                          </div>
-
-                          <div className="mt-3 text-red-700">
-                            {ConvertIDR(cart.product.salePrice)}
-                          </div>
-                        </div>
-                      ) : (
-                        ConvertIDR(cart.product.price)
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-1 justify-center">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            handleDecrease(index);
-                          }}
-                          disabled={cart.quantity <= 1 ? true : false}
-                        >
-                          -
-                        </Button>
-                        <Input
-                          type="text"
-                          className="text-center w-[100px] h-9"
-                          value={cart.quantity}
-                          onChange={(e) =>
-                            handleSetQuantity(parseInt(e.target.value), index)
-                          }
-                        />
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleIncrease(index)}
-                          disabled={
-                            cart.quantity >= cart.product.totalStock
-                              ? true
-                              : false
-                          }
-                        >
-                          +
-                        </Button>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {cart.product.status === "sale" ? (
-                        <div className="block">
-                          <div className="w-fit text-gray-600">
-                            {ConvertIDR(cart.product.price * cart.quantity)}
-                            <div className="border -mt-3 border-black z-20"></div>
-                          </div>
-
-                          <div className="mt-3 text-red-700">
-                            {ConvertIDR(cart.product.salePrice * cart.quantity)}
-                          </div>
-                        </div>
-                      ) : (
-                        ConvertIDR(cart.total)
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center justify-center">
-                        {cart.isLoading ? (
-                          <LoadingGif />
-                        ) : (
-                          <Trash2
-                            className="text-red-500 cursor-pointer"
-                            width={18}
-                            height={18}
-                            onClick={() => handleDelete(index)}
-                          />
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
+                    );
+                  }
+                })
               ) : (
                 <TableRow>
                   <TableCell colSpan={7} className="h-24 text-center">
