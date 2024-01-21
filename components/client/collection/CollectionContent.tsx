@@ -43,7 +43,7 @@ const CollectionContent: React.FC<CollectionContentProps> = ({
 
   return (
     <React.Fragment>
-      <div className="w-full flex justify-center mt-[80px] lg:mt-[150px]">
+      <div className="w-full lg:min-h-[calc(100vh-536px)] md:min-h-[calc(100vh-505px)]  min-h-[calc(100vh-126px)] flex justify-center mt-[80px] lg:mt-[150px]">
         <div className="w-[90%] flex gap-5">
           <div className="w-full">
             <div className="w-full text-center text-2xl font-serif font-semibold mb-3 capitalize">
@@ -52,7 +52,13 @@ const CollectionContent: React.FC<CollectionContentProps> = ({
 
             <SearchByCategory categories={categories} />
 
-            <CollectionProducts products={products} />
+            {products.length < 1 ? (
+              <div className="mt-20 w-full text-center">
+                Opss, product not found.
+              </div>
+            ) : (
+              <CollectionProducts products={products} />
+            )}
 
             <Pagination totalPage={totalPage} />
           </div>

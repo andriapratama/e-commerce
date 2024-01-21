@@ -98,7 +98,7 @@ const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
 
   return (
     <React.Fragment>
-      <div className="w-full flex justify-center lg:mt-[150px] md:mt-[100px] mt-[80px] font-serif">
+      <div className="w-full lg:min-h-[calc(100vh-537px)] flex justify-center lg:mt-[150px] md:mt-[100px] mt-[80px] font-serif">
         <div className="md:w-[60%] sm:w-[80%] w-[90%] grid sm:grid-cols-2 grid-cols-1 gap-5">
           <div className="w-full flex justify-center relative">
             <StatusProduct status={product.status} />
