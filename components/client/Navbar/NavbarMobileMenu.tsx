@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import MobileLogo from "../MobileLogo";
+import { signOut } from "next-auth/react";
 
 interface Props {
   menus: MenuType[];
@@ -38,15 +39,34 @@ const NavbarMobileMenu: React.FC<Props> = ({ menus }) => {
             Menu
           </DialogTitle>
           <ul className="w-full h-fit mt-3">
-            {menus.map((menu) => (
-              <li
-                className="w-full text-center mb-3 uppercase"
-                key={menu.name}
-                onClick={() => setIsShowMenu(false)}
-              >
-                <Link href={menu.link}>{menu.name}</Link>
-              </li>
-            ))}
+            {menus.map((menu) => {
+              if (menu.status === "active") {
+                if (menu.name === "Logout") {
+                  return (
+                    <li
+                      className="w-full text-center mb-3 uppercase"
+                      key={menu.name}
+                      onClick={() => {
+                        signOut();
+                        setIsShowMenu(false);
+                      }}
+                    >
+                      {menu.name}
+                    </li>
+                  );
+                } else {
+                  return (
+                    <li
+                      className="w-full text-center mb-3 uppercase"
+                      key={menu.name}
+                      onClick={() => setIsShowMenu(false)}
+                    >
+                      <Link href={menu.link}>{menu.name}</Link>
+                    </li>
+                  );
+                }
+              }
+            })}
           </ul>
         </DialogContent>
       </Dialog>
