@@ -8,33 +8,24 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 const Login = async () => {
-  let isSuccess = false;
-  try {
-    const session = await getServerSession(authOptions);
+  const { categories } = await useGetAllCategoriesHook();
 
-    if (session?.user.role === "member") {
-      isSuccess = true;
-    }
+  const session = await getServerSession(authOptions);
 
-    const { categories } = await useGetAllCategoriesHook();
-
-    return (
-      <section className="w-full">
-        <Navbar categories={categories} role={session?.user.role} />
-        <LoginForm />
-
-        <div className="fixed bottom-0 left-0 right-0">
-          <Footer />
-        </div>
-      </section>
-    );
-  } catch (error) {
-    console.log(error);
-  } finally {
-    if (isSuccess === true) {
-      redirect("/");
-    }
+  if (session?.user.role === "member") {
+    redirect("/");
   }
+
+  return (
+    <section className="w-full">
+      <Navbar categories={categories} />
+      <LoginForm />
+
+      <div className="fixed bottom-0 left-0 right-0">
+        <Footer />
+      </div>
+    </section>
+  );
 };
 
 export default Login;

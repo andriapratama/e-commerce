@@ -10,47 +10,86 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import PromoDetailContent from "@/components/client/promo-detail/PromoDetailContent";
 import React from "react";
+import { PromoType } from "@/types/PromoType";
+import { redirect } from "next/navigation";
 
 const PromoDetail = async ({ params }: { params: { id: string } }) => {
   const slug: string = params.id;
 
+  let thisPromo: PromoType = {
+    createdAt: "",
+    description: "",
+    firstPrice: 0,
+    image: "",
+    imagePathname: "",
+    name: "",
+    promoPrice: 0,
+    slug: "",
+    status: "archive",
+  };
+
+  let isPromoNotFound: boolean = false;
+
+  const { categories } = await useGetAllCategoriesHook();
+
   try {
-    const session = await getServerSession(authOptions);
-
-    const { countCarts } = await useCountCartsHook();
-
-    const { categories } = await useGetAllCategoriesHook();
-
     const { promo } = await useGetOnePromoHook(slug);
 
+    thisPromo = promo;
+  } catch (error: any) {
+    if (error.response.status === 404) {
+      isPromoNotFound = true;
+    }
+  }
+
+  let thisTotalStock: number = 0;
+
+  try {
     const { totalStock } = await useGetPromoStockHook(slug);
 
-    return (
-      <section className="w-full">
+    thisTotalStock = totalStock;
+  } catch (error) {
+    thisTotalStock = 0;
+  }
+
+  const session = await getServerSession(authOptions);
+
+  let thisCountCarts: number = 0;
+
+  if (session?.user.role === "member") {
+    try {
+      const { countCarts } = await useCountCartsHook();
+
+      thisCountCarts = countCarts;
+    } catch (error: any) {
+      if (error.response.status === 404) {
+        redirect("/denied");
+      }
+    }
+  }
+
+  return (
+    <section className="w-full">
+      {session?.user.role === "member" ? (
         <Navbar
           role={session?.user.role}
           categories={categories}
-          countCarts={countCarts}
+          countCarts={thisCountCarts}
         />
-        <PromoDetailContent promo={promo} totalStock={totalStock} />
-        <Footer />
-      </section>
-    );
-  } catch (error) {
-    const { categories } = await useGetAllCategoriesHook();
-
-    const { promo } = await useGetOnePromoHook(slug);
-
-    const { totalStock } = await useGetPromoStockHook(slug);
-
-    return (
-      <section className="w-full">
+      ) : (
         <Navbar categories={categories} />
-        <PromoDetailContent promo={promo} totalStock={totalStock} />
-        <Footer />
-      </section>
-    );
-  }
+      )}
+
+      {isPromoNotFound ? (
+        <div className="w-full md:min-h-[calc(100vh-386px)] min-h-[calc(100vh-52px)] flex justify-center items-center">
+          Opss, promo not found.
+        </div>
+      ) : (
+        <PromoDetailContent promo={thisPromo} totalStock={thisTotalStock} />
+      )}
+      <Footer />
+    </section>
+  );
 };
 
 export default PromoDetail;

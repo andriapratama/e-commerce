@@ -5,33 +5,62 @@ import { useCountCartsHook } from "@/hooks/client/CartHook";
 import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
 import { authOptions } from "@/lib/auth";
+import { UserType } from "@/types/UserType";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
 
 const Profil = async () => {
-  try {
-    const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
-    const { user } = await useGetUserByEmailHook();
-
-    const { countCarts } = await useCountCartsHook();
-
+  if (session?.user.role === "member") {
     const { categories } = await useGetAllCategoriesHook();
+
+    let thisUser: UserType = {
+      firstName: "",
+      lastName: "",
+      email: "",
+      role: "guest",
+      address: null,
+      phone: null,
+      active: false,
+    };
+
+    let thisCountCarts: number = 0;
+
+    try {
+      const { user } = await useGetUserByEmailHook();
+
+      thisUser = user;
+    } catch (error: any) {
+      if (error.response.status === 404) {
+        redirect("/denied");
+      }
+    }
+
+    try {
+      const { countCarts } = await useCountCartsHook();
+
+      thisCountCarts = countCarts;
+    } catch (error: any) {
+      if (error.response.status === 404) {
+        redirect("/denied");
+      }
+    }
 
     return (
       <section className="w-full min-h-[calc(100vh-150px)]">
         <Navbar
-          countCarts={countCarts}
+          countCarts={thisCountCarts}
           categories={categories}
           role={session?.user.role}
         />
-        <ProfileContent user={user} />
+        <ProfileContent user={thisUser} />
         <Footer />
       </section>
     );
-  } catch (error) {
-    return redirect("/login");
+  } else {
+    redirect("/login");
   }
 };
 

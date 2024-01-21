@@ -6,76 +6,62 @@ import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { useGetAllProductsHook } from "@/hooks/client/ProductHook";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import React from "react";
 
 const Collections = async ({ searchParams }: any) => {
-  try {
-    const session = await getServerSession(authOptions);
+  const categoryParams: string = searchParams.category;
 
-    const { categories } = await useGetAllCategoriesHook();
+  const subCategoryParams: string = searchParams.subCategory;
 
-    const { countCarts } = await useCountCartsHook();
+  const statusParams: string = searchParams.status;
 
-    const categoryParams: string = searchParams.category;
+  const pageParams: string = searchParams.page;
 
-    const subCategoryParams: string = searchParams.subCategory;
+  let thisCountCarts: number = 0;
 
-    const statusParams: string = searchParams.status;
+  const { products, totalPage } = await useGetAllProductsHook(
+    categoryParams,
+    subCategoryParams,
+    statusParams,
+    pageParams
+  );
 
-    const pageParams: string = searchParams.page;
+  const { categories } = await useGetAllCategoriesHook();
 
-    const { products, totalPage } = await useGetAllProductsHook(
-      categoryParams,
-      subCategoryParams,
-      statusParams,
-      pageParams
-    );
+  const session = await getServerSession(authOptions);
 
-    return (
-      <section className="w-full min-h-screen">
+  if (session?.user.role === "member") {
+    try {
+      const { countCarts } = await useCountCartsHook();
+
+      thisCountCarts = countCarts;
+    } catch (error: any) {
+      if (error.response.status === 404) {
+        redirect("/denied");
+      }
+    }
+  }
+
+  return (
+    <section className="w-full">
+      {session?.user.role === "member" ? (
         <Navbar
-          countCarts={countCarts}
+          countCarts={thisCountCarts}
           categories={categories}
           role={session?.user.role}
         />
-        <CollectionContent
-          categories={categories}
-          products={products}
-          totalPage={totalPage}
-        />
-        <Footer />
-      </section>
-    );
-  } catch (error) {
-    const { categories } = await useGetAllCategoriesHook();
-
-    const categoryParams: string = searchParams.category;
-
-    const subCategoryParams: string = searchParams.subCategory;
-
-    const statusParams: string = searchParams.status;
-
-    const pageParams: string = searchParams.page;
-
-    const { products, totalPage } = await useGetAllProductsHook(
-      categoryParams,
-      subCategoryParams,
-      statusParams,
-      pageParams
-    );
-
-    return (
-      <section className="w-full min-h-screen">
+      ) : (
         <Navbar categories={categories} />
-        <CollectionContent
-          categories={categories}
-          products={products}
-          totalPage={totalPage}
-        />
-        <Footer />
-      </section>
-    );
-  }
+      )}
+      <CollectionContent
+        categories={categories}
+        products={products}
+        totalPage={totalPage}
+      />
+      <Footer />
+    </section>
+  );
 };
 
 export default Collections;

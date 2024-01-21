@@ -8,30 +8,21 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 const Register = async () => {
-  let isSuccess = false;
-  try {
-    const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
-    if (session?.user.role === "member") {
-      isSuccess = true;
-    }
-
-    const { categories } = await useGetAllCategoriesHook();
-
-    return (
-      <section className="w-full">
-        <Navbar categories={categories} role={session?.user.role} />
-        <RegisterForm />
-        <Footer />
-      </section>
-    );
-  } catch (error) {
-    console.log(error);
-  } finally {
-    if (isSuccess === true) {
-      redirect("/");
-    }
+  if (session?.user.role === "member") {
+    redirect("/");
   }
+
+  const { categories } = await useGetAllCategoriesHook();
+
+  return (
+    <section className="w-full">
+      <Navbar categories={categories} />
+      <RegisterForm />
+      <Footer />
+    </section>
+  );
 };
 
 export default Register;

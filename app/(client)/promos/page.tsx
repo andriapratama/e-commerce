@@ -5,43 +5,47 @@ import { useCountCartsHook } from "@/hooks/client/CartHook";
 import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { useGetAllPromoHook } from "@/hooks/client/PromoHook";
 import { authOptions } from "@/lib/auth";
+import { PromoType } from "@/types/PromoType";
 import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import React from "react";
 
 const Promos = async () => {
-  try {
-    const session = await getServerSession(authOptions);
+  let thisCountCarts: number = 0;
 
-    const { categories } = await useGetAllCategoriesHook();
+  const { categories } = await useGetAllCategoriesHook();
 
-    const { countCarts } = await useCountCartsHook();
+  const { promos } = await useGetAllPromoHook();
 
-    const { promos } = await useGetAllPromoHook();
+  const session = await getServerSession(authOptions);
 
-    return (
-      <section className="min-h-screen !w-full overflow-hidden">
+  if (session?.user.role === "member") {
+    try {
+      const { countCarts } = await useCountCartsHook();
+
+      thisCountCarts = countCarts;
+    } catch (error: any) {
+      if (error.response.status === 404) {
+        redirect("/denied");
+      }
+    }
+  }
+
+  return (
+    <section className="!w-full overflow-hidden">
+      {session?.user.role === "member" ? (
         <Navbar
           categories={categories}
-          countCarts={countCarts}
+          countCarts={thisCountCarts}
           role={session?.user.role}
         />
-        <PromoContent promos={promos} />
-        <Footer />
-      </section>
-    );
-  } catch (error) {
-    const { categories } = await useGetAllCategoriesHook();
-
-    const { promos } = await useGetAllPromoHook();
-
-    return (
-      <section className="min-h-screen !w-full overflow-hidden">
+      ) : (
         <Navbar categories={categories} />
-        <PromoContent promos={promos} />
-        <Footer />
-      </section>
-    );
-  }
+      )}
+      <PromoContent promos={promos} />
+      <Footer />
+    </section>
+  );
 };
 
 export default Promos;
