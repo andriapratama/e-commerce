@@ -37,7 +37,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     try {
       setIsLoading(true);
 
-      const res = await axios.post("/api/cart", {
+      const res = await axios.post("/api/cart/product/post", {
         productSlug: product.slug,
         quantity: 1,
       });

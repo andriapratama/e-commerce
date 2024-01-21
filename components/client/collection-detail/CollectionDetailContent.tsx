@@ -78,7 +78,7 @@ const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
     try {
       setIsLoading(true);
 
-      await axios.post("/api/cart", {
+      await axios.post("/api/cart/product/post", {
         productSlug: slug,
         quantity,
       });
@@ -109,6 +109,7 @@ const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
               height={600}
               className="object-cover sm:h-[500px] md:h-[400px] h-[300px] w-auto rounded cursor-pointer"
               onClick={() => setIsOpenImage(true)}
+              priority
             />
           </div>
           <div className="w-full">
