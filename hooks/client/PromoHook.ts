@@ -22,7 +22,7 @@ export const useGetPromoStockHook = async (slug: string) => {
     `${process.env.WEB_URL}/api/promo/${slug}/stock/get`
   );
 
-  const totalStock = res.data.data;
+  const totalStock: number = res.data.data;
 
   return { totalStock };
 };

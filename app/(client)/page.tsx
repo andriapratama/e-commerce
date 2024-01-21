@@ -14,71 +14,59 @@ import { useGetAllPromoHook } from "@/hooks/client/PromoHook";
 import Promo from "@/components/client/home/Promo";
 
 const Home = async () => {
-  let isActive: boolean = true;
+  const { products: productsBest } = await useGetProductsByStatusHook("best");
 
-  try {
-    const session = await getServerSession(authOptions);
+  const { products: productsSale } = await useGetProductsByStatusHook("sale");
 
-    const { user } = await useGetUserByEmailHook();
+  const { products: productsNew } = await useGetProductsByStatusHook("new");
 
-    isActive = user.active;
+  const { categories } = await useGetAllCategoriesHook();
 
-    const { products: productsBest } = await useGetProductsByStatusHook("best");
+  const { heros } = await useGetAllHerosData();
 
-    const { products: productsSale } = await useGetProductsByStatusHook("sale");
+  const { promos } = await useGetAllPromoHook();
 
-    const { products: productsNew } = await useGetProductsByStatusHook("new");
+  const session = await getServerSession(authOptions);
 
-    const { categories } = await useGetAllCategoriesHook();
+  let thisCountCarts: number = 0;
 
-    const { countCarts } = await useCountCartsHook();
+  if (session?.user.role === "member") {
+    try {
+      const { user } = await useGetUserByEmailHook();
 
-    const { heros } = await useGetAllHerosData();
+      if (user.active === false) redirect("/announcement");
+    } catch (error: any) {
+      if (error.response.status === 404) redirect("/denied");
+    }
 
-    const { promos } = await useGetAllPromoHook();
+    try {
+      const { countCarts } = await useCountCartsHook();
 
-    return (
-      <main className="min-h-screen !w-full overflow-x-hidden">
+      thisCountCarts = countCarts;
+    } catch (error: any) {
+      if (error.response.status === 404) redirect("/denied");
+    }
+  }
+
+  return (
+    <main className="min-h-screen !w-full overflow-x-hidden">
+      {session?.user.role === "member" ? (
         <Navbar
-          countCarts={countCarts}
+          countCarts={thisCountCarts}
           role={session?.user.role}
           categories={categories}
         />
-        <Hero heros={heros} />
-        <Products products={productsBest} title="best seller" />
-        <Products products={productsNew} title="new" />
-        <Products products={productsSale} title="sale" />
-        <Promo promos={promos} />
-        <Footer />
-      </main>
-    );
-  } catch (error) {
-    const { products: productsBest } = await useGetProductsByStatusHook("best");
-
-    const { products: productsSale } = await useGetProductsByStatusHook("sale");
-
-    const { products: productsNew } = await useGetProductsByStatusHook("new");
-
-    const { categories } = await useGetAllCategoriesHook();
-
-    const { heros } = await useGetAllHerosData();
-
-    const { promos } = await useGetAllPromoHook();
-
-    return (
-      <main className="min-h-screen !w-full overflow-x-hidden">
+      ) : (
         <Navbar categories={categories} />
-        <Hero heros={heros} />
-        <Products products={productsBest} title="best seller" />
-        <Products products={productsNew} title="new" />
-        <Products products={productsSale} title="sale" />
-        <Promo promos={promos} />
-        <Footer />
-      </main>
-    );
-  } finally {
-    isActive === false && redirect("/announcement");
-  }
+      )}
+      <Hero heros={heros} />
+      <Products products={productsBest} title="best seller" />
+      <Products products={productsNew} title="new" />
+      <Products products={productsSale} title="sale" />
+      <Promo promos={promos} />
+      <Footer />
+    </main>
+  );
 };
 
 export default Home;
