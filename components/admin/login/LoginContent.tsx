@@ -57,7 +57,10 @@ const LoginContent = () => {
   });
 
   useEffect(() => {
-    if (session.status === "unauthenticated") {
+    if (
+      session.status === "unauthenticated" ||
+      session.data?.user.role === "member"
+    ) {
       setIsLoadingPage(false);
     }
   }, [session]);
