@@ -47,6 +47,16 @@ export const GET = async (
             slug: true,
           },
         },
+        promo: {
+          select: {
+            name: true,
+            firstPrice: true,
+            promoPrice: true,
+            status: true,
+            image: true,
+            slug: true,
+          },
+        },
         createdAt: true,
       },
       orderBy: {

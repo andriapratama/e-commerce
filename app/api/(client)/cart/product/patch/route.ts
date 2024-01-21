@@ -45,6 +45,10 @@ export const PATCH = async (req: Request) => {
       return NextResponse.json({ message: "Cart not found" }, { status: 404 });
     }
 
+    if (!findCart.product) {
+      return null;
+    }
+
     const findProduct = await prismadb.product.findUnique({
       where: {
         id: findCart.product.id,

@@ -17,7 +17,7 @@ export const POST = async (req: Request) => {
     const body = await req.json();
 
     const schema = z.object({
-      productSlug: z.string().min(1),
+      promoSlug: z.string().min(1),
       quantity: z.number().min(1),
     });
 
@@ -32,40 +32,37 @@ export const POST = async (req: Request) => {
       );
     }
 
-    const { productSlug, quantity } = response.data;
+    const { promoSlug, quantity } = response.data;
 
-    const findProduct = await prismadb.product.findUnique({
+    const findPromo = await prismadb.promo.findUnique({
       where: {
-        slug: productSlug,
+        slug: promoSlug,
       },
     });
 
-    if (!findProduct) {
+    if (!findPromo) {
       return NextResponse.json(
         { message: "Product not found" },
         { status: 404 }
       );
     }
 
-    const findProductInCart = await prismadb.cart.findFirst({
+    const findPromoInCart = await prismadb.cart.findFirst({
       where: {
-        productId: findProduct.id,
+        promoId: findPromo.id,
       },
     });
 
-    const total =
-      findProduct.status === "sale"
-        ? findProduct.salePrice * quantity
-        : findProduct.price * quantity;
+    const total = findPromo.promoPrice * quantity;
 
-    if (findProductInCart) {
+    if (findPromoInCart) {
       await prismadb.cart.update({
         where: {
-          id: findProductInCart.id,
+          id: findPromoInCart.id,
         },
         data: {
-          quantity: findProductInCart.quantity + quantity,
-          total: findProductInCart.total + total,
+          quantity: findPromoInCart.quantity + quantity,
+          total: findPromoInCart.total + total,
         },
       });
     } else {
@@ -73,18 +70,18 @@ export const POST = async (req: Request) => {
         data: {
           quantity,
           total,
-          productId: findProduct.id,
+          promoId: findPromo.id,
           userId: findUser ? findUser.id : "",
         },
       });
     }
 
     return NextResponse.json(
-      { message: "Your product are saved to your cart" },
+      { message: "Your promo are saved to your cart" },
       { status: 201 }
     );
   } catch (error) {
-    console.log("[CART_POST]" + error);
+    console.log("[CART_PROMO_POST]" + error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };
