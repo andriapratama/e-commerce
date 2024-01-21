@@ -15,6 +15,9 @@ export const GET = async (
 
     const product = await prismadb.product.findUnique({
       where: {
+        NOT: {
+          status: "archive",
+        },
         slug: params.slug,
       },
       select: {

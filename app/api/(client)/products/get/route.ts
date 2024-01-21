@@ -52,6 +52,9 @@ export const GET = async (req: Request) => {
     if (categoryParams && subCategoryParams) {
       products = await prismadb.product.findMany({
         where: {
+          NOT: {
+            status: "archive",
+          },
           subCategory: {
             name: subCategoryParams,
           },
@@ -66,6 +69,9 @@ export const GET = async (req: Request) => {
 
       total = await prismadb.product.count({
         where: {
+          NOT: {
+            status: "archive",
+          },
           subCategory: {
             name: subCategoryParams,
           },
@@ -74,6 +80,9 @@ export const GET = async (req: Request) => {
     } else if (categoryParams) {
       products = await prismadb.product.findMany({
         where: {
+          NOT: {
+            status: "archive",
+          },
           category: {
             name: categoryParams,
           },
@@ -88,6 +97,9 @@ export const GET = async (req: Request) => {
 
       total = await prismadb.product.count({
         where: {
+          NOT: {
+            status: "archive",
+          },
           category: {
             name: categoryParams,
           },
@@ -111,6 +123,9 @@ export const GET = async (req: Request) => {
     } else if (searchParams) {
       products = await prismadb.product.findMany({
         where: {
+          NOT: {
+            status: "archive",
+          },
           OR: [
             {
               name: { contains: searchParams },
@@ -125,6 +140,11 @@ export const GET = async (req: Request) => {
       });
     } else if (page > 0) {
       products = await prismadb.product.findMany({
+        where: {
+          NOT: {
+            status: "archive",
+          },
+        },
         take,
         skip,
         orderBy: {
@@ -133,7 +153,13 @@ export const GET = async (req: Request) => {
         select,
       });
 
-      total = await prismadb.product.count();
+      total = await prismadb.product.count({
+        where: {
+          NOT: {
+            status: "archive",
+          },
+        },
+      });
     } else {
       products = await prismadb.product.findMany({
         orderBy: {
