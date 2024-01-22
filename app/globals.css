@@ -146,4 +146,8 @@
   .admin-promo-detail-table__title {
     @apply p-5 border-b font-semibold capitalize text-base;
   }
+
+  .client-title {
+    @apply w-full text-center text-2xl font-serif font-semibold mb-3 capitalize;
+  }
 }
