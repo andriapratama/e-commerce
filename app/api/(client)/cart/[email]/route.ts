@@ -30,6 +30,18 @@ export const GET = async (
     const carts = await prismadb.cart.findMany({
       where: {
         userId: findUser.id,
+        NOT: [
+          {
+            product: {
+              status: "archive",
+            },
+          },
+          {
+            promo: {
+              status: "archive",
+            },
+          },
+        ],
       },
       select: {
         id: true,

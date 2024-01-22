@@ -30,6 +30,18 @@ export const GET = async (
     const countCarts = await prismadb.cart.count({
       where: {
         userId: findUser.id,
+        NOT: [
+          {
+            product: {
+              status: "archive",
+            },
+          },
+          {
+            promo: {
+              status: "archive",
+            },
+          },
+        ],
       },
     });
 
