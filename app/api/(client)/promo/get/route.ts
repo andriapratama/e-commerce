@@ -4,6 +4,11 @@ import { NextResponse } from "next/server";
 export const GET = async () => {
   try {
     const promos = await prismadb.promo.findMany({
+      where: {
+        NOT: {
+          status: "archive",
+        },
+      },
       orderBy: {
         createdAt: "asc",
       },
