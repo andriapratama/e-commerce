@@ -215,8 +215,10 @@ model Cart {
   total       Int
   status      Boolean @default(false)
 
-  productId   String
-  product     Product @relation("ProductToCart", fields: [productId], references: [id])
+  productId   String?
+  product     Product? @relation("ProductToCart", fields: [productId], references: [id])
+  promoId     String?
+  promo       Promo? @relation("PromoToCart", fields: [promoId], references: [id])
   userId      String
   user        User @relation("UserToCart", fields: [userId], references: [id])
 
@@ -225,6 +227,7 @@ model Cart {
 
   @@index([productId])
   @@index([userId])
+  @@index([promoId])
 }
 
 model Order {
@@ -271,14 +274,17 @@ model OrderDetail {
 
   orderId     String
   order       Order @relation("OrderToOrderDetail", fields: [orderId], references: [id])
-  productId   String
-  product     Product @relation("ProductToOrderDetail", fields: [productId], references: [id])
+  productId   String?
+  product     Product? @relation("ProductToOrderDetail", fields: [productId], references: [id])
+  promoId     String?
+  promo       Promo? @relation("PromoToOrderDetail", fields: [promoId], references: [id])
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([productId])
   @@index([orderId])
+  @@index([promoId])
 }
 
 model OrderLog {
@@ -350,6 +356,8 @@ model Promo {
 
   promoProductProvision   PromoProductProvision[] @relation("PromoToPromoProductProvision")
   promoProductBonus       PromoProductBonus[] @relation("PromoToPromoProductBonus")
+  cart                    Cart[] @relation("PromoToCart")
+  orderDetail             OrderDetail[] @relation("PromoToOrderDetail")
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -396,4 +404,5 @@ model PromoProductBonus {
 enum PromoStatus {
   archive
   active
+  deleted
 }
