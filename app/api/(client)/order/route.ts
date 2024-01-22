@@ -84,6 +84,17 @@ export const POST = async (req: Request) => {
             salePrice: true,
           },
         },
+        promo: {
+          select: {
+            id: true,
+            name: true,
+            firstPrice: true,
+            promoPrice: true,
+            status: true,
+            image: true,
+            slug: true,
+          },
+        },
       },
     });
 
@@ -96,12 +107,12 @@ export const POST = async (req: Request) => {
     let invoice: string = "";
 
     if (!findOrder) {
-      invoice = "ODR1";
+      invoice = "ODR001";
     } else {
       const prevInvoice = findOrder.invoice;
-      const getNumber = prevInvoice.replace("ODR", "");
+      const getNumber = prevInvoice.replace("ODR00", "");
       const number = parseInt(getNumber);
-      invoice = `ODR${number + 1}`;
+      invoice = `ODR00${number + 1}`;
     }
 
     const order = await prismadb.order.create({
@@ -125,22 +136,41 @@ export const POST = async (req: Request) => {
     let totalItem: number = 0;
 
     for (let i = 0; i < findCart.length; i++) {
-      const product = findCart[i].product;
       const cart = findCart[i];
 
       subTotal += cart.total;
       totalItem += cart.quantity;
 
-      await prismadb.orderDetail.create({
-        data: {
-          name: product.name,
-          price: product.status === "sale" ? product.salePrice : product.price,
-          quantity: cart.quantity,
-          total: cart.total,
-          productId: product.id,
-          orderId: order.id,
-        },
-      });
+      if (cart.product) {
+        const product = cart.product;
+
+        await prismadb.orderDetail.create({
+          data: {
+            name: product.name,
+            price:
+              product.status === "sale" ? product.salePrice : product.price,
+            quantity: cart.quantity,
+            total: cart.total,
+            productId: product.id,
+            orderId: order.id,
+          },
+        });
+      }
+
+      if (cart.promo) {
+        const promo = cart.promo;
+
+        await prismadb.orderDetail.create({
+          data: {
+            name: promo.name,
+            price: promo.promoPrice,
+            quantity: cart.quantity,
+            total: cart.total,
+            promoId: promo.id,
+            orderId: order.id,
+          },
+        });
+      }
     }
 
     tax = (subTotal / 100) * 11;

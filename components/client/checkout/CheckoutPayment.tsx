@@ -66,9 +66,16 @@ const CheckoutPayment: React.FC<CheckoutPaymentProps> = ({ note }) => {
       if (resOrder.status === 201) {
         setIsOpenSuccessAlert(true);
       }
+
+      setIsLoading(false);
+      setIsOpenWarningAlert(false);
     } catch (error: any) {
+      if (error.response.status === 401 || error.response.status === 404) {
+        router.push("/denied");
+      }
+
       toast.error(error.response.data.message);
-    } finally {
+
       setIsLoading(false);
       setIsOpenWarningAlert(false);
     }
