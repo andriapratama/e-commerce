@@ -7,41 +7,61 @@ import {
 } from "@/hooks/client/CartHook";
 import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { authOptions } from "@/lib/auth";
+import { CartType } from "@/types/CartType";
 import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import React from "react";
 
 const Cart = async () => {
-  try {
-    const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
-    const { carts } = await useGetAllCartsByEmail();
+  const { categories } = await useGetAllCategoriesHook();
 
-    const { countCarts } = await useCountCartsHook();
+  let thisCountCarts: number = 0;
 
-    const { categories } = await useGetAllCategoriesHook();
+  let thisCarts: CartType[] = [];
 
-    return (
-      <section className="w-full min-h-screen">
-        <Navbar
-          countCarts={countCarts}
-          categories={categories}
-          role={session?.user.role}
-        />
-        <CartTable carts={carts} />
-        <Footer />
-      </section>
-    );
-  } catch (error) {
-    const { categories } = await useGetAllCategoriesHook();
+  if (session?.user.role === "member") {
+    try {
+      const { countCarts } = await useCountCartsHook();
 
-    return (
-      <section className="w-full min-h-screen">
-        <Navbar categories={categories} />
-        <CartTable />
-        <Footer />
-      </section>
-    );
+      thisCountCarts = countCarts;
+    } catch (error: any) {
+      if (error.response.status === 404) redirect("/denied");
+    }
+
+    try {
+      const { carts } = await useGetAllCartsByEmail();
+
+      thisCarts = carts;
+    } catch (error: any) {
+      if (error.response.status === 404) redirect("/denied");
+    }
   }
+
+  return (
+    <section className="w-full">
+      {session?.user.role === "member" ? (
+        <React.Fragment>
+          <Navbar
+            countCarts={thisCountCarts}
+            categories={categories}
+            role={session?.user.role}
+          />
+
+          <CartTable carts={thisCarts} />
+        </React.Fragment>
+      ) : (
+        <React.Fragment>
+          <Navbar categories={categories} />
+
+          <CartTable />
+        </React.Fragment>
+      )}
+
+      <Footer />
+    </section>
+  );
 };
 
 export default Cart;

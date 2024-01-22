@@ -42,9 +42,9 @@ const CartTotal: React.FC<CartTotalProps> = ({ carts }) => {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-[80%] flex justify-end">
+      <div className="lg:w-[80%] w-full lg:flex lg:justify-end">
         <div className="block">
-          <div className="w-[350px] h-fit p-4 font-serif mt-10 text-gray-600 border rounded-md text-sm">
+          <div className="lg:w-[350px] w-full h-fit p-4 font-serif mt-10 text-gray-600 border rounded-md text-sm">
             <div className="text-lg font-semibold">Cart Total</div>
             <div className="w-full flex justify-between mt-3 px-1">
               <div>Subtotal</div>
