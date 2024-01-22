@@ -71,7 +71,7 @@ const LoginForm = () => {
         Login
       </div>
 
-      <div className="w-full flex justify-center">
+      <div className="w-full flex justify-center lg:min-h-[calc(100vh-569px)] md:min-h-[calc(100vh-519px)] min-h-[calc(100vh-163px)]">
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full sm:w-[300px] md:w-[400px] px-5 pt-3 h-fit rounded border mt-[20px]"
