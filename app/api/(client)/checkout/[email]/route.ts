@@ -30,6 +30,18 @@ export const GET = async (
       where: {
         userId: findUser.id,
         status: true,
+        NOT: [
+          {
+            product: {
+              status: "archive",
+            },
+          },
+          {
+            promo: {
+              status: "archive",
+            },
+          },
+        ],
       },
       select: {
         id: true,
@@ -43,6 +55,16 @@ export const GET = async (
             salePrice: true,
             status: true,
             totalStock: true,
+            image: true,
+            slug: true,
+          },
+        },
+        promo: {
+          select: {
+            name: true,
+            firstPrice: true,
+            promoPrice: true,
+            status: true,
             image: true,
             slug: true,
           },
