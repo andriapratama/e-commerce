@@ -1,7 +1,7 @@
 "use client";
 
 import { CartType } from "@/types/CartType";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import CheckoutPayment from "./CheckoutPayment";
 import CheckoutTotal from "./CheckoutTotal";
@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ToastContainer } from "react-toastify";
 import { UserType } from "@/types/UserType";
 import CheckoutWarning from "./CheckoutWarning";
+import AutosizeTextArea from "@/utils/AutosizeTextArea";
 
 interface CheckoutContentProps {
   carts?: CartType[];
@@ -19,6 +20,10 @@ interface CheckoutContentProps {
 const CheckoutContent: React.FC<CheckoutContentProps> = ({ carts, user }) => {
   const [note, setNote] = useState<string>("");
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
+
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  AutosizeTextArea(textAreaRef.current, note);
 
   const handleCheckPofileUser = () => {
     if (!user?.address || !user.phone) {
@@ -35,20 +40,28 @@ const CheckoutContent: React.FC<CheckoutContentProps> = ({ carts, user }) => {
   return (
     <React.Fragment>
       <ToastContainer />
-      <div className="w-full flex justify-center mt-[50px] font-serif">
-        <div className="w-[80%]">
-          <CheckoutTable carts={carts} />
 
-          <Textarea
-            className="mb-2 mt-10 resize-none"
-            placeholder="Input note (optional)"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-          />
+      <div className="w-full lg:min-h-[calc(100vh-536px)] md:min-h-[calc(100vh-488px)] lg:mt-[150px] md:mt-[100px] mt-[80px]">
+        <div className="w-full text-center text-2xl font-serif font-semibold mb-3 capitalize">
+          Checkout
+        </div>
 
-          <div className="w-full grid grid-cols-2 gap-5">
-            <CheckoutTotal carts={carts} />
-            <CheckoutPayment note={note} />
+        <div className="w-full flex justify-center mt-10 font-serif">
+          <div className="lg:w-[80%] w-[90%]">
+            <CheckoutTable carts={carts} />
+
+            <Textarea
+              className="mb-2 mt-10 resize-none"
+              placeholder="Input note (optional)"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              ref={textAreaRef}
+            />
+
+            <div className="w-full grid md:grid-cols-2 grid-cols-1 gap-5">
+              <CheckoutTotal carts={carts} />
+              <CheckoutPayment note={note} />
+            </div>
           </div>
         </div>
       </div>

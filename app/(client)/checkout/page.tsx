@@ -1,52 +1,86 @@
 import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar";
-import TitlePage from "@/components/client/TitlePage";
-import Topbar from "@/components/client/Topbar";
+import Navbar from "@/components/client/Navbar/Navbar";
 import CheckoutContent from "@/components/client/checkout/CheckoutContent";
 import { useCountCartsHook } from "@/hooks/client/CartHook";
+import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { useGetAllDataCheckoutByEmail } from "@/hooks/client/CheckoutHook";
 import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
 import { authOptions } from "@/lib/auth";
+import { CartType } from "@/types/CartType";
+import { UserType } from "@/types/UserType";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
 
 const Checkout = async () => {
-  let isEmptyData: boolean = false;
+  const { categories } = await useGetAllCategoriesHook();
 
-  try {
-    const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
-    const { user } = await useGetUserByEmailHook();
+  let thisCountCarts: number = 0;
 
-    const { countCarts } = await useCountCartsHook();
+  let thisCarts: CartType[] = [];
 
-    const { carts } = await useGetAllDataCheckoutByEmail();
+  let thisUser: UserType = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    role: "guest",
+    address: null,
+    phone: null,
+    active: false,
+  };
 
-    carts.length <= 0 ? (isEmptyData = true) : (isEmptyData = false);
+  if (session?.user.role === "member") {
+    try {
+      const { user } = await useGetUserByEmailHook();
 
-    return (
-      <section className="w-full min-h-screen">
-        <Topbar role={session?.user.role} userName={user.firstName} />
-        <Navbar countCarts={countCarts} />
-        <TitlePage title="Checkout" />
-        <CheckoutContent carts={carts} user={user} />
-        <Footer />
-      </section>
-    );
-  } catch (error) {
-    return (
-      <section className="w-full min-h-screen">
-        <Topbar />
-        <Navbar />
-        <TitlePage title="Checkout" />
-        <CheckoutContent />
-        <Footer />
-      </section>
-    );
-  } finally {
-    isEmptyData === true && redirect("/cart");
+      thisUser = user;
+    } catch (error: any) {
+      if (error.response.status === 404) redirect("/denied");
+    }
+
+    try {
+      const { countCarts } = await useCountCartsHook();
+
+      thisCountCarts = countCarts;
+    } catch (error: any) {
+      if (error.response.status === 404) redirect("/denied");
+    }
+
+    try {
+      const { carts } = await useGetAllDataCheckoutByEmail();
+
+      thisCarts = carts;
+
+      if (carts.length < 1) redirect("/cart");
+    } catch (error: any) {
+      if (error.response.status === 404) redirect("/denied");
+    }
   }
+
+  return (
+    <section className="w-full">
+      {session?.user.role === "member" ? (
+        <>
+          <Navbar
+            countCarts={thisCountCarts}
+            categories={categories}
+            role={session?.user.role}
+          />
+
+          <CheckoutContent carts={thisCarts} user={thisUser} />
+        </>
+      ) : (
+        <>
+          <Navbar categories={categories} />
+
+          <CheckoutContent />
+        </>
+      )}
+      <Footer />
+    </section>
+  );
 };
 
 export default Checkout;

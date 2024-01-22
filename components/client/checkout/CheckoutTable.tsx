@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import {
   Table,
   TableBody,
@@ -10,8 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ConvertIDR } from "@/utils/ConvertIDR";
 import { CartType } from "@/types/CartType";
+import CheckoutTableProduct from "./CheckoutTableProduct";
+import CheckoutTablePromo from "./CheckoutTablePromo";
+import CheckoutMobileTableProduct from "./CheckoutMobileTableProduct";
+import CheckoutMobileTablePromo from "./CheckoutMobileTablePromo";
 
 interface CheckoutTableProps {
   carts?: CartType[];
@@ -19,78 +21,73 @@ interface CheckoutTableProps {
 
 const CheckoutTable: React.FC<CheckoutTableProps> = ({ carts }) => {
   return (
-    <Table className="bg-white rounded-md">
-      <TableHeader>
-        <TableRow>
-          <TableHead className="text-center">Image</TableHead>
-          <TableHead>Name</TableHead>
-          <TableHead>Price</TableHead>
-          <TableHead className="text-center">Quantity</TableHead>
-          <TableHead>Total</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {carts ? (
-          carts.length > 0 ? (
-            carts.map((cart: CartType, index) => (
-              <TableRow key={cart.product.slug}>
-                <TableCell className="flex justify-center items-center">
-                  <Image
-                    src={cart.product.image}
-                    alt={cart.product.name}
-                    width={50}
-                    height={50}
-                    className="object-contain h-[50px] w-auto"
-                  />
-                </TableCell>
-                <TableCell className="capitalize">
-                  {cart.product.name}
-                </TableCell>
-                <TableCell>
-                  {cart.product.status === "sale" ? (
-                    <div className="block">
-                      <div className="w-fit text-gray-600">
-                        {ConvertIDR(cart.product.price)}
-                        <div className="border -mt-3 border-black z-20"></div>
-                      </div>
-
-                      <div className="mt-3 text-red-700">
-                        {ConvertIDR(cart.product.salePrice)}
-                      </div>
-                    </div>
-                  ) : (
-                    ConvertIDR(cart.product.price)
-                  )}
-                </TableCell>
-                <TableCell className="text-center">{cart.quantity}</TableCell>
-                <TableCell>
-                  {cart.product.status === "sale" ? (
-                    <div className="block">
-                      <div className="w-fit text-gray-600">
-                        {ConvertIDR(cart.product.price * cart.quantity)}
-                        <div className="border -mt-3 border-black z-20"></div>
-                      </div>
-
-                      <div className="mt-3 text-red-700">
-                        {ConvertIDR(cart.product.salePrice * cart.quantity)}
-                      </div>
-                    </div>
-                  ) : (
-                    ConvertIDR(cart.total)
-                  )}
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
+    <React.Fragment>
+      <div className="w-full hidden md:block">
+        <Table className="bg-white rounded-md ">
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center">
-                Empty data
-              </TableCell>
+              <TableHead className="text-center">Image</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead className="text-center">Quantity</TableHead>
+              <TableHead>Total</TableHead>
             </TableRow>
-          )
-        ) : null}
-      </TableBody>
-    </Table>
+          </TableHeader>
+          <TableBody>
+            {carts ? (
+              carts.length > 0 ? (
+                carts.map((cart: CartType, index) => {
+                  if (cart.product) {
+                    return <CheckoutTableProduct cart={cart} key={index} />;
+                  }
+
+                  if (cart.promo) {
+                    return <CheckoutTablePromo cart={cart} key={index} />;
+                  }
+                })
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-24 text-center">
+                    Empty data
+                  </TableCell>
+                </TableRow>
+              )
+            ) : null}
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="w-full block md:hidden">
+        <Table className="bg-white rounded-md ">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Product</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {carts ? (
+              carts.length > 0 ? (
+                carts.map((cart: CartType, index) => {
+                  if (cart.product) {
+                    return (
+                      <CheckoutMobileTableProduct cart={cart} key={index} />
+                    );
+                  }
+
+                  if (cart.promo) {
+                    return <CheckoutMobileTablePromo cart={cart} key={index} />;
+                  }
+                })
+              ) : (
+                <TableRow>
+                  <TableCell className="h-24 text-center">Empty data</TableCell>
+                </TableRow>
+              )
+            ) : null}
+          </TableBody>
+        </Table>
+      </div>
+    </React.Fragment>
   );
 };
 
