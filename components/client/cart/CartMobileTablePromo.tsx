@@ -136,8 +136,8 @@ const CartMobileTablePromo: React.FC<Props> = ({
             <Image
               src={cart.promo.image}
               alt={cart.promo.name}
-              width={50}
-              height={50}
+              width={300}
+              height={200}
               className="object-contain h-[80px] w-auto"
             />
           </div>

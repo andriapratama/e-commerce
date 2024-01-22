@@ -127,9 +127,9 @@ const CartTableProduct: React.FC<Props> = ({
           <Image
             src={cart.product.image}
             alt={cart.product.name}
-            width={50}
-            height={50}
-            className="object-contain h-[50px] w-auto"
+            width={200}
+            height={200}
+            className="object-contain h-[60px] w-auto"
           />
         </TableCell>
         <TableCell className="capitalize">{cart.product.name}</TableCell>
