@@ -22,20 +22,28 @@ const Cart = async () => {
   let thisCarts: CartType[] = [];
 
   if (session?.user.role === "member") {
+    let isCountCarts404: boolean = false;
+
     try {
       const { countCarts } = await useCountCartsHook();
 
       thisCountCarts = countCarts;
     } catch (error: any) {
-      if (error.response.status === 404) redirect("/denied");
+      if (error.response.status === 404) isCountCarts404 = true;
+    } finally {
+      if (isCountCarts404) redirect("/denied");
     }
+
+    let carts404: boolean = false;
 
     try {
       const { carts } = await useGetAllCartsByEmail();
 
       thisCarts = carts;
     } catch (error: any) {
-      if (error.response.status === 404) redirect("/denied");
+      if (error.response.status === 404) carts404 = true;
+    } finally {
+      if (carts404) redirect("/denied");
     }
   }
 

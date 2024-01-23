@@ -31,20 +31,31 @@ const Home = async () => {
   let thisCountCarts: number = 0;
 
   if (session?.user.role === "member") {
+    let isUserActive: boolean = false;
+
+    let user404: boolean = false;
+
     try {
       const { user } = await useGetUserByEmailHook();
 
-      if (user.active === false) redirect("/announcement");
+      isUserActive = user.active;
     } catch (error: any) {
-      if (error.response.status === 404) redirect("/denied");
+      if (error.response.status === 404) user404 = true;
+    } finally {
+      if (isUserActive === false) redirect("/announcement");
+      if (user404) redirect("/denied");
     }
+
+    let isCountCarts404: boolean = false;
 
     try {
       const { countCarts } = await useCountCartsHook();
 
       thisCountCarts = countCarts;
     } catch (error: any) {
-      if (error.response.status === 404) redirect("/denied");
+      if (error.response.status === 404) isCountCarts404 = true;
+    } finally {
+      if (isCountCarts404) redirect("/denied");
     }
   }
 

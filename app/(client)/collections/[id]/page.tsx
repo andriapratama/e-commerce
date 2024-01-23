@@ -31,13 +31,13 @@ const CollectionDetail = async ({ params }: { params: { id: string } }) => {
     createdAt: "",
   };
 
-  let isProductNotFound: boolean = false;
-
   let thisCountCarts: number = 0;
 
   const { categories } = await useGetAllCategoriesHook();
 
   const session = await getServerSession(authOptions);
+
+  let isProduct404: boolean = false;
 
   try {
     const { product } = await useGetProductDetailHook(slug);
@@ -45,19 +45,21 @@ const CollectionDetail = async ({ params }: { params: { id: string } }) => {
     thisProduct = product;
   } catch (error: any) {
     if (error.response.status === 404) {
-      isProductNotFound = true;
+      isProduct404 = true;
     }
   }
 
   if (session?.user.role === "member") {
+    let isCountCarts404: boolean = false;
+
     try {
       const { countCarts } = await useCountCartsHook();
 
       thisCountCarts = countCarts;
     } catch (error: any) {
-      if (error.response.status === 404) {
-        redirect("/denied");
-      }
+      if (error.response.status === 404) isCountCarts404 = true;
+    } finally {
+      if (isCountCarts404) redirect("/denied");
     }
   }
 
@@ -72,7 +74,7 @@ const CollectionDetail = async ({ params }: { params: { id: string } }) => {
       ) : (
         <Navbar categories={categories} />
       )}
-      {isProductNotFound ? (
+      {isProduct404 ? (
         <div className="w-full lg:min-h-[calc(100vh-490px)] md:min-h-[calc(100vh-480px)] min-h-[calc(100vh-60px)] lg:mt-[100px] mt-[60px] flex justify-center items-center">
           Opss, product not found.
         </div>

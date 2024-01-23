@@ -32,14 +32,16 @@ const Collections = async ({ searchParams }: any) => {
   const session = await getServerSession(authOptions);
 
   if (session?.user.role === "member") {
+    let isCountCarts404: boolean = false;
+
     try {
       const { countCarts } = await useCountCartsHook();
 
       thisCountCarts = countCarts;
     } catch (error: any) {
-      if (error.response.status === 404) {
-        redirect("/denied");
-      }
+      if (error.response.status === 404) isCountCarts404 = true;
+    } finally {
+      if (isCountCarts404) redirect("/denied");
     }
   }
 

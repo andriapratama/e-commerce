@@ -28,7 +28,7 @@ const PromoDetail = async ({ params }: { params: { id: string } }) => {
     status: "archive",
   };
 
-  let isPromoNotFound: boolean = false;
+  let isPromo404: boolean = false;
 
   const { categories } = await useGetAllCategoriesHook();
 
@@ -38,7 +38,7 @@ const PromoDetail = async ({ params }: { params: { id: string } }) => {
     thisPromo = promo;
   } catch (error: any) {
     if (error.response.status === 404) {
-      isPromoNotFound = true;
+      isPromo404 = true;
     }
   }
 
@@ -57,14 +57,16 @@ const PromoDetail = async ({ params }: { params: { id: string } }) => {
   let thisCountCarts: number = 0;
 
   if (session?.user.role === "member") {
+    let isCountCarts404: boolean = false;
+
     try {
       const { countCarts } = await useCountCartsHook();
 
       thisCountCarts = countCarts;
     } catch (error: any) {
-      if (error.response.status === 404) {
-        redirect("/denied");
-      }
+      if (error.response.status === 404) isCountCarts404 = true;
+    } finally {
+      if (isCountCarts404) redirect("/denied");
     }
   }
 
@@ -80,7 +82,7 @@ const PromoDetail = async ({ params }: { params: { id: string } }) => {
         <Navbar categories={categories} />
       )}
 
-      {isPromoNotFound ? (
+      {isPromo404 ? (
         <div className="w-full md:min-h-[calc(100vh-386px)] min-h-[calc(100vh-52px)] flex justify-center items-center">
           Opss, promo not found.
         </div>

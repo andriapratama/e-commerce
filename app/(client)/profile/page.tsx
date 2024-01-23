@@ -28,24 +28,30 @@ const Profil = async () => {
 
     let thisCountCarts: number = 0;
 
+    let user404: boolean = false;
+
     try {
       const { user } = await useGetUserByEmailHook();
 
       thisUser = user;
     } catch (error: any) {
-      if (error.response.status === 404) {
+      if (error.response.status === 404) user404 = true;
+    } finally {
+      if (user404) {
         redirect("/denied");
       }
     }
+
+    let isCountCarts404: boolean = false;
 
     try {
       const { countCarts } = await useCountCartsHook();
 
       thisCountCarts = countCarts;
     } catch (error: any) {
-      if (error.response.status === 404) {
-        redirect("/denied");
-      }
+      if (error.response.status === 404) isCountCarts404 = true;
+    } finally {
+      if (isCountCarts404) redirect("/denied");
     }
 
     return (
