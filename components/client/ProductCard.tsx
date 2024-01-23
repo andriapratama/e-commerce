@@ -113,7 +113,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </Link>
         ) : null}
         {isLoading ? (
-          <LoadingGif />
+          <div className="pb-2">
+            <LoadingGif />
+          </div>
         ) : (
           <ShoppingCart
             width={30}
