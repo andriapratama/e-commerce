@@ -16,7 +16,10 @@ export interface OrderDetailType {
   price: number;
   quantity: number;
   total: number;
-  product: {
+  product?: {
+    image: string;
+  };
+  promo?: {
     image: string;
   };
 }

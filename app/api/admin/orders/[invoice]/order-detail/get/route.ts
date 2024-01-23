@@ -60,6 +60,11 @@ export const GET = async (
                 image: true,
               },
             },
+            promo: {
+              select: {
+                image: true,
+              },
+            },
           },
         },
         orderLog: {

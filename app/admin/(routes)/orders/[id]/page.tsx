@@ -12,8 +12,9 @@ import OrderDetailCard from "@/components/admin/order-detail/OrderDetailCard";
 import OrderDetailTable from "@/components/admin/order-detail/OrderDetailTable";
 import OrderDetailLog from "@/components/admin/order-detail/OrderDetailLog";
 import OrderDetailButton from "@/components/admin/order-detail/OrderDetailButton";
+import Link from "next/link";
 
-const OrderDetail = async () => {
+const OrderDetail = () => {
   const { order, isLoadingContent, getOrder, orderLogs, setIsLoadingContent } =
     useGetOrderHook();
 
@@ -36,8 +37,24 @@ const OrderDetail = async () => {
                 <div>
                   {order.user.firstName} {order.user.lastName}
                 </div>
-                <div>{order.user.email}</div>
-                <div>{order.user.phone}</div>
+                <div>
+                  <Link
+                    href={`mailto:${order.user.email}`}
+                    target="_blank"
+                    className="w-fit hover:border-b border-blue-500 hover:text-blue-500"
+                  >
+                    {order.user.email}
+                  </Link>
+                </div>
+                <div>
+                  <Link
+                    href={`https://web.whatsapp.com/send/?phone=%2B${order.user.phone}&text&type=phone_number&app_absent=0`}
+                    target="_blank"
+                    className="w-fit hover:border-b border-blue-500 hover:text-blue-500"
+                  >
+                    {order.user.phone}
+                  </Link>
+                </div>
               </OrderDetailCard>
               <OrderDetailCard title="Dikirim ke">
                 <div className="text-capitalize">{order.user.address}</div>

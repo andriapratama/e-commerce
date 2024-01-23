@@ -28,7 +28,7 @@ const Orders = () => {
 
   useEffect(() => {
     getOrders();
-  }, [getOrders]);
+  }, []);
 
   if (isLoadingPage) {
     return <PageLoading />;

@@ -27,8 +27,8 @@ const OrderDetailTable: React.FC<OrderDetailTableProps> = ({ order }) => {
       <Table className="bg-white rounded-md mb-5 text-base">
         <TableHeader>
           <TableRow>
-            <TableHead>#</TableHead>
-            <TableHead>Gambar</TableHead>
+            <TableHead className="text-center w-[2%]">#</TableHead>
+            <TableHead className="text-center w-[13%]">Gambar</TableHead>
             <TableHead>Nama</TableHead>
             <TableHead>Harga/Unit</TableHead>
             <TableHead>Jumlah</TableHead>
@@ -39,15 +39,26 @@ const OrderDetailTable: React.FC<OrderDetailTableProps> = ({ order }) => {
           {orderDetail.length > 0 ? (
             orderDetail.map((data: OrderDetailType, index) => (
               <TableRow key={data.name}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>
-                  <Image
-                    src={data.product.image}
-                    alt={data.name}
-                    width={50}
-                    height={50}
-                    className="object-contain"
-                  />
+                <TableCell className="text-center">{index + 1}</TableCell>
+                <TableCell className="flex justify-center">
+                  {data.product && (
+                    <Image
+                      src={data.product.image}
+                      alt={data.name}
+                      width={200}
+                      height={200}
+                      className="object-contain h-[60px] w-auto"
+                    />
+                  )}
+                  {data.promo && (
+                    <Image
+                      src={data.promo.image}
+                      alt={data.name}
+                      width={300}
+                      height={200}
+                      className="object-contain h-[60px] w-auto"
+                    />
+                  )}
                 </TableCell>
                 <TableCell>{data.name}</TableCell>
                 <TableCell>{ConvertIDR(data.price)}</TableCell>

@@ -36,6 +36,15 @@ export const POST = async (
       );
     }
 
+    await prismadb.order.update({
+      where: {
+        invoice: params.invoice,
+      },
+      data: {
+        statusOrder: "done",
+      },
+    });
+
     await prismadb.orderLog.create({
       data: {
         status: "done",

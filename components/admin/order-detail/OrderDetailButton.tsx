@@ -76,7 +76,7 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
 
       getOrder();
 
-      toast.success("Pesanan telah dikirim");
+      toast.success("Barang telah dikirim");
 
       setIsOpenDelivery(false);
       setIsLoadingStore(false);
@@ -94,7 +94,7 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
 
       getOrder();
 
-      toast.success("Pesanan telah diterima");
+      toast.success("Barang telah diterima");
 
       setIsOpenAccepted(false);
       setIsLoadingStore(false);
@@ -149,9 +149,7 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
       resAccepted?.status === "accepted" &&
       resDone === undefined
     ) {
-      return (
-        <Button onClick={() => setIsOpenDone(true)}>Pesanan Selesai</Button>
-      );
+      return <Button onClick={() => setIsOpenDone(true)}>Order Selesai</Button>;
     } else {
       return null;
     }
@@ -166,26 +164,26 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
         ) : null}
         {checkStatus("delivery") === undefined ? (
           <Button onClick={() => setIsOpenDelivery(true)}>
-            Pesanan Dikirim
+            Barang Dikirim
           </Button>
         ) : checkStatus("accepted") === undefined ? (
           <Button onClick={() => setIsOpenAccepted(true)}>
-            Pesanan Diterima
+            Barang Diterima
           </Button>
         ) : null}
 
         {doneButton()}
 
-        {checkStatus("invoice") === undefined ? (
-          <Button onClick={() => setIsOpenEditTransaction(true)}>
-            Masukkan biaya lainnya
-          </Button>
-        ) : null}
-
         {checkStatus("done") === undefined ? (
-          <Button onClick={() => setIsOpenSendInvoice(true)}>
-            Kirim Invoice
-          </Button>
+          <>
+            <Button onClick={() => setIsOpenEditTransaction(true)}>
+              Masukkan biaya lainnya
+            </Button>
+
+            <Button onClick={() => setIsOpenSendInvoice(true)}>
+              Kirim Invoice
+            </Button>
+          </>
         ) : null}
 
         <Button
@@ -214,7 +212,7 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
         setIsOpen={setIsOpenPaymentStatus}
         isLoading={isLoadingStore}
         handleStoreData={handleChangePaymentStatus}
-        title="Apakah pesanan sudah dibayar?"
+        title="Apakah barang sudah dibayar?"
       />
 
       <WarningAlert
@@ -222,7 +220,7 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
         setIsOpen={setIsOpenDelivery}
         isLoading={isLoadingStore}
         handleStoreData={handleDelivery}
-        title="Apakah pesanan sudah dikirim?"
+        title="Apakah barang sudah dikirim?"
       />
 
       <WarningAlert
@@ -230,7 +228,7 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
         setIsOpen={setIsOpenAccepted}
         isLoading={isLoadingStore}
         handleStoreData={handleAccepted}
-        title="Apakah pesanan sudah diterima?"
+        title="Apakah barang sudah diterima?"
       />
 
       <WarningAlert
@@ -238,7 +236,7 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
         setIsOpen={setIsOpenDone}
         isLoading={isLoadingStore}
         handleStoreData={handleDone}
-        title="Apakah pesanan sudah selesai?"
+        title="Apakah order sudah selesai?"
       />
 
       <WarningAlert
@@ -246,7 +244,7 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
         setIsOpen={setIsOpenSendInvoice}
         isLoading={isLoadingStore}
         handleStoreData={handleSendInvoice}
-        title="Seletah invoice dikirim maka biaya lainnya tidak dapat diubah. Apakah anda yakin mengirim invoice?"
+        title="Invoice akan dikirim melalui email. Apakah anda yakin mengirim invoice?"
       />
     </React.Fragment>
   );
