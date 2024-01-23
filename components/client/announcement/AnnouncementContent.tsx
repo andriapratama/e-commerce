@@ -15,8 +15,8 @@ const AnnouncementContent: React.FC<AnnouncementContentProps> = ({
   }, [active]);
 
   return (
-    <div className="w-full text-center text-2xl my-[50px] font-serif">
-      Please verify your email first.
+    <div className="w-full text-center text-2xl h-screen items-center flex justify-center font-serif">
+      Please verification your email first.
       <br />
       After that, login again.
     </div>

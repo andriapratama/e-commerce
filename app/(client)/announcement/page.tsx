@@ -1,47 +1,61 @@
 import AnnouncementContent from "@/components/client/announcement/AnnouncementContent";
-import Navbar from "@/components/client/Navbar";
-import TitlePage from "@/components/client/TitlePage";
-import Topbar from "@/components/client/Topbar";
+import Navbar from "@/components/client/Navbar/Navbar";
+import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
 import { authOptions } from "@/lib/auth";
+import { UserType } from "@/types/UserType";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
 
 const Announcement = async () => {
-  let role: "member" | undefined = undefined;
+  const { categories } = await useGetAllCategoriesHook();
 
-  let isActive: boolean = true;
+  const session = await getServerSession(authOptions);
 
-  try {
-    const session = await getServerSession(authOptions);
+  let thisUser: UserType = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    role: "guest",
+    address: null,
+    phone: null,
+    active: false,
+  };
 
-    session?.user.role === "member" ? (role = "member") : (role = undefined);
+  if (session?.user.role === "member") {
+    let isUserActive: boolean = false;
 
-    const { user } = await useGetUserByEmailHook();
+    let user404: boolean = false;
 
-    isActive = user.active;
+    try {
+      const { user } = await useGetUserByEmailHook();
 
-    return (
-      <section className="w-full min-h-screen realtive">
-        <Topbar />
-        <Navbar />
-        <TitlePage title="Announcement" />
-        <AnnouncementContent active={user.active} />
-      </section>
-    );
-  } catch (error: any) {
-    return (
-      <section className="w-full min-h-screen realtive">
-        <Topbar />
-        <Navbar />
-        <TitlePage title="Announcement" />
-        <AnnouncementContent />
-      </section>
-    );
-  } finally {
-    if (role === "member" && isActive === true) redirect("/");
+      thisUser = user;
+
+      isUserActive = user.active;
+    } catch (error: any) {
+      if (error.response.status === 404) user404 = true;
+    } finally {
+      if (session.user.role === "member" && isUserActive) {
+        return redirect("/");
+      }
+
+      if (user404) redirect("/denied");
+    }
   }
+
+  return (
+    <section className="w-full realtive">
+      <Navbar categories={categories} />
+
+      {session?.user.role === "member" ? (
+        <AnnouncementContent active={thisUser.active} />
+      ) : (
+        <AnnouncementContent />
+      )}
+    </section>
+  );
 };
 
 export default Announcement;
