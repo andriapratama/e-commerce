@@ -1,13 +1,13 @@
 "use client";
 
-import { CategoryType } from "@/types/CategoryType";
+import { CategoryFullType } from "@/types/CategoryType";
 import { MenuType } from "@/types/MenuType";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import React, { useState } from "react";
 
 interface Props {
-  categories: CategoryType[];
+  categories: CategoryFullType[];
   menus: MenuType[];
 }
 
@@ -15,7 +15,7 @@ const NavbarDesktopMenu: React.FC<Props> = ({ categories, menus }) => {
   const [isOpenCategories, setIsOpenCategories] = useState<boolean>(false);
 
   const CategoriesContent = () => {
-    return categories.map((category: CategoryType) => {
+    return categories.map((category: CategoryFullType) => {
       return (
         <li className="w-fit text-center mx-10 capitalize" key={category.name}>
           <Link

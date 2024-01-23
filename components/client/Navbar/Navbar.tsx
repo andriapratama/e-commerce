@@ -6,7 +6,7 @@ import Image from "next/image";
 import { MenuType } from "@/types/MenuType";
 import { ShoppingCart } from "lucide-react";
 import { ToastContainer } from "react-toastify";
-import { CategoryType } from "@/types/CategoryType";
+import { CategoryFullType } from "@/types/CategoryType";
 import NavbarSearch from "./NavbarSearch";
 import NavbarDesktopMenu from "./NavbarDesktopMenu";
 import NavbarMobileMenu from "./NavbarMobileMenu";
@@ -15,7 +15,7 @@ import NavbarMobileSearch from "./NavbarMobileSearch";
 interface NavbarProps {
   role?: string;
   countCarts?: number;
-  categories: CategoryType[];
+  categories: CategoryFullType[];
 }
 
 const Navbar: React.FC<NavbarProps> = ({ countCarts, role, categories }) => {

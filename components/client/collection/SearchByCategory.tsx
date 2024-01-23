@@ -1,6 +1,6 @@
 "use client";
 
-import { CategoryType } from "@/types/CategoryType";
+import { CategoryFullType } from "@/types/CategoryType";
 import { LayoutGrid } from "lucide-react";
 import React, { useState } from "react";
 import {
@@ -13,7 +13,7 @@ import MobileLogo from "../MobileLogo";
 import Link from "next/link";
 
 interface SearchByCategoryProps {
-  categories: CategoryType[];
+  categories: CategoryFullType[];
 }
 
 const SearchByCategory: React.FC<SearchByCategoryProps> = ({ categories }) => {
@@ -40,7 +40,7 @@ const SearchByCategory: React.FC<SearchByCategoryProps> = ({ categories }) => {
           </DialogTitle>
 
           <ul>
-            {categories.map((category: CategoryType) => (
+            {categories.map((category: CategoryFullType) => (
               <li
                 className="w-full text-center font-semibold capitalize mt-5"
                 key={category.name}
