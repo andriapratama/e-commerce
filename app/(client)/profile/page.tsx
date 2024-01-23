@@ -55,7 +55,7 @@ const Profil = async () => {
     }
 
     return (
-      <section className="w-full min-h-[calc(100vh-150px)]">
+      <section className="w-full">
         <Navbar
           countCarts={thisCountCarts}
           categories={categories}

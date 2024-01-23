@@ -18,8 +18,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user }) => {
   return (
     <React.Fragment>
       <ToastContainer />
-      <div className="w-full flex justify-center lg:mt-[150px] md:mt-[100px] mt-[80px]">
-        <div className="lg:w-[50%] sm:w-[90%] w-full bg-white rounded-md shadow p-5 font-serif">
+      <div className="w-full lg:min-h-[calc(100vh-536px)] md:min-h-[calc(100vh-488px)] min-h-[calc(100vh-148px)] flex justify-center lg:mt-[150px] md:mt-[100px] mt-[80px]">
+        <div className="lg:w-[50%] sm:w-[90%] w-full h-fit bg-white rounded-md shadow p-5 font-serif">
           <div className="w-full flex pb-3 border-b">
             <div className="lg:w-[150px] w-[100px] font-semibold capitalize">
               Full Name
