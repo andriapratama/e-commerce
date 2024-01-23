@@ -52,10 +52,10 @@ export const TemplateEmailVerify = (name: string, link: string) => {
                           "
                         >
                           <div style="color: rgb(0, 0, 0); text-align: left">
-                            <h1 style="margin: 1rem 0">Email Verify</h1>
+                            <h1 style="margin: 1rem 0">Email Verification</h1>
                             <p>Hai ${name}</p>
                             <p style="padding-bottom: 16px">
-                              Follow this link to verify your email address.
+                              Follow this link to verification your email address.
                             </p>
                             <p style="padding-bottom: 16px">
                               <a
@@ -73,7 +73,7 @@ export const TemplateEmailVerify = (name: string, link: string) => {
                               >
                             </p>
                             <p style="padding-bottom: 16px">
-                              If you didn’t ask to verify this address, you can
+                              If you didn’t ask to verification this address, you can
                               ignore this email.
                             </p>
                             <p style="padding-bottom: 16px">
