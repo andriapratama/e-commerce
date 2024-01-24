@@ -70,6 +70,11 @@ const menus: MenuType[] = [
     link: "/admin/guests",
     role: ["superAdmin", "admin"],
   },
+  {
+    name: "pengaturan",
+    link: "/admin/settings",
+    role: ["superAdmin"],
+  },
 ];
 
 interface NavbarProps {

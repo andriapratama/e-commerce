@@ -406,3 +406,21 @@ enum PromoStatus {
   active
   deleted
 }
+
+model Setting {
+  id              String @id
+  image           String?
+  imagePathname   String?
+  email           String?
+  address         String? @db.Text
+  whatsapp        String?
+  instagram       String?
+  twitter         String?
+  facebook        String?
+  bank            String?
+  bankName        String?
+  bankNumber      String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
