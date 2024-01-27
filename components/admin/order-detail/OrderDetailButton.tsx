@@ -174,16 +174,17 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
 
         {doneButton()}
 
-        {checkStatus("done") === undefined ? (
-          <>
-            <Button onClick={() => setIsOpenEditTransaction(true)}>
-              Masukkan biaya lainnya
-            </Button>
+        {checkStatus("delivery") === undefined ||
+        order.statuspayment === "pending" ? (
+          <Button onClick={() => setIsOpenEditTransaction(true)}>
+            Masukkan biaya lainnya
+          </Button>
+        ) : null}
 
-            <Button onClick={() => setIsOpenSendInvoice(true)}>
-              Kirim Invoice
-            </Button>
-          </>
+        {checkStatus("done") === undefined ? (
+          <Button onClick={() => setIsOpenSendInvoice(true)}>
+            Kirim Invoice
+          </Button>
         ) : null}
 
         <Button
@@ -199,11 +200,11 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
       <OrderDetailEditTransaction
         isOpen={isOpenEditTransaction}
         setIsOpen={setIsOpenEditTransaction}
-        subTotal={order.subTotal}
-        tax={order.tax}
+        subTotal={order.subTotal ? order.subTotal : 0}
+        tax={order.tax ? order.tax : 0}
         shipping={order.shipping}
         discount={order.discount}
-        grandTotal={order.grandTotal}
+        grandTotal={order.grandTotal ? order.grandTotal : 0}
         getOrder={getOrder}
       />
 

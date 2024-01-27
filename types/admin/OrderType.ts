@@ -27,25 +27,25 @@ export interface OrderDetailType {
 export interface OrderType {
   discount: number | null;
   employeeName: string | null;
-  grandTotal: number;
+  grandTotal: number | null;
   invoice: string;
-  note: string;
+  note: string | null;
   paymentMethod: "cash" | "transfer";
   shipping: number | null;
   statusOrder: "new" | "ongoing" | "done" | "cancel";
   statuspayment: "pending" | "paid";
-  subTotal: number;
-  tax: number;
+  subTotal: number | null;
+  tax: number | null;
   totalItem: number;
   user: {
-    address: string;
+    address: string | null;
     email: string;
     firstName: string;
     lastName: string;
-    phone: string;
+    phone: string | null;
   };
   orderDetail: OrderDetailType[];
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface OrderLogType {
