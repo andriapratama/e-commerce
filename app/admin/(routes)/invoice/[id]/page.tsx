@@ -5,6 +5,9 @@ import { useGetOrderHook } from "@/hooks/admin/GetOrderHook";
 import InvoiceTable from "@/components/admin/invoice/InvoiceTable";
 import { ConvertIDR } from "@/utils/ConvertIDR";
 import PageLoading from "@/components/PageLoading";
+import { useGetSettingHook } from "@/hooks/admin/SettingHook";
+import Image from "next/image";
+import { ImageIcon } from "lucide-react";
 
 const Invoice = () => {
   const months = [
@@ -23,6 +26,8 @@ const Invoice = () => {
   ];
 
   const { order, isLoadingContent } = useGetOrderHook();
+
+  const { setting } = useGetSettingHook();
 
   const user = order.user;
 
@@ -47,15 +52,26 @@ const Invoice = () => {
     return (
       <section className="admin__container">
         <div className="w-full flex justify-center">
-          <div className="w-[595px] h-[842px] bg-orange-300 overflow-hidden relative">
+          <div className="w-[595px] h-[842px] bg-primary-color overflow-hidden relative">
             <div className="w-full h-full px-10 pt-16 bg-white rounded-tl-[300px] relative">
               <div className="w-full flex justify-center">
-                <div className="text-3xl">Logo</div>
+                {setting.image && setting.imagePathname ? (
+                  <Image
+                    src={setting.image}
+                    alt={setting.imagePathname}
+                    width={200}
+                    height={200}
+                    className="w-[100px] h-[100px] object-contain"
+                    priority
+                  />
+                ) : (
+                  <ImageIcon width={100} height={100} />
+                )}
               </div>
 
               <div className="w-full grid grid-cols-2 mt-12 text-xs gap-3 ">
                 <div className="w-full mt-2">
-                  <div className="font-semibold uppercase text-orange-500">
+                  <div className="font-semibold uppercase text-primary-color">
                     Billed to:
                   </div>
                   <div className="capitalize">
@@ -83,20 +99,23 @@ const Invoice = () => {
 
               <div className="w-full grid grid-cols-2 gap-3 text-xs">
                 <div className="w-full">
-                  <div className="font-semibold uppercase mb-2 text-orange-500">
+                  <div className="font-semibold uppercase mb-2 text-primary-color">
                     Note:
                   </div>
                   <div>{order.note}</div>
                 </div>
 
                 <div className="w-full">
-                  {cost("Total", order.subTotal)}
-                  {cost("Tax", order.tax)}
+                  {cost("Total", order.subTotal ? order.subTotal : 0)}
+                  {cost("Tax", order.tax ? order.tax : 0)}
                   {cost("Shipping", order.shipping ? order.shipping : 0)}
                   {cost("Discount", order.discount ? order.discount : 0)}
                   <div className="w-full flex justify-end mb-2">
-                    <div className="w-[210px] px-2 pt-2 pb-1 flex justify-between font-semibold text-sm bg-orange-300 text-black">
-                      Grand Total <div>{ConvertIDR(order.grandTotal)}</div>
+                    <div className="w-[210px] px-2 pt-2 pb-1 flex justify-between font-semibold text-sm bg-primary-color text-black">
+                      Grand Total{" "}
+                      <div>
+                        {ConvertIDR(order.grandTotal ? order.grandTotal : 0)}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -104,15 +123,16 @@ const Invoice = () => {
 
               <div className="w-full grid grid-cols-2 gap-3 text-xs mt-7">
                 <div className="w-full">
-                  <div className="uppercase font-semibold text-orange-500">
+                  <div className="uppercase font-semibold text-primary-color">
                     payment information
                   </div>
-                  <div className="capitalize">mandiri bank</div>
-                  <div className="capitalize">account name: andria pratama</div>
+                  <div className="capitalize">{setting.bank}</div>
                   <div className="capitalize">
-                    account number: 21398712398734918
+                    account name: {setting.bankName}
                   </div>
-                  <div>Pay by 4 December 2023</div>
+                  <div className="capitalize">
+                    account number: {setting.bankNumber}
+                  </div>
                 </div>
 
                 <div className="w-full h-full flex justify-center items-center">
@@ -120,7 +140,7 @@ const Invoice = () => {
                 </div>
               </div>
             </div>
-            <div className="absolute w-full h-10 bottom-0 bg-orange-300 z-50"></div>
+            <div className="absolute w-full h-10 bottom-0 bg-primary-color z-50"></div>
           </div>
         </div>
       </section>

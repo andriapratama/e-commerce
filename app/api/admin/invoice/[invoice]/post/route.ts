@@ -29,6 +29,18 @@ export const POST = async (
       where: {
         invoice: params.invoice,
       },
+      include: {
+        orderDetail: true,
+        user: {
+          select: {
+            address: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            phone: true,
+          },
+        },
+      },
     });
 
     if (!findOrder) {
@@ -38,11 +50,20 @@ export const POST = async (
       );
     }
 
+    const findSetting = await prismadb.setting.findFirst();
+
+    if (!findSetting) {
+      return NextResponse.json(
+        { message: "Setting is not found" },
+        { status: 404 }
+      );
+    }
+
     const mailOptions = {
       from: process.env.EMAIL,
       to: findOrder.userEmail,
       subject: "Invoice",
-      html: TemplateInvoice(),
+      html: TemplateInvoice(findOrder, findSetting),
     };
 
     await transporter.sendMail(mailOptions);

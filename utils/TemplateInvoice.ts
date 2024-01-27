@@ -1,5 +1,56 @@
-export const TemplateInvoice = () => {
-  const template = `
+import { OrderType } from "@/types/admin/OrderType";
+import { ConvertIDR } from "./ConvertIDR";
+import { SettingType } from "@/types/admin/SettingType";
+
+export const TemplateInvoice = (order: OrderType, setting: SettingType) => {
+  const color: string = "#cfaa71";
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const date = new Date(order.createdAt);
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+
+  const tableBody = () => {
+    let tableBody: string = "";
+    order.orderDetail.map(
+      (item) =>
+        (tableBody =
+          tableBody +
+          `<tr style="border-bottom: #1f2937 solid 1px">` +
+          `<td style="text-align: left; padding: 8px">` +
+          `${item.name}` +
+          `</td>` +
+          `<td style="text-align: center; padding: 8px">` +
+          `${ConvertIDR(item.price)}` +
+          `</td>` +
+          `<td style="text-align: center; padding: 8px">` +
+          `${item.quantity}` +
+          `</td>` +
+          `<td style="text-align: center; padding: 8px">` +
+          `${ConvertIDR(item.total)}` +
+          `</td>` +
+          `</tr>`)
+    );
+
+    return tableBody;
+  };
+
+  const template =
+    `
   <!DOCTYPE html>
     <html lang="en">
         <head>
@@ -47,7 +98,7 @@ export const TemplateInvoice = () => {
                             style="
                                 width: 595px;
                                 height: fit-content;
-                                background-color: #fdba74;
+                                background-color: ${color};
                                 overflow: hidden;
                                 position: relative;
                             "
@@ -89,7 +140,11 @@ export const TemplateInvoice = () => {
                                                 line-height: 36px;
                                                 "
                                             >
-                                                Logo
+                                            <img
+                                                src="${setting.image}"
+                                                alt="logo"
+                                                style="width: 100px; height: 100px; object-fit: contain"
+                                            />
                                             </td>
                                             </tr>
                                         </tbody>
@@ -129,7 +184,7 @@ export const TemplateInvoice = () => {
                                                 style="
                                                 font-weight: 600;
                                                 text-transform: uppercase;
-                                                color: #f97316;
+                                                color: ${color};
                                                 "
                                             >
                                                 BILLED TO:
@@ -137,17 +192,17 @@ export const TemplateInvoice = () => {
                                             </tr>
                                             <tr>
                                             <td style="text-transform: capitalize">
-                                                Jhon Doe
+                                                ${order.user.firstName} ${order.user.lastName}
                                             </td>
                                             </tr>
                                             <tr>
-                                            <td>+6289627006169</td>
+                                            <td>${order.user.phone}</td>
                                             </tr>
                                             <tr>
-                                            <td>gerhanaini@gmail.com</td>
+                                            <td>${order.user.email}</td>
                                             </tr>
                                             <tr>
-                                            <td>Jln. Kuta Badung, Bali Indonesia</td>
+                                            <td>${order.user.address}</td>
                                             </tr>
                                         </tbody>
                                         </table>
@@ -177,13 +232,18 @@ export const TemplateInvoice = () => {
                                             </td>
                                             </tr>
                                             <tr>
-                                            <td>Invoice No: ODR1</td>
+                                            <td>Invoice No: ${order.invoice}</td>
                                             </tr>
                                             <tr>
-                                            <td>Order Date: 2 Desember 2023</td>
+                                            <td>Order Date: ${day} ${month} ${year}</td>
                                             </tr>
                                             <tr>
-                                            <td>Payment Method: TRANSFER</td>
+                                            <td>
+                                                Payment Method: 
+                                                <span style="text-transform: uppercase">
+                                                    ${order.paymentMethod}
+                                                </span>
+                                            </td>
                                             </tr>
                                         </tbody>
                                         </table>
@@ -208,7 +268,7 @@ export const TemplateInvoice = () => {
                                     style="
                                         border-bottom: #1f2937 solid 1px;
                                         font-weight: 500;
-                                        background-color: #fdba74;
+                                        background-color: ${color};
                                         color: black;
                                     "
                                     >
@@ -226,50 +286,9 @@ export const TemplateInvoice = () => {
                                     </th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr style="border-bottom: #1f2937 solid 1px">
-                                    <td style="text-align: left; padding: 8px">
-                                        Absolut Vodka
-                                    </td>
-                                    <td style="text-align: center; padding: 8px">
-                                        Rp 550.000
-                                    </td>
-                                    <td style="text-align: center; padding: 8px">
-                                        1
-                                    </td>
-                                    <td style="text-align: center; padding: 8px">
-                                        Rp. 550.000
-                                    </td>
-                                    </tr>
-                                    <tr style="border-bottom: #1f2937 solid 1px">
-                                    <td style="text-align: left; padding: 8px">
-                                        Absolut Vodka
-                                    </td>
-                                    <td style="text-align: center; padding: 8px">
-                                        Rp 550.000
-                                    </td>
-                                    <td style="text-align: center; padding: 8px">
-                                        1
-                                    </td>
-                                    <td style="text-align: center; padding: 8px">
-                                        Rp. 550.000
-                                    </td>
-                                    </tr>
-                                    <tr style="border-bottom: #1f2937 solid 1px">
-                                    <td style="text-align: left; padding: 8px">
-                                        Absolut Vodka
-                                    </td>
-                                    <td style="text-align: center; padding: 8px">
-                                        Rp 550.000
-                                    </td>
-                                    <td style="text-align: center; padding: 8px">
-                                        1
-                                    </td>
-                                    <td style="text-align: center; padding: 8px">
-                                        Rp. 550.000
-                                    </td>
-                                    </tr>
-                                </tbody>
+                                <tbody>` +
+    tableBody() +
+    `</tbody>
                                 </table>
 
                                 <table
@@ -302,7 +321,7 @@ export const TemplateInvoice = () => {
                                                 font-weight: 600;
                                                 text-transform: uppercase;
                                                 padding-bottom: 6px;
-                                                color: #f97316;
+                                                color: ${color};
                                                 "
                                             >
                                                 Note:
@@ -310,12 +329,7 @@ export const TemplateInvoice = () => {
                                             </tr>
                                             <tr>
                                             <td style="line-height: 18px">
-                                                Lorem ipsum dolor sit, amet consectetur
-                                                adipisicing elit. Vitae quasi fugit
-                                                deserunt deleniti voluptatum laboriosam
-                                                repellat ducimus provident consequatur
-                                                error sapiente similique, aut dolores
-                                                est illum porro obcaecati minima et!
+                                                ${order.note}
                                             </td>
                                             </tr>
                                         </tbody>
@@ -351,7 +365,11 @@ export const TemplateInvoice = () => {
                                                 padding-right: 8px;
                                                 "
                                             >
-                                                Rp 3.450.000
+                                                ${ConvertIDR(
+                                                  order.subTotal
+                                                    ? order.subTotal
+                                                    : 0
+                                                )}
                                             </td>
                                             </tr>
                                             <tr>
@@ -371,7 +389,9 @@ export const TemplateInvoice = () => {
                                                 padding-right: 8px;
                                                 "
                                             >
-                                                Rp 379.500
+                                               ${ConvertIDR(
+                                                 order.tax ? order.tax : 0
+                                               )}
                                             </td>
                                             </tr>
                                             <tr>
@@ -391,7 +411,11 @@ export const TemplateInvoice = () => {
                                                 padding-right: 8px;
                                                 "
                                             >
-                                                Rp 30.000
+                                               ${ConvertIDR(
+                                                 order.shipping
+                                                   ? order.shipping
+                                                   : 0
+                                               )}
                                             </td>
                                             </tr>
                                             <tr>
@@ -411,13 +435,17 @@ export const TemplateInvoice = () => {
                                                 padding-right: 8px;
                                                 "
                                             >
-                                                Rp 4.000
+                                                ${ConvertIDR(
+                                                  order.discount
+                                                    ? order.discount
+                                                    : 0
+                                                )}
                                             </td>
                                             </tr>
                                             <tr
                                             style="
                                                 font-weight: 600;
-                                                background-color: #fdba74;
+                                                background-color: ${color};
                                                 color: black;
                                                 font-size: 14px;
                                                 line-height: 20px;
@@ -440,7 +468,11 @@ export const TemplateInvoice = () => {
                                                 padding-bottom: 8px;
                                                 "
                                             >
-                                                Rp 3.855.500
+                                                ${ConvertIDR(
+                                                  order.grandTotal
+                                                    ? order.grandTotal
+                                                    : 0
+                                                )}
                                             </td>
                                             </tr>
                                         </tbody>
@@ -481,7 +513,7 @@ export const TemplateInvoice = () => {
                                                 style="
                                                 text-transform: uppercase;
                                                 font-weight: 600;
-                                                color: #f97316;
+                                                color: ${color};
                                                 padding-bottom: 6px;
                                                 "
                                             >
@@ -489,16 +521,17 @@ export const TemplateInvoice = () => {
                                             </td>
                                             </tr>
                                             <tr>
-                                            <td>mandiri bank</td>
+                                            <td>${setting.bank}</td>
                                             </tr>
                                             <tr>
-                                            <td>account name: Andria Pratama</td>
+                                            <td>account name: ${
+                                              setting.bankName
+                                            }</td>
                                             </tr>
                                             <tr>
-                                            <td>account number: 283732847329838</td>
-                                            </tr>
-                                            <tr>
-                                            <td>pay by 4 december 2023</td>
+                                            <td>account number: ${
+                                              setting.bankNumber
+                                            }</td>
                                             </tr>
                                         </tbody>
                                         </table>
@@ -536,7 +569,7 @@ export const TemplateInvoice = () => {
                     >
                     <tbody>
                         <tr
-                        style="width: 100%; height: 40px; background-color: #fdba74"
+                        style="width: 100%; height: 40px; background-color: ${color}"
                         >
                         <td></td>
                         </tr>

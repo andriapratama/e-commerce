@@ -1,16 +1,16 @@
 export interface SettingType {
   id: string;
-  image?: string;
-  imagePathname?: string;
-  email?: string;
-  address?: string;
-  whatsapp?: string;
-  instagram?: string;
-  twitter?: string;
-  facebook?: string;
-  bank?: string;
-  bankName?: string;
-  bankNumber?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  image: string | null;
+  imagePathname: string | null;
+  email: string | null;
+  address: string | null;
+  whatsapp: string | null;
+  instagram: string | null;
+  twitter: string | null;
+  facebook: string | null;
+  bank: string | null;
+  bankName: string | null;
+  bankNumber: string | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
 }

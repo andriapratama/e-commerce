@@ -26,8 +26,8 @@ const Setting = () => {
     bank: "",
     bankName: "",
     bankNumber: "",
-    createdAt: undefined,
-    updatedAt: undefined,
+    createdAt: null,
+    updatedAt: null,
   });
 
   const getSetting = useCallback(async () => {
