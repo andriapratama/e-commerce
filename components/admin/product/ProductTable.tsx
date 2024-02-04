@@ -22,6 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Pagination from "../Pagination";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface ProductTableProps {
   products: AdminProductType[];
@@ -36,6 +37,30 @@ const ProductTable: React.FC<ProductTableProps> = ({
   setIsLoadingContent,
   totalPage,
 }) => {
+  const router = useRouter();
+
+  const pathName = usePathname();
+
+  const searchParams = useSearchParams();
+
+  const pageParams = searchParams.get("page");
+
+  const categoryParams = searchParams.get("category");
+
+  const subCategoryParams = searchParams.get("subCategory");
+
+  const handleRouterPagination = (page: number) => {
+    if (categoryParams && subCategoryParams) {
+      router.push(
+        `${pathName}?category=${categoryParams}&subCategory=${subCategoryParams}&page=${page}`
+      );
+    } else if (categoryParams) {
+      router.push(`${pathName}?category=${categoryParams}&page=${page}`);
+    } else {
+      router.push(`${pathName}?page=${page}`);
+    }
+  };
+
   return (
     <div className="w-full">
       <Table className="bg-white rounded-md border">
@@ -122,6 +147,8 @@ const ProductTable: React.FC<ProductTableProps> = ({
       <Pagination
         totalPage={totalPage}
         setIsLoadingContent={setIsLoadingContent}
+        pageParams={parseInt(pageParams ? pageParams : "1")}
+        handleRouter={handleRouterPagination}
       />
     </div>
   );

@@ -1,40 +1,22 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { Dispatch, SetStateAction } from "react";
 
 interface Props {
   totalPage: number;
   setIsLoadingContent: Dispatch<SetStateAction<boolean>>;
+  pageParams: number;
+  handleRouter: (page: number) => void;
 }
 
-const Pagination: React.FC<Props> = ({ totalPage, setIsLoadingContent }) => {
-  const router = useRouter();
-
-  const pathName = usePathname();
-
-  const searchParams = useSearchParams();
-
-  const pageParams = searchParams.get("page");
-
-  const categoryParams = searchParams.get("category");
-
-  const subCategoryParams = searchParams.get("subCategory");
-
-  const pageNow: number = parseInt(pageParams ? pageParams : "1");
-
-  const handleRouter = (page: number) => {
-    if (categoryParams && subCategoryParams) {
-      router.push(
-        `${pathName}?category=${categoryParams}&subCategory=${subCategoryParams}&page=${page}`
-      );
-    } else if (categoryParams) {
-      router.push(`${pathName}?category=${categoryParams}&page=${page}`);
-    } else {
-      router.push(`${pathName}?page=${page}`);
-    }
-  };
+const Pagination: React.FC<Props> = ({
+  totalPage,
+  setIsLoadingContent,
+  pageParams,
+  handleRouter,
+}) => {
+  const pageNow: number = pageParams;
 
   const paginationNumber = () => {
     let pagination: number[] = [];
