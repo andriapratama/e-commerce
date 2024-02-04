@@ -1,14 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Dispatch, SetStateAction, useState } from "react";
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import { Dispatch, SetStateAction } from "react";
+import { MoreHorizontal } from "lucide-react";
 import { ConvertIDR } from "@/utils/ConvertIDR";
 import { OrdersType } from "@/types/admin/OrderType";
 import { ConvertDate } from "@/utils/ConvertDate";
 import StatusOrder from "../StatusOrder";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,17 +21,39 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Pagination from "../Pagination";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 interface OrderTableProps {
   orders: OrdersType[];
   setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
+  setIsLoadingContent: Dispatch<SetStateAction<boolean>>;
+  totalPage: number;
 }
 
 const OrderTable: React.FC<OrderTableProps> = ({
   orders,
   setIsLoadingPage,
+  setIsLoadingContent,
+  totalPage,
 }) => {
-  const [search, setSearch] = useState<string>("");
+  const router = useRouter();
+
+  const pathName = usePathname();
+
+  const searchParams = useSearchParams();
+
+  const pageParams = searchParams.get("page");
+
+  const handleRouterPagination = (page: number) => {
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
+
+    current.set("page", page.toString());
+
+    router.push(`${pathName}?${current.toString()}`);
+  };
 
   const StatusPayment = (status: "pending" | "paid") => {
     return (
@@ -49,16 +69,26 @@ const OrderTable: React.FC<OrderTableProps> = ({
     );
   };
 
+  const handleRouterPush = (invoice: string, status: string) => {
+    setIsLoadingPage(true);
+
+    router.push(`/admin/orders/${invoice}`);
+
+    if (status === "new") {
+      handleStoreData(invoice);
+    }
+  };
+
+  const handleStoreData = async (invoice: string) => {
+    try {
+      await axios.patch(`/api/admin/orders/${invoice}/status-order/patch`);
+    } catch (error: any) {
+      toast.error(error.response.data.message);
+    }
+  };
+
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Cari no invoice..."
-          value={search}
-          className="max-w-sm"
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
       <div className="rounded-md border">
         <Table className="bg-white rounded-md">
           <TableHeader>
@@ -122,14 +152,14 @@ const OrderTable: React.FC<OrderTableProps> = ({
                         </div>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <Link href={`/admin/orders/${order.invoice}`}>
-                          <DropdownMenuItem
-                            className="cursor-pointer"
-                            onClick={() => setIsLoadingPage(true)}
-                          >
-                            Detail
-                          </DropdownMenuItem>
-                        </Link>
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() =>
+                            handleRouterPush(order.invoice, order.statusOrder)
+                          }
+                        >
+                          Detail
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -145,16 +175,13 @@ const OrderTable: React.FC<OrderTableProps> = ({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="space-x-2">
-          <Button variant="outline" size="sm">
-            <ChevronLeft />
-          </Button>
-          <Button variant="outline" size="sm">
-            <ChevronRight />
-          </Button>
-        </div>
-      </div>
+
+      <Pagination
+        totalPage={totalPage}
+        setIsLoadingContent={setIsLoadingContent}
+        handleRouter={handleRouterPagination}
+        pageParams={pageParams ? parseInt(pageParams) : 1}
+      />
     </div>
   );
 };

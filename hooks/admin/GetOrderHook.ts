@@ -30,7 +30,7 @@ export const useGetOrderHook = () => {
       phone: "",
     },
     orderDetail: [],
-    createdAt: "",
+    createdAt: new Date(),
   });
 
   const [orderLogs, setOrderLogs] = useState<OrderLogType[]>([]);
@@ -44,11 +44,6 @@ export const useGetOrderHook = () => {
       );
 
       const order: OrderType = res.data.data;
-
-      if (order.statusOrder === "new") {
-        await axios.patch(`/api/admin/orders/${invoice}/status-order/patch`);
-        getOrder();
-      }
 
       setOrder(order);
 
