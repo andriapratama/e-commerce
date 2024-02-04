@@ -26,6 +26,11 @@ interface MenuType {
 
 const menus: MenuType[] = [
   {
+    name: "dashboard",
+    link: "/admin",
+    role: ["superAdmin", "admin"],
+  },
+  {
     name: "order",
     link: "/admin/orders",
     role: ["superAdmin", "admin"],
