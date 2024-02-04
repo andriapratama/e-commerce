@@ -55,7 +55,7 @@ const PromoDetailContent: React.FC<Props> = ({
           <div className="admin-promo-detail__content">
             <div className="admin-promo-detail__title">Tanggal Dibuat</div>
             <div className="admin-promo-detail__value capitalize">
-              {ConvertDateId(promo.createdAt)}
+              {ConvertDateId(promo.createdAt).fullDateName}
             </div>
           </div>
 

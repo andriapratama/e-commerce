@@ -52,6 +52,7 @@ export const GET = async (
         status: true,
         note: true,
         createdAt: true,
+        invoice: true,
         employee: {
           select: {
             name: true,

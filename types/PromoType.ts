@@ -1,5 +1,5 @@
 export interface PromoType {
-  createdAt: string;
+  createdAt: Date;
   description: string;
   firstPrice: number;
   image: string;

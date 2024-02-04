@@ -9,8 +9,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-const ProductDetailShowNote = ({ note }: { note: string }) => {
+const ProductDetailShowNote = ({
+  note,
+  invoice,
+}: {
+  note: string;
+  invoice?: string;
+}) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -21,7 +28,17 @@ const ProductDetailShowNote = ({ note }: { note: string }) => {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Catatan</DialogTitle>
-          <DialogDescription>{note}</DialogDescription>
+          <DialogDescription>
+            {note}
+            {invoice ? (
+              <Link
+                className="ml-1 hover:text-blue-500"
+                href={`/admin/orders/${invoice}`}
+              >
+                {invoice}
+              </Link>
+            ) : null}
+          </DialogDescription>
         </DialogHeader>
       </DialogContent>
     </Dialog>

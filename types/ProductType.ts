@@ -33,3 +33,19 @@ export interface ClientProductType {
   image: string;
   createdAt: string | Date;
 }
+
+export interface ProductSoldType {
+  image: string;
+  name: string;
+  slug: string;
+  total: {
+    total: number;
+  };
+}
+
+export interface ProductMinStockType {
+  name: string;
+  image: string;
+  totalStock: number;
+  slug: string;
+}

@@ -61,7 +61,9 @@ const OrderDetail = () => {
               </OrderDetailCard>
               <OrderDetailCard title="Tanggal pesan & Pembayaran">
                 <div>{ConvertTime(order.createdAt)}</div>
-                <div>{ConvertDateId(order.createdAt)}</div>
+                <div className="capitalize">
+                  {ConvertDateId(order.createdAt).fullDateName}
+                </div>
                 <div className="capitalize">
                   {order.paymentMethod === "cash" ? "tunai" : "transfer"}
                 </div>

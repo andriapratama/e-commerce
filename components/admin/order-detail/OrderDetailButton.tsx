@@ -174,7 +174,7 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
 
         {doneButton()}
 
-        {checkStatus("delivery") === undefined ||
+        {checkStatus("delivery") === undefined &&
         order.statuspayment === "pending" ? (
           <Button onClick={() => setIsOpenEditTransaction(true)}>
             Masukkan biaya lainnya

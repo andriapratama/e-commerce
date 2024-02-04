@@ -20,6 +20,7 @@ interface ProductStockLogType {
   note: string;
   createdAt: string;
   employee: { name: string };
+  invoice?: string;
 }
 
 interface ProductDetailStockLogProps {
@@ -69,7 +70,10 @@ const ProductDetailStockLog: React.FC<ProductDetailStockLogProps> = ({
                   {!value.note ? (
                     "-"
                   ) : (
-                    <ProductDetailShowNote note={value.note} />
+                    <ProductDetailShowNote
+                      note={value.note}
+                      invoice={value.invoice}
+                    />
                   )}
                 </TableCell>
                 <TableCell className="capitalize text-center">
