@@ -1,4 +1,4 @@
-import AdminNavbar from "@/components/admin/Navbar";
+import AdminNavbar from "@/components/admin/navbar/Navbar";
 import { Suspense } from "react";
 import AdminLoading from "./loading";
 import { getServerSession } from "next-auth";

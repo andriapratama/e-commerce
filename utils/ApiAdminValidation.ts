@@ -24,11 +24,11 @@ export const ApiAdminValidation = async () => {
   }
 
   if (session?.user) {
-    const username = session.user.username;
+    const usernameSession = session.user.username;
 
     const findEmployee = await prismadb.employee.findUnique({
       where: {
-        username,
+        username: usernameSession,
       },
     });
 
@@ -38,7 +38,7 @@ export const ApiAdminValidation = async () => {
         (validation.status = 404);
     }
 
-    return { validation, findEmployee };
+    return { validation, findEmployee, usernameSession };
   }
 
   return { validation };
