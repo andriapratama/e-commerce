@@ -5,12 +5,25 @@ import Link from "next/link";
 import Image from "next/image";
 import { MenuType } from "@/types/MenuType";
 import { ShoppingCart } from "lucide-react";
-import { ToastContainer } from "react-toastify";
 import { CategoryFullType } from "@/types/CategoryType";
 import NavbarSearch from "./NavbarSearch";
 import NavbarDesktopMenu from "./NavbarDesktopMenu";
 import NavbarMobileMenu from "./NavbarMobileMenu";
 import NavbarMobileSearch from "./NavbarMobileSearch";
+import { Kaushan_Script } from "next/font/google";
+import localFont from "next/font/local";
+
+const kaushan = Kaushan_Script({
+  weight: "400",
+  style: "normal",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const prostestRiot = localFont({
+  src: [{ path: "../../../public/ProtestRiot-Regular.ttf", weight: "400" }],
+  display: "swap",
+});
 
 interface NavbarProps {
   role?: string;
@@ -59,7 +72,6 @@ const Navbar: React.FC<NavbarProps> = ({ countCarts, role, categories }) => {
 
   return (
     <React.Fragment>
-      <ToastContainer />
       <nav
         className={`w-full flex justify-center z-40 top-0 fixed bg-second-color text-primary-color text-sm font-semibold`}
       >
@@ -70,12 +82,19 @@ const Navbar: React.FC<NavbarProps> = ({ countCarts, role, categories }) => {
             <Image
               src="/logo.png"
               alt="logo"
-              height={45}
-              width={45}
-              className="object-contain lg:w-[45px] lg:h-[45px] h-[30px] w-[30px]"
+              height={100}
+              width={100}
+              className="object-contain lg:w-[70px] lg:h-[70px] h-[30px] w-[30px]"
             />
-            <div className="uppercase text-lg hidden sm:block">
-              <span className="text-white">Bottle</span> Time
+            <div className="text-lg hidden sm:block">
+              <div className={`text-3xl ${prostestRiot.className}`}>
+                <span className="text-white">BOTTLE</span> TIME
+              </div>
+              <div
+                className={`text-md text-white text-2xl ${kaushan.className}`}
+              >
+                bir wine spirit Bali
+              </div>
             </div>
           </Link>
 
