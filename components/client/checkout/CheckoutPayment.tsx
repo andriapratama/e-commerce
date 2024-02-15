@@ -69,6 +69,8 @@ const CheckoutPayment: React.FC<CheckoutPaymentProps> = ({ note }) => {
 
       setIsLoading(false);
       setIsOpenWarningAlert(false);
+
+      await axios.get("/api/telegram/get");
     } catch (error: any) {
       if (error.response.status === 401 || error.response.status === 404) {
         router.push("/denied");
