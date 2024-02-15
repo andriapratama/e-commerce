@@ -140,8 +140,6 @@ const PromoEditData: React.FC<Props> = ({
     try {
       setIsLoading(true);
 
-      console.log("masuk");
-
       const res = await axios.patch(
         `/api/admin/promos/${paramsSlug}/data/patch`,
         {
@@ -162,7 +160,7 @@ const PromoEditData: React.FC<Props> = ({
         getPromo();
       }
 
-      toast.success("Data produk berhasil disimpan");
+      toast.success("Data promo berhasil disimpan");
 
       setIsOpen(false);
       setIsOpenWarning(false);

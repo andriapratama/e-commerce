@@ -1,6 +1,6 @@
 "use client";
 
-import { CategoryType } from "@/types/CategoryType";
+import { CategoryFullType } from "@/types/CategoryType";
 import React, { useEffect, useState } from "react";
 import SearchByCategory from "./SearchByCategory";
 import CollectionProducts from "./CollectionProducts";
@@ -9,7 +9,7 @@ import Pagination from "../Pagination";
 import { useSearchParams } from "next/navigation";
 
 interface CollectionContentProps {
-  categories: CategoryType[];
+  categories: CategoryFullType[];
   products: ClientProductType[];
   totalPage: number;
 }

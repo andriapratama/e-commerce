@@ -44,12 +44,12 @@ const Promo: React.FC<Props> = ({ promos }) => {
             {promos.map((promo: PromoType, index) => (
               <CarouselItem
                 key={index}
-                className={`pl-2 ${
+                className={`pl-2 rounded  ${
                   promos.length === 2
-                    ? "md:basis-1/2"
+                    ? "md:basis-1/2 md:h-[400px]"
                     : promos.length === 1
                     ? "md:basis-full"
-                    : "lg:basis-1/3 md:basis-1/2"
+                    : "lg:basis-1/3 md:basis-1/2 lg:h-[280px]"
                 }`}
               >
                 <Link href={`promos/${promo.slug}`} className="p-1">

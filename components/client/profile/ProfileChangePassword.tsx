@@ -38,7 +38,7 @@ const formSchema = z
     confirmNewPassword: z
       .string()
       .min(1, "Confirm new password is required")
-      .min(3, "Confirm new password minimum 6 characters"),
+      .min(6, "Confirm new password minimum 6 characters"),
   })
   .refine((data) => data.newPassword === data.confirmNewPassword, {
     message: "Confirm new password don't match",

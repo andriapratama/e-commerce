@@ -6,6 +6,7 @@ const alegreya = Alegreya_SC({
   weight: "500",
   style: "italic",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const ClientPageLoading = () => {
