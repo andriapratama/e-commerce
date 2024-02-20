@@ -12,6 +12,8 @@ import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { useGetAllHerosData } from "@/hooks/client/HeroHook";
 import { useGetAllPromoHook } from "@/hooks/client/PromoHook";
 import Promo from "@/components/client/home/Promo";
+import { ToastContainer } from "react-toastify";
+import React from "react";
 
 const Home = async () => {
   const { products: productsBest } = await useGetProductsByStatusHook("best");
@@ -60,23 +62,27 @@ const Home = async () => {
   }
 
   return (
-    <main className="min-h-screen !w-full overflow-x-hidden">
-      {session?.user.role === "member" ? (
-        <Navbar
-          countCarts={thisCountCarts}
-          role={session?.user.role}
-          categories={categories}
-        />
-      ) : (
-        <Navbar categories={categories} />
-      )}
-      <Hero heros={heros} />
-      <Products products={productsBest} title="best seller" />
-      <Products products={productsNew} title="new" />
-      <Products products={productsSale} title="sale" />
-      <Promo promos={promos} />
-      <Footer />
-    </main>
+    <React.Fragment>
+      <ToastContainer />
+
+      <main className="min-h-screen !w-full overflow-x-hidden">
+        {session?.user.role === "member" ? (
+          <Navbar
+            countCarts={thisCountCarts}
+            role={session?.user.role}
+            categories={categories}
+          />
+        ) : (
+          <Navbar categories={categories} />
+        )}
+        <Hero heros={heros} />
+        <Products products={productsBest} title="best seller" />
+        <Products products={productsNew} title="new" />
+        <Products products={productsSale} title="sale" />
+        <Promo promos={promos} />
+        <Footer />
+      </main>
+    </React.Fragment>
   );
 };
 

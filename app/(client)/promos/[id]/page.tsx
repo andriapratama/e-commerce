@@ -17,7 +17,7 @@ const PromoDetail = async ({ params }: { params: { id: string } }) => {
   const slug: string = params.id;
 
   let thisPromo: PromoType = {
-    createdAt: "",
+    createdAt: new Date(),
     description: "",
     firstPrice: 0,
     image: "",
