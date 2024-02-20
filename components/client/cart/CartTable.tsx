@@ -1,13 +1,11 @@
 "use client";
 
-import axios from "axios";
 import CartTotal from "./CartTotal";
 import { CartType } from "@/types/CartType";
-import { useRouter } from "next/navigation";
 import CartTablePromo from "./CartTablePromo";
 import CartTableProduct from "./CartTableProduct";
-import React, { useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import React from "react";
+import { ToastContainer } from "react-toastify";
 import {
   Table,
   TableBody,
@@ -16,76 +14,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
-import Image from "next/image";
-import { ConvertIDR } from "@/utils/ConvertIDR";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import LoadingGif from "@/components/LoadingGif";
-import { Trash2 } from "lucide-react";
 import CartMobileTableProduct from "./CartMobileTableProduct";
 import CartMobileTablePromo from "./CartMobileTablePromo";
+import { useCartHook } from "@/hooks/client/CartClientSideHook";
 
 interface CartTableProps {
   carts?: CartType[];
 }
 
 const CartTable: React.FC<CartTableProps> = ({ carts }) => {
-  const [cartList, setCartList] = useState<CartType[]>([]);
-
-  const router = useRouter();
-
-  useEffect(() => {
-    if (carts) {
-      let thisCarts: CartType[] = [...carts];
-
-      carts.map((cart, index) => {
-        thisCarts[index].isLoading = false;
-      });
-
-      setCartList(thisCarts);
-    }
-  }, [setCartList, carts]);
-
-  const handleDelete = async (index: number) => {
-    const thisCarts = [...cartList];
-
-    const cartId = thisCarts[index].id;
-
-    try {
-      thisCarts[index].isLoading = true;
-
-      setCartList(thisCarts);
-
-      await axios.delete(`/api/cart/delete/${cartId}`);
-
-      router.refresh();
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-    } finally {
-      thisCarts[index].isLoading = false;
-
-      setCartList(thisCarts);
-    }
-  };
-
-  const handleChecked = async (index: number) => {
-    const thisCarts = [...cartList];
-
-    const cartId = thisCarts[index].id;
-
-    thisCarts[index].status = !thisCarts[index].status;
-
-    setCartList(thisCarts);
-
-    try {
-      await axios.patch(`/api/cart/check/${cartId}`);
-
-      router.refresh();
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-    }
-  };
+  const { cartList, setCartList, handleDelete, handleChecked } =
+    useCartHook(carts);
 
   return (
     <div className="w-full lg:min-h-[calc(100vh-536px)] md:min-h-[calc(100vh-487px)]">
@@ -153,7 +92,9 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
           <TableHeader>
             <TableRow>
               <TableHead className="text-center w-[2%]">#</TableHead>
-              <TableHead colSpan={3}>Products</TableHead>
+              <TableHead colSpan={3} className="text-center">
+                Products
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

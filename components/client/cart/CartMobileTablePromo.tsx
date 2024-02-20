@@ -12,11 +12,11 @@ import Image from "next/image";
 import { ConvertIDR } from "@/utils/ConvertIDR";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { CartType } from "@/types/CartType";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import LoadingGif from "@/components/LoadingGif";
 import { Trash2 } from "lucide-react";
 import axios from "axios";
+import { useCartDetailHook } from "@/hooks/client/CartClientSideHook";
 
 interface Props {
   cart: CartType;
@@ -51,76 +51,8 @@ const CartMobileTablePromo: React.FC<Props> = ({
     getTotalStock();
   }, []);
 
-  const handleIncrease = () => {
-    const thisCarts = [...cartList];
-
-    if (thisCarts[index].quantity >= totalStock) {
-      thisCarts[index].quantity = totalStock;
-    } else {
-      thisCarts[index].quantity = thisCarts[index].quantity + 1;
-    }
-
-    setCartList(thisCarts);
-
-    handleTotal(thisCarts[index].quantity);
-
-    handleUpdate(thisCarts[index].id, thisCarts[index].quantity);
-  };
-
-  const handleDecrease = () => {
-    const thisCarts = [...cartList];
-
-    if (thisCarts[index].quantity <= 1 || !thisCarts[index].quantity) {
-      thisCarts[index].quantity = 1;
-    } else {
-      thisCarts[index].quantity = thisCarts[index].quantity - 1;
-    }
-
-    setCartList(thisCarts);
-
-    handleTotal(thisCarts[index].quantity);
-
-    handleUpdate(thisCarts[index].id, thisCarts[index].quantity);
-  };
-
-  const handleSetQuantity = (quantity: number) => {
-    const thisCarts = [...cartList];
-
-    if (quantity >= totalStock) {
-      thisCarts[index].quantity = totalStock;
-    } else if (quantity <= 1 || !quantity) {
-      thisCarts[index].quantity = 1;
-    } else {
-      thisCarts[index].quantity = quantity;
-    }
-
-    setCartList(thisCarts);
-
-    handleTotal(thisCarts[index].quantity);
-
-    handleUpdate(thisCarts[index].id, thisCarts[index].quantity);
-  };
-
-  const handleTotal = (quantity: number) => {
-    const thisCarts = [...cartList];
-
-    const price = thisCarts[index].promo?.promoPrice;
-
-    const thisPrice = price ? price : 0;
-
-    const total = thisPrice * quantity;
-
-    thisCarts[index].total = total;
-
-    setCartList(thisCarts);
-  };
-
-  const handleUpdate = async (cartId: string, quantity: number) => {
-    await axios.patch("/api/cart/promo/patch", {
-      cartId,
-      quantity,
-    });
-  };
+  const { handleDecrease, handleSetQuantity, handleIncrease } =
+    useCartDetailHook(index, cartList, setCartList, "promo", totalStock);
 
   if (cart.promo) {
     return (
