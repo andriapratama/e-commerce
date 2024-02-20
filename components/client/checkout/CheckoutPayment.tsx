@@ -19,6 +19,7 @@ import Alert from "../Alert";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { cashDesc, transferDesc } from "@/constant/CheckoutPaymentDesc";
 
 interface CheckoutPaymentProps {
   note: string;
@@ -35,11 +36,6 @@ const CheckoutPayment: React.FC<CheckoutPaymentProps> = ({ note }) => {
   const [isOpenWarningAlert, setIsOpenWarningAlert] = useState<boolean>(false);
   const [isOpenSuccessAlert, setIsOpenSuccessAlert] = useState<boolean>(false);
   const [paymentMethod, setPaymentMethod] = useState<string>("");
-
-  const transferDesc =
-    "Your order is being processed, an invoice will be sent to email or WhatsApp to continue payment.";
-  const cashDesc =
-    "Your order is being processed, an invoice will be sent to email or WhatsApp and the product will be sent according to the address.";
 
   const router = useRouter();
 
