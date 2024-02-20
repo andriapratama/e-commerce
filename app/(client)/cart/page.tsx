@@ -1,5 +1,6 @@
 import Footer from "@/components/client/Footer";
 import Navbar from "@/components/client/Navbar/Navbar";
+import CartLocalTable from "@/components/client/cart-local/CartLocalTable";
 import CartTable from "@/components/client/cart/CartTable";
 import {
   useCountCartsHook,
@@ -63,7 +64,7 @@ const Cart = async () => {
         <React.Fragment>
           <Navbar categories={categories} />
 
-          <CartTable />
+          <CartLocalTable />
         </React.Fragment>
       )}
 

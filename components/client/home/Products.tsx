@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import ProductCard from "../ProductCard";
 import Autoplay from "embla-carousel-autoplay";
 import { ClientProductType } from "@/types/ProductType";
@@ -11,6 +11,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { useSession } from "next-auth/react";
 
 interface ProductProps {
   products: ClientProductType[];
@@ -21,6 +22,8 @@ const Products: React.FC<ProductProps> = ({ products, title }) => {
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   );
+
+  const { status } = useSession();
 
   if (products.length < 1) {
     return null;
@@ -60,7 +63,11 @@ const Products: React.FC<ProductProps> = ({ products, title }) => {
                     }`}
                   >
                     <div className="p-1">
-                      <ProductCard product={product} key={product.slug} />
+                      <ProductCard
+                        product={product}
+                        key={product.slug}
+                        status={status}
+                      />
                     </div>
                   </CarouselItem>
                 ))}

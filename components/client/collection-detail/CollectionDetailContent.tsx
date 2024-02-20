@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { ClientProductType } from "@/types/ProductType";
 import { ConvertIDR } from "@/utils/ConvertIDR";
@@ -8,10 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ShowImage from "../ShowImage";
 import StatusProduct from "../StatusProduct";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import ButtonLoading from "@/components/ButtonLoading";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useCartContext } from "@/context/CartContext";
+import { CartLocalType } from "@/types/CartType";
 
 interface CollectionDetailContentProps {
   product: ClientProductType;
@@ -26,6 +29,10 @@ const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
   const [message, setMessage] = useState<string>("");
   const [isOpenImage, setIsOpenImage] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { carts, handleSetCarts } = useCartContext();
+
+  const { status } = useSession();
 
   const router = useRouter();
 
@@ -70,11 +77,13 @@ const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
     if (quantity < 1) {
       setMessage("Quantity cannot be 0");
     } else {
-      storeData();
+      if (status === "unauthenticated") storeDataToLocalStorage();
+
+      if (status === "authenticated") storeDataToDB();
     }
   };
 
-  const storeData = async () => {
+  const storeDataToDB = async () => {
     try {
       setIsLoading(true);
 
@@ -83,7 +92,7 @@ const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
         quantity,
       });
 
-      toast.success("Order saved in cart");
+      toast.success("Order saved to cart");
 
       setQuantity(0);
 
@@ -96,8 +105,43 @@ const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
     }
   };
 
+  const storeDataToLocalStorage = () => {
+    const findProductIndex = carts.findIndex(
+      (cart) => cart.slug === product.slug
+    );
+
+    if (findProductIndex === -1) {
+      const cart: CartLocalType = {
+        image: product.image,
+        name: product.name,
+        slug: product.slug,
+        status: true,
+        price: product.price,
+        salePrice: product.salePrice ? product.salePrice : 0,
+        quantity: quantity,
+        type: "product",
+        totalStock: product.totalStock,
+      };
+
+      const newCarts = [...carts, cart];
+
+      handleSetCarts(newCarts);
+    } else {
+      let newCarts = [...carts];
+      newCarts[findProductIndex].quantity += quantity;
+
+      handleSetCarts(newCarts);
+    }
+
+    toast.success("Order saved to cart");
+
+    setQuantity(0);
+  };
+
   return (
     <React.Fragment>
+      <ToastContainer />
+
       <div className="w-full lg:min-h-[calc(100vh-537px)] flex justify-center lg:mt-[150px] md:mt-[100px] mt-[80px] font-serif">
         <div className="md:w-[60%] sm:w-[80%] w-[90%] grid sm:grid-cols-2 grid-cols-1 gap-5">
           <div className="w-full flex justify-center relative">

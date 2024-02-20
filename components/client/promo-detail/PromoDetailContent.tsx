@@ -9,8 +9,11 @@ import React, { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ButtonLoading from "@/components/ButtonLoading";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useCartContext } from "@/context/CartContext";
+import { CartLocalType } from "@/types/CartType";
 
 interface Props {
   promo: PromoType;
@@ -22,6 +25,9 @@ const PromoDetailContent: React.FC<Props> = ({ promo, totalStock }) => {
   const [message, setMessage] = useState<string>("");
   const [isOpenImage, setIsOpenImage] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { carts, handleSetCarts } = useCartContext();
+
+  const { status } = useSession();
 
   const router = useRouter();
 
@@ -66,11 +72,13 @@ const PromoDetailContent: React.FC<Props> = ({ promo, totalStock }) => {
     if (quantity < 1) {
       setMessage("Quantity cannot be 0");
     } else {
-      storeData();
+      if (status === "unauthenticated") storeDataToLocalStorage();
+
+      if (status === "authenticated") storeDataToDB();
     }
   };
 
-  const storeData = async () => {
+  const storeDataToDB = async () => {
     try {
       setIsLoading(true);
 
@@ -79,7 +87,7 @@ const PromoDetailContent: React.FC<Props> = ({ promo, totalStock }) => {
         quantity,
       });
 
-      toast.success("Order saved in cart");
+      toast.success("Order saved to cart");
 
       setQuantity(0);
 
@@ -92,8 +100,41 @@ const PromoDetailContent: React.FC<Props> = ({ promo, totalStock }) => {
     }
   };
 
+  const storeDataToLocalStorage = () => {
+    const findProductIndex = carts.findIndex((cart) => cart.slug === slug);
+
+    if (findProductIndex === -1) {
+      const cart: CartLocalType = {
+        image: promo.image,
+        name: promo.name,
+        slug: promo.slug,
+        status: true,
+        price: promo.firstPrice,
+        salePrice: promo.promoPrice,
+        quantity: quantity,
+        type: "promo",
+        totalStock: totalStock,
+      };
+
+      const newCarts = [...carts, cart];
+
+      handleSetCarts(newCarts);
+    } else {
+      let newCarts = [...carts];
+      newCarts[findProductIndex].quantity += 1;
+
+      handleSetCarts(newCarts);
+    }
+
+    toast.success("Order saved to cart");
+
+    setQuantity(0);
+  };
+
   return (
     <React.Fragment>
+      <ToastContainer />
+
       <div className="w-full flex justify-center mt-[80px] lg:mt-[150px]">
         <div className="md:w-[80%] w-[90%] flex gap-5">
           <div className="w-[60%] flex justify-center relative">

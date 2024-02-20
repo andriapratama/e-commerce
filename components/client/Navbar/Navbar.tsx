@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { MenuType } from "@/types/MenuType";
@@ -12,6 +12,8 @@ import NavbarMobileMenu from "./NavbarMobileMenu";
 import NavbarMobileSearch from "./NavbarMobileSearch";
 import { Kaushan_Script } from "next/font/google";
 import localFont from "next/font/local";
+import { useSession } from "next-auth/react";
+import { useCartContext } from "@/context/CartContext";
 
 const kaushan = Kaushan_Script({
   weight: "400",
@@ -70,6 +72,18 @@ const Navbar: React.FC<NavbarProps> = ({ countCarts, role, categories }) => {
     },
   ];
 
+  const [totalCarts, setTotalCarts] = useState<number | undefined>(undefined);
+
+  const { status } = useSession();
+
+  const { carts } = useCartContext();
+
+  useEffect(() => {
+    if (status === "unauthenticated") setTotalCarts(carts.length);
+
+    if (status === "authenticated") setTotalCarts(countCarts);
+  }, [status, carts, countCarts]);
+
   return (
     <React.Fragment>
       <nav
@@ -106,9 +120,9 @@ const Navbar: React.FC<NavbarProps> = ({ countCarts, role, categories }) => {
 
           <Link href="/cart" className="relative">
             <div className="relative h-fit w-fit">
-              {countCarts ? (
+              {totalCarts ? (
                 <div className="absolute w-5 h-5 flex justify-center items-center rounded-full bg-red-500 text-xs -right-2 -top-2 text-white">
-                  {countCarts}
+                  {totalCarts}
                 </div>
               ) : null}
               <ShoppingCart width={25} height={25} />

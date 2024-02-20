@@ -31,3 +31,15 @@ export interface CartType {
   status: boolean;
   isLoading?: boolean;
 }
+
+export interface CartLocalType {
+  image: string;
+  name: string;
+  slug: string;
+  status: boolean;
+  price: number;
+  salePrice: number;
+  quantity: number;
+  type: "product" | "promo";
+  totalStock: number;
+}

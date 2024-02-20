@@ -11,38 +11,51 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import LoadingGif from "../LoadingGif";
+import { CartLocalType } from "@/types/CartType";
+import { useCartContext } from "@/context/CartContext";
 
 const lugrasimo = Lugrasimo({
   weight: "400",
   style: "normal",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const junge = Junge({
   weight: "400",
   style: "normal",
   subsets: ["latin"],
+  display: "swap",
 });
 
 interface ProductCardProps {
   product: ClientProductType;
+  status: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, status }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { carts, handleSetCarts } = useCartContext();
 
   const router = useRouter();
 
   const handleAddCart = async () => {
+    if (status === "unauthenticated") storeDataToLocalStorage();
+
+    if (status === "authenticated") storeDataToDB();
+  };
+
+  const storeDataToDB = async () => {
     try {
       setIsLoading(true);
 
-      const res = await axios.post("/api/cart/product/post", {
+      await axios.post("/api/cart/product/post", {
         productSlug: product.slug,
         quantity: 1,
       });
 
-      toast.success(res.data.message);
+      toast.success("Order saved to cart");
 
       router.refresh();
     } catch (error: any) {
@@ -51,6 +64,38 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       setIsLoading(false);
     }
   };
+
+  const storeDataToLocalStorage = () => {
+    const findProductIndex = carts.findIndex(
+      (cart) => cart.slug === product.slug
+    );
+
+    if (findProductIndex === -1) {
+      const cart: CartLocalType = {
+        image: product.image,
+        name: product.name,
+        slug: product.slug,
+        status: true,
+        price: product.price,
+        salePrice: product.salePrice ? product.salePrice : 0,
+        quantity: 1,
+        type: "product",
+        totalStock: product.totalStock,
+      };
+
+      const newCarts = [...carts, cart];
+
+      handleSetCarts(newCarts);
+    } else {
+      let newCarts = [...carts];
+      newCarts[findProductIndex].quantity += 1;
+
+      handleSetCarts(newCarts);
+    }
+
+    toast.success("Order saved to cart");
+  };
+
   return (
     <div className="w-full h-fit mb-6 hover:shadow">
       <div
