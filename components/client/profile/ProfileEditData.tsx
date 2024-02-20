@@ -33,12 +33,12 @@ import {
   InterPhoneCodes,
   ValidatePhoneNumber,
 } from "@/utils/ValidatePhoneNumber";
-import ProfileSelectInterCodePhone from "./ProfileSelectInterCodePhone";
 import useAutosizeTextArea from "@/utils/AutosizeTextArea";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import ButtonLoading from "@/components/ButtonLoading";
+import SelectInterCodePhone from "../SelectInterCodePhone";
 
 interface ProfileEditDataProps {
   user: UserType;
@@ -247,7 +247,7 @@ const ProfileEditData: React.FC<ProfileEditDataProps> = ({
                     <FormLabel className="text-gray-700">Phone</FormLabel>
                     <FormControl>
                       <div className="w-full flex gap-2">
-                        <ProfileSelectInterCodePhone
+                        <SelectInterCodePhone
                           isOpen={isOpenPhoneCode}
                           setIsOpen={setIsOpenPhoneCode}
                           phoneCode={phoneCode}
