@@ -1,5 +1,6 @@
 import Footer from "@/components/client/Footer";
 import Navbar from "@/components/client/Navbar/Navbar";
+import CheckoutLocalContent from "@/components/client/checkout-local/CheckoutLocalContent";
 import CheckoutContent from "@/components/client/checkout/CheckoutContent";
 import { useCountCartsHook } from "@/hooks/client/CartHook";
 import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
@@ -87,7 +88,7 @@ const Checkout = async () => {
         <>
           <Navbar categories={categories} />
 
-          <CheckoutContent />
+          <CheckoutLocalContent />
         </>
       )}
       <Footer />
