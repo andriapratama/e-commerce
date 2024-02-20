@@ -50,6 +50,7 @@ export const POST = async (req: Request) => {
     const findPromoInCart = await prismadb.cart.findFirst({
       where: {
         promoId: findPromo.id,
+        userId: findUser?.id,
       },
     });
 
@@ -59,6 +60,7 @@ export const POST = async (req: Request) => {
       await prismadb.cart.update({
         where: {
           id: findPromoInCart.id,
+          userId: findUser?.id,
         },
         data: {
           quantity: findPromoInCart.quantity + quantity,
