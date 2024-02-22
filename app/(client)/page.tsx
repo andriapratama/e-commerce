@@ -14,6 +14,7 @@ import { useGetAllPromoHook } from "@/hooks/client/PromoHook";
 import Promo from "@/components/client/home/Promo";
 import { ToastContainer } from "react-toastify";
 import React from "react";
+import axios from "axios";
 
 const Home = async () => {
   const { products: productsBest } = await useGetProductsByStatusHook("best");
@@ -61,6 +62,10 @@ const Home = async () => {
     }
   }
 
+  const setting = await axios.get(`${process.env.WEB_URL}/api/setting/get`);
+
+  const settingValue = setting.data.data;
+
   return (
     <React.Fragment>
       <ToastContainer />
@@ -80,7 +85,7 @@ const Home = async () => {
         <Products products={productsNew} title="new" />
         <Products products={productsSale} title="sale" />
         <Promo promos={promos} />
-        <Footer />
+        <Footer settingValue={settingValue} />
       </main>
     </React.Fragment>
   );
