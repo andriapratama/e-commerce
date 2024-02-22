@@ -42,4 +42,5 @@ export interface CartLocalType {
   quantity: number;
   type: "product" | "promo";
   totalStock: number;
+  createdAt: Date;
 }

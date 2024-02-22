@@ -24,14 +24,33 @@ export default function CartContextProvider({
 }) {
   const [carts, setCarts] = useState<CartLocalType[]>([]);
 
-  useEffect(() => {
+  const getCarts = () => {
     if (typeof window !== "undefined" && window.localStorage) {
       const cartsFromLocal = JSON.parse(
         localStorage.getItem("carts") as string
       );
 
-      setCarts(cartsFromLocal);
+      if (!cartsFromLocal) {
+        setCarts([]);
+      } else {
+        const timeNow = new Date().getTime();
+
+        const lastTime = new Date(cartsFromLocal[0].createdAt).getTime();
+
+        const oneDay = 24 * 60 * 60 * 1000;
+
+        if (timeNow - lastTime > oneDay) {
+          localStorage.removeItem("carts");
+          setCarts([]);
+        }
+
+        setCarts(cartsFromLocal);
+      }
     }
+  };
+
+  useEffect(() => {
+    getCarts();
   }, []);
 
   return (

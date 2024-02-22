@@ -79,7 +79,13 @@ const Navbar: React.FC<NavbarProps> = ({ countCarts, role, categories }) => {
   const { carts } = useCartContext();
 
   useEffect(() => {
-    if (status === "unauthenticated") setTotalCarts(carts.length);
+    if (status === "unauthenticated") {
+      if (!carts) {
+        setTotalCarts(undefined);
+      } else {
+        setTotalCarts(carts.length);
+      }
+    }
 
     if (status === "authenticated") setTotalCarts(countCarts);
   }, [status, carts, countCarts]);

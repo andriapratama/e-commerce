@@ -101,29 +101,36 @@ const PromoDetailContent: React.FC<Props> = ({ promo, totalStock }) => {
   };
 
   const storeDataToLocalStorage = () => {
-    const findProductIndex = carts.findIndex((cart) => cart.slug === slug);
+    const cart: CartLocalType = {
+      image: promo.image,
+      name: promo.name,
+      slug: promo.slug,
+      status: true,
+      price: promo.firstPrice,
+      salePrice: promo.promoPrice,
+      quantity: quantity,
+      type: "promo",
+      totalStock: totalStock,
+      createdAt: new Date(),
+    };
 
-    if (findProductIndex === -1) {
-      const cart: CartLocalType = {
-        image: promo.image,
-        name: promo.name,
-        slug: promo.slug,
-        status: true,
-        price: promo.firstPrice,
-        salePrice: promo.promoPrice,
-        quantity: quantity,
-        type: "promo",
-        totalStock: totalStock,
-      };
-
-      const newCarts = [...carts, cart];
+    if (!carts) {
+      const newCarts = [cart];
 
       handleSetCarts(newCarts);
     } else {
-      let newCarts = [...carts];
-      newCarts[findProductIndex].quantity += 1;
+      const findProductIndex = carts.findIndex((cart) => cart.slug === slug);
 
-      handleSetCarts(newCarts);
+      if (findProductIndex === -1) {
+        const newCarts = [...carts, cart];
+
+        handleSetCarts(newCarts);
+      } else {
+        let newCarts = [...carts];
+        newCarts[findProductIndex].quantity += 1;
+
+        handleSetCarts(newCarts);
+      }
     }
 
     toast.success("Order saved to cart");

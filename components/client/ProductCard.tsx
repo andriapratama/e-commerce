@@ -66,31 +66,38 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, status }) => {
   };
 
   const storeDataToLocalStorage = () => {
-    const findProductIndex = carts.findIndex(
-      (cart) => cart.slug === product.slug
-    );
+    const cart: CartLocalType = {
+      image: product.image,
+      name: product.name,
+      slug: product.slug,
+      status: true,
+      price: product.price,
+      salePrice: product.salePrice ? product.salePrice : 0,
+      quantity: 1,
+      type: "product",
+      totalStock: product.totalStock,
+      createdAt: new Date(),
+    };
 
-    if (findProductIndex === -1) {
-      const cart: CartLocalType = {
-        image: product.image,
-        name: product.name,
-        slug: product.slug,
-        status: true,
-        price: product.price,
-        salePrice: product.salePrice ? product.salePrice : 0,
-        quantity: 1,
-        type: "product",
-        totalStock: product.totalStock,
-      };
-
-      const newCarts = [...carts, cart];
+    if (!carts) {
+      const newCarts = [cart];
 
       handleSetCarts(newCarts);
     } else {
-      let newCarts = [...carts];
-      newCarts[findProductIndex].quantity += 1;
+      const findProductIndex = carts.findIndex(
+        (cart) => cart.slug === product.slug
+      );
 
-      handleSetCarts(newCarts);
+      if (findProductIndex === -1) {
+        const newCarts = [...carts, cart];
+
+        handleSetCarts(newCarts);
+      } else {
+        let newCarts = [...carts];
+        newCarts[findProductIndex].quantity += 1;
+
+        handleSetCarts(newCarts);
+      }
     }
 
     toast.success("Order saved to cart");
