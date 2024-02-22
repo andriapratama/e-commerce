@@ -6,6 +6,7 @@ import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { useGetProductDetailHook } from "@/hooks/client/ProductHook";
 import { authOptions } from "@/lib/auth";
 import { ClientProductType } from "@/types/ProductType";
+import axios from "axios";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -63,6 +64,10 @@ const CollectionDetail = async ({ params }: { params: { id: string } }) => {
     }
   }
 
+  const setting = await axios.get(`${process.env.WEB_URL}/api/setting/get`);
+
+  const settingValue = setting.data.data;
+
   return (
     <section className="w-full">
       {session?.user.role === "member" ? (
@@ -81,7 +86,7 @@ const CollectionDetail = async ({ params }: { params: { id: string } }) => {
       ) : (
         <CollectionDetailContent product={thisProduct} slug={slug} />
       )}
-      <Footer />
+      <Footer settingValue={settingValue} />
     </section>
   );
 };

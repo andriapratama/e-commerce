@@ -12,6 +12,7 @@ import PromoDetailContent from "@/components/client/promo-detail/PromoDetailCont
 import React from "react";
 import { PromoType } from "@/types/PromoType";
 import { redirect } from "next/navigation";
+import axios from "axios";
 
 const PromoDetail = async ({ params }: { params: { id: string } }) => {
   const slug: string = params.id;
@@ -70,6 +71,10 @@ const PromoDetail = async ({ params }: { params: { id: string } }) => {
     }
   }
 
+  const setting = await axios.get(`${process.env.WEB_URL}/api/setting/get`);
+
+  const settingValue = setting.data.data;
+
   return (
     <section className="w-full">
       {session?.user.role === "member" ? (
@@ -89,7 +94,7 @@ const PromoDetail = async ({ params }: { params: { id: string } }) => {
       ) : (
         <PromoDetailContent promo={thisPromo} totalStock={thisTotalStock} />
       )}
-      <Footer />
+      <Footer settingValue={settingValue} />
     </section>
   );
 };

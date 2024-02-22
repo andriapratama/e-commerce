@@ -5,6 +5,7 @@ import { useCountCartsHook } from "@/hooks/client/CartHook";
 import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { useGetAllProductsHook } from "@/hooks/client/ProductHook";
 import { authOptions } from "@/lib/auth";
+import axios from "axios";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -45,6 +46,10 @@ const Collections = async ({ searchParams }: any) => {
     }
   }
 
+  const setting = await axios.get(`${process.env.WEB_URL}/api/setting/get`);
+
+  const settingValue = setting.data.data;
+
   return (
     <section className="w-full">
       {session?.user.role === "member" ? (
@@ -61,7 +66,7 @@ const Collections = async ({ searchParams }: any) => {
         products={products}
         totalPage={totalPage}
       />
-      <Footer />
+      <Footer settingValue={settingValue} />
     </section>
   );
 };

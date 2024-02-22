@@ -1,7 +1,6 @@
 "use client";
 
 import { SettingType } from "@/types/SettingType";
-import axios from "axios";
 import {
   FacebookIcon,
   Instagram,
@@ -11,9 +10,7 @@ import {
   Twitter,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import React from "react";
 
 const menus = [
   {
@@ -56,32 +53,11 @@ const menus = [
   },
 ];
 
-const Footer = () => {
-  const [setVal, setSetVal] = useState<SettingType>({
-    whatsapp: "",
-    instagram: "",
-    twitter: "",
-    facebook: "",
-    email: "",
-    address: "",
-  });
+interface Props {
+  settingValue: SettingType;
+}
 
-  const router = useRouter();
-
-  const getSetting = useCallback(async () => {
-    try {
-      const res = await axios.get(`/api/setting/get`);
-
-      setSetVal(res.data.data);
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-    }
-  }, []);
-
-  useEffect(() => {
-    getSetting();
-  }, []);
-
+const Footer: React.FC<Props> = ({ settingValue }) => {
   return (
     <React.Fragment>
       <footer className="w-full mt-[50px] flex bg-gray-100 justify-center text-gray-600">
@@ -94,21 +70,29 @@ const Footer = () => {
               The best choice in finding your best drink.
             </div>
             <div className="w-full flex gap-3">
-              <Link href={setVal.twitter} target="_blank">
-                <div className="w-10 h-10 rounded-full cursor-pointer bg-gray-800 text-white flex justify-center items-center ">
-                  <Twitter height={15} width={15} />
-                </div>
-              </Link>
-              <Link href={setVal.facebook} target="_blank">
-                <div className="w-10 h-10 rounded-full cursor-pointer bg-gray-800 text-white flex justify-center items-center ">
-                  <FacebookIcon height={15} width={15} />
-                </div>
-              </Link>
-              <Link href={setVal.instagram} target="_blank">
-                <div className="w-10 h-10 rounded-full cursor-pointer bg-gray-800 text-white flex justify-center items-center ">
-                  <Instagram height={15} width={15} />
-                </div>
-              </Link>
+              {!settingValue.twitter ? null : (
+                <Link href={settingValue.twitter} target="_blank">
+                  <div className="w-10 h-10 rounded-full cursor-pointer bg-gray-800 text-white flex justify-center items-center ">
+                    <Twitter height={15} width={15} />
+                  </div>
+                </Link>
+              )}
+
+              {!settingValue.facebook ? null : (
+                <Link href={settingValue.facebook} target="_blank">
+                  <div className="w-10 h-10 rounded-full cursor-pointer bg-gray-800 text-white flex justify-center items-center ">
+                    <FacebookIcon height={15} width={15} />
+                  </div>
+                </Link>
+              )}
+
+              {!settingValue.twitter ? null : (
+                <Link href={settingValue.instagram} target="_blank">
+                  <div className="w-10 h-10 rounded-full cursor-pointer bg-gray-800 text-white flex justify-center items-center ">
+                    <Instagram height={15} width={15} />
+                  </div>
+                </Link>
+              )}
             </div>
           </div>
 
@@ -131,15 +115,15 @@ const Footer = () => {
             </div>
             <div className="flex gap-3 mb-3">
               <Map width={20} height={20} />
-              <div className="text-sm font-serif">{setVal.address}</div>
+              <div className="text-sm font-serif">{settingValue.address}</div>
             </div>
             <div className="flex gap-3 mb-3">
               <Phone width={15} height={15} />
-              <div className="text-sm font-serif">{setVal.whatsapp}</div>
+              <div className="text-sm font-serif">{settingValue.whatsapp}</div>
             </div>
             <div className="flex gap-3 mb-3">
               <Send width={15} height={15} />
-              <div className="text-sm font-serif">{setVal.email}</div>
+              <div className="text-sm font-serif">{settingValue.email}</div>
             </div>
           </div>
         </div>
@@ -147,7 +131,7 @@ const Footer = () => {
 
       <div className="fixed right-7 bottom-7 z-[99]">
         <Link
-          href={`https://web.whatsapp.com/send/?phone=%2B${setVal.whatsapp}&text&type=phone_number&app_absent=0`}
+          href={`https://web.whatsapp.com/send/?phone=%2B${settingValue.whatsapp}&text&type=phone_number&app_absent=0`}
           target="_blank"
         >
           <svg

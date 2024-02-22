@@ -9,6 +9,7 @@ import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
 import { authOptions } from "@/lib/auth";
 import { CartType } from "@/types/CartType";
 import { UserType } from "@/types/UserType";
+import axios from "axios";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -72,6 +73,10 @@ const Checkout = async () => {
     }
   }
 
+  const setting = await axios.get(`${process.env.WEB_URL}/api/setting/get`);
+
+  const settingValue = setting.data.data;
+
   return (
     <section className="w-full">
       {session?.user.role === "member" ? (
@@ -91,7 +96,7 @@ const Checkout = async () => {
           <CheckoutLocalContent />
         </>
       )}
-      <Footer />
+      <Footer settingValue={settingValue} />
     </section>
   );
 };

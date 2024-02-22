@@ -6,6 +6,7 @@ import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
 import { authOptions } from "@/lib/auth";
 import { UserType } from "@/types/UserType";
+import axios from "axios";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -54,6 +55,10 @@ const Profil = async () => {
       if (isCountCarts404) redirect("/denied");
     }
 
+    const setting = await axios.get(`${process.env.WEB_URL}/api/setting/get`);
+
+    const settingValue = setting.data.data;
+
     return (
       <section className="w-full">
         <Navbar
@@ -62,7 +67,7 @@ const Profil = async () => {
           role={session?.user.role}
         />
         <ProfileContent user={thisUser} />
-        <Footer />
+        <Footer settingValue={settingValue} />
       </section>
     );
   } else {
