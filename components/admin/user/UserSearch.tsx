@@ -1,0 +1,44 @@
+"use client";
+
+import { Input } from "@/components/ui/input";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
+
+const UserSearch = () => {
+  const searchParams = useSearchParams();
+
+  const searchValueParams = searchParams.get("search");
+
+  const [search, setSearch] = useState<string>("");
+
+  const router = useRouter();
+
+  const pathname = usePathname();
+
+  const handleSearch = useDebouncedCallback((value: string) => {
+    router.push(`${pathname}?search=${value}`);
+  }, 500);
+
+  useEffect(() => {
+    if (searchValueParams) {
+      setSearch(searchValueParams);
+    } else {
+      setSearch("");
+    }
+  }, [searchValueParams]);
+
+  return (
+    <Input
+      placeholder="Cari email"
+      value={search}
+      className="w-[300px]"
+      onChange={(e) => {
+        setSearch(e.target.value);
+        handleSearch(e.target.value);
+      }}
+    />
+  );
+};
+
+export default UserSearch;

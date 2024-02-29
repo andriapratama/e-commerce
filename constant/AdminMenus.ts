@@ -43,12 +43,12 @@ export const adminMenus: AdminMenuType[] = [
   },
   {
     name: "pelanggan",
-    link: "/admin/users",
+    link: "/admin/users/member",
     role: ["superAdmin", "admin"],
   },
   {
     name: "tamu",
-    link: "/admin/guests",
+    link: "/admin/users/guest",
     role: ["superAdmin", "admin"],
   },
   {

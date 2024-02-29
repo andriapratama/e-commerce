@@ -1,0 +1,105 @@
+"use client";
+
+import ContentLoading from "@/components/ContentLoading";
+import PageLoading from "@/components/PageLoading";
+import Title from "@/components/admin/Title";
+import UserSearch from "@/components/admin/user/UserSearch";
+import UserTable from "@/components/admin/user/UserTable";
+import { AdminUserType } from "@/types/UserType";
+import axios from "axios";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import React, { useCallback, useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+
+const Users = () => {
+  const [users, setUsers] = useState<AdminUserType[]>([]);
+
+  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
+
+  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
+
+  const [totalPage, setTotalPage] = useState<number>(0);
+
+  const router = useRouter();
+
+  const params = useParams();
+
+  const role = params.role;
+
+  const searchParams = useSearchParams();
+
+  const pageParams = searchParams.get("page");
+
+  const pageNow = parseInt(pageParams ? pageParams : "1");
+
+  const searchValueParams = searchParams.get("search");
+
+  const getUsers = useCallback(async () => {
+    try {
+      const pathName = `/api/admin/users/get?role=${role}`;
+
+      let route = "";
+
+      if (searchValueParams) {
+        route = `${pathName}&search=${searchValueParams}`;
+      } else {
+        route = `${pathName}&page=${pageNow}`;
+      }
+
+      const res = await axios.get(route);
+
+      setUsers(res.data.data.users);
+
+      setTotalPage(res.data.data.totalPage);
+
+      setIsLoadingContent(false);
+    } catch (error: any) {
+      toast.error(error.response.data.message);
+    }
+  }, [pageNow, searchValueParams, role]);
+
+  useEffect(() => {
+    if (role === "member") {
+      getUsers();
+    } else if (role === "guest") {
+      getUsers();
+    } else {
+      router.push("/404");
+    }
+  }, [getUsers, role]);
+
+  if (isLoadingPage) {
+    return <PageLoading />;
+  } else {
+    return (
+      <section className="admin__container">
+        <div className="admin__container-body">
+          <ToastContainer />
+
+          <Title
+            title={`${
+              role === "member" ? "Pelanggan" : role === "guest" ? "Tamu" : ""
+            }`}
+          />
+
+          <div className="my-4">
+            <UserSearch />
+          </div>
+
+          {isLoadingContent ? (
+            <ContentLoading className="mt-10" />
+          ) : (
+            <UserTable
+              users={users}
+              setIsLoadingPage={setIsLoadingPage}
+              setIsLoadingContent={setIsLoadingContent}
+              totalPage={totalPage}
+            />
+          )}
+        </div>
+      </section>
+    );
+  }
+};
+
+export default Users;
