@@ -25,6 +25,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Pagination from "../Pagination";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { StatusPayment } from "../StatusPayment";
 
 interface OrderTableProps {
   orders: OrdersType[];
@@ -53,20 +54,6 @@ const OrderTable: React.FC<OrderTableProps> = ({
     current.set("page", page.toString());
 
     router.push(`${pathName}?${current.toString()}`);
-  };
-
-  const StatusPayment = (status: "pending" | "paid") => {
-    return (
-      <div
-        className={`px-5 py-3 rounded-full ${
-          status === "pending"
-            ? "bg-black text-white"
-            : "bg-white border border-black text-black"
-        }`}
-      >
-        {status === "pending" ? "belum dibayar" : "selesai"}
-      </div>
-    );
   };
 
   const handleRouterPush = (invoice: string, status: string) => {
