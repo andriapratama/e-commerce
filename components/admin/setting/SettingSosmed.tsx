@@ -29,8 +29,8 @@ import {
   ValidatePhoneNumber,
   InterPhoneCodes,
 } from "@/utils/ValidatePhoneNumber";
-import ProfileSelectInterCodePhone from "@/components/client/profile/ProfileSelectInterCodePhone";
 import SettingItem from "./SettingItem";
+import ProfileSelectInterCodePhone from "@/components/client/SelectInterCodePhone";
 
 const formSchema = z.object({
   whatsapp: z
