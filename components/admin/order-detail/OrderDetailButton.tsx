@@ -45,6 +45,8 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
 
   const [isOpenSendInvoice, setIsOpenSendInvoice] = useState<boolean>(false);
 
+  const [isOpenCancel, setIsOpenCancel] = useState<boolean>(false);
+
   const [isLoadingStore, setIsLoadingStore] = useState<boolean>(false);
 
   const [isOpenEditTransaction, setIsOpenEditTransaction] =
@@ -140,6 +142,24 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
     }
   };
 
+  const handleCancel = async () => {
+    try {
+      setIsLoadingStore(true);
+
+      await axios.post(`/api/admin/orders/${invoice}/cancel/post`);
+
+      getOrder();
+
+      toast.success("Orderan telah dibatalkan");
+
+      setIsOpenCancel(false);
+      setIsLoadingStore(false);
+    } catch (error: any) {
+      toast.error(error.response.data.message);
+      setIsLoadingStore(false);
+    }
+  };
+
   const doneButton = () => {
     const resAccepted = checkStatus("accepted");
     const resDone = checkStatus("done");
@@ -154,19 +174,24 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
       return null;
     }
   };
+
   return (
     <React.Fragment>
       <div className="w-full gap-3 flex justify-end mt-5">
-        {order.statuspayment === "pending" ? (
+        {order.statuspayment === "pending" &&
+        order.statusOrder === "ongoing" ? (
           <Button onClick={() => setIsOpenPaymentStatus(true)}>
             Ubah Status Pembayaran
           </Button>
         ) : null}
-        {checkStatus("delivery") === undefined ? (
+
+        {checkStatus("delivery") === undefined &&
+        order.statusOrder === "ongoing" ? (
           <Button onClick={() => setIsOpenDelivery(true)}>
             Barang Dikirim
           </Button>
-        ) : checkStatus("accepted") === undefined ? (
+        ) : checkStatus("accepted") === undefined &&
+          order.statusOrder === "ongoing" ? (
           <Button onClick={() => setIsOpenAccepted(true)}>
             Barang Diterima
           </Button>
@@ -175,13 +200,15 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
         {doneButton()}
 
         {checkStatus("delivery") === undefined &&
-        order.statuspayment === "pending" ? (
+        order.statuspayment === "pending" &&
+        order.statusOrder === "ongoing" ? (
           <Button onClick={() => setIsOpenEditTransaction(true)}>
             Masukkan biaya lainnya
           </Button>
         ) : null}
 
-        {checkStatus("done") === undefined ? (
+        {checkStatus("done") === undefined &&
+        order.statusOrder === "ongoing" ? (
           <Button onClick={() => setIsOpenSendInvoice(true)}>
             Kirim Invoice
           </Button>
@@ -195,6 +222,13 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
         >
           Lihat Invoice
         </Button>
+
+        {order.statusOrder === "done" ||
+        order.statusOrder === "cancel" ? null : (
+          <Button onClick={() => setIsOpenCancel(true)} variant="destructive">
+            Orderan Batal
+          </Button>
+        )}
       </div>
 
       <OrderDetailEditTransaction
@@ -246,6 +280,14 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
         isLoading={isLoadingStore}
         handleStoreData={handleSendInvoice}
         title="Invoice akan dikirim melalui email. Apakah anda yakin mengirim invoice?"
+      />
+
+      <WarningAlert
+        isOpen={isOpenCancel}
+        setIsOpen={setIsOpenCancel}
+        isLoading={isLoadingStore}
+        handleStoreData={handleCancel}
+        title="Apakah orderan dibatalkan?"
       />
     </React.Fragment>
   );
