@@ -10,7 +10,6 @@ import { signIn, useSession } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ToastContainer, toast } from "react-toastify";
 import ButtonLoading from "@/components/ButtonLoading";
-import AdminLoading from "@/app/admin/(routes)/loading";
 import {
   Form,
   FormControl,
@@ -19,6 +18,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import PageLoading from "@/components/PageLoading";
 
 const formSchema = z.object({
   username: z
@@ -89,7 +89,7 @@ const LoginContent = () => {
   };
 
   if (isLoadingPage) {
-    return <AdminLoading />;
+    return <PageLoading />;
   } else {
     return (
       <Form {...form}>
