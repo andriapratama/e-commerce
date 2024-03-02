@@ -9,11 +9,15 @@ import EmployeeEdit from "@/components/admin/employee/EmployeeEdit";
 import EmployeeTable from "@/components/admin/employee/EmployeeTable";
 import ContentLoading from "@/components/ContentLoading";
 import { EmployeeType } from "@/types/admin/EmployeeType";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import PageLoading from "@/components/PageLoading";
 
 const Employees = () => {
   const [employees, setEmployees] = useState<EmployeeType[]>([]);
 
   const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
+
+  const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
   const [editEmployee, setEditEmployee] = useState({
     name: "",
@@ -38,36 +42,44 @@ const Employees = () => {
     getEmployees();
   }, [getEmployees]);
 
-  return (
-    <section className="admin__container">
-      <div className="admin__container-body">
-        <ToastContainer />
+  useEffect(() => {
+    setIsLoadingPage(false);
+  }, []);
 
-        <Title title="Pegawai" />
+  if (isLoadingPage) {
+    return <PageLoading />;
+  } else {
+    return (
+      <section className="admin__container">
+        <div className="admin__container-body">
+          <ToastContainer />
 
-        <div className="flex justify-between md:flex-nowrap flex-wrap gap-3 w-full">
-          {editEmployee.name ? (
-            <EmployeeEdit
-              getEmployees={getEmployees}
-              editEmployee={editEmployee}
-              setEditEmployee={setEditEmployee}
-            />
-          ) : (
-            <EmployeeAdd getEmployees={getEmployees} />
-          )}
+          <Title title="Pegawai" />
 
-          {isLoadingContent ? (
-            <ContentLoading />
-          ) : (
-            <EmployeeTable
-              employees={employees}
-              setEditEmployee={setEditEmployee}
-            />
-          )}
+          <div className="flex justify-between md:flex-nowrap flex-wrap gap-3 w-full">
+            {editEmployee.name ? (
+              <EmployeeEdit
+                getEmployees={getEmployees}
+                editEmployee={editEmployee}
+                setEditEmployee={setEditEmployee}
+              />
+            ) : (
+              <EmployeeAdd getEmployees={getEmployees} />
+            )}
+
+            {isLoadingContent ? (
+              <ContentLoading />
+            ) : (
+              <EmployeeTable
+                employees={employees}
+                setEditEmployee={setEditEmployee}
+              />
+            )}
+          </div>
         </div>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  }
 };
 
 export default Employees;

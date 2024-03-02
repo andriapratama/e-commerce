@@ -5,6 +5,7 @@ import PageLoading from "@/components/PageLoading";
 import Title from "@/components/admin/Title";
 import UserDetailData from "@/components/admin/user-detail/UserDetailData";
 import UserDetailOrder from "@/components/admin/user-detail/UserDetailOrder";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
 import { AdminUserOrderType, AdminUserType } from "@/types/UserType";
 import axios from "axios";
 import { useParams, useSearchParams } from "next/navigation";
@@ -17,7 +18,7 @@ const UserDetail = () => {
   const [isLoadingOrderContent, setIsLoadingOrderContent] =
     useState<boolean>(false);
 
-  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
+  const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
   const [user, setUser] = useState<AdminUserType>({
     id: "",
@@ -66,6 +67,10 @@ const UserDetail = () => {
   useEffect(() => {
     getUser();
   }, [getUser]);
+
+  useEffect(() => {
+    setIsLoadingPage(false);
+  }, []);
 
   if (isLoadingPage) {
     return <PageLoading />;

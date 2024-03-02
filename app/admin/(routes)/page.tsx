@@ -13,6 +13,8 @@ import { ProductMinStockType, ProductSoldType } from "@/types/ProductType";
 import DashboardSetDate from "@/components/admin/dashboard/DashboardSetDate";
 import DashboardProductSold from "@/components/admin/dashboard/DashboardProductSold";
 import DashboardProductMinStock from "@/components/admin/dashboard/DashboardProductMinStock";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import PageLoading from "@/components/PageLoading";
 
 const Dashboard = () => {
   const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
@@ -26,6 +28,8 @@ const Dashboard = () => {
   const [totalProductPage, setTotalProductPage] = useState<number>(0);
   const [isLoadingProductContent, setIsLoadingProductContent] =
     useState<boolean>(false);
+
+  const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
   const searchParams = useSearchParams();
 
@@ -93,48 +97,56 @@ const Dashboard = () => {
     getProductsMinStock();
   }, []);
 
-  return (
-    <section className="admin__container">
-      <div className="admin__container-body">
-        <ToastContainer />
+  useEffect(() => {
+    setIsLoadingPage(false);
+  }, []);
 
-        <Title title="Dashboard" />
+  if (isLoadingPage) {
+    return <PageLoading />;
+  } else {
+    return (
+      <section className="admin__container">
+        <div className="admin__container-body">
+          <ToastContainer />
 
-        {isLoadingContent ? (
-          <ContentLoading />
-        ) : (
-          <>
-            <DashboardSetDate />
+          <Title title="Dashboard" />
 
-            <div className="w-full grid grid-cols-3 gap-5 mb-5">
-              <DashboardCard
-                title="Total Pesanan"
-                value={transaction ? `${transaction} pesanan` : "0"}
-              />
-              <DashboardCard
-                title="Total Penjualan"
-                value={ConvertIDR(sales)}
-              />
-              <DashboardCard
-                title="Total Keuntungan"
-                value={ConvertIDR(profit)}
-              />
-            </div>
+          {isLoadingContent ? (
+            <ContentLoading />
+          ) : (
+            <>
+              <DashboardSetDate />
 
-            <div className="w-full grid grid-cols-2 gap-5">
-              <DashboardProductSold
-                productsSold={productsSold}
-                totalPage={totalProductPage}
-                isLoadingProductContent={isLoadingProductContent}
-                setIsLoadingProductContent={setIsLoadingProductContent}
-              />
-              <DashboardProductMinStock productsMinStock={productsMinStock} />
-            </div>
-          </>
-        )}
-      </div>
-    </section>
-  );
+              <div className="w-full grid grid-cols-3 gap-5 mb-5">
+                <DashboardCard
+                  title="Total Pesanan"
+                  value={transaction ? `${transaction} pesanan` : "0"}
+                />
+                <DashboardCard
+                  title="Total Penjualan"
+                  value={ConvertIDR(sales)}
+                />
+                <DashboardCard
+                  title="Total Keuntungan"
+                  value={ConvertIDR(profit)}
+                />
+              </div>
+
+              <div className="w-full grid grid-cols-2 gap-5">
+                <DashboardProductSold
+                  productsSold={productsSold}
+                  totalPage={totalProductPage}
+                  isLoadingProductContent={isLoadingProductContent}
+                  setIsLoadingProductContent={setIsLoadingProductContent}
+                />
+                <DashboardProductMinStock productsMinStock={productsMinStock} />
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+    );
+  }
 };
 
 export default Dashboard;

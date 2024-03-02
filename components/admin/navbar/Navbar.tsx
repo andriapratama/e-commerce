@@ -24,6 +24,8 @@ import { AdminMenuType } from "@/types/MenuType";
 import { adminMenus } from "@/constant/AdminMenus";
 import NavbarEditProfile from "./NavbarEditProfile";
 import NavbarChangePassword from "./NavbarChangePassword";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import { usePathname } from "next/navigation";
 
 interface NavbarProps {
   name: string | null | undefined;
@@ -37,6 +39,10 @@ const Navbar: React.FC<NavbarProps> = ({ name, role }) => {
     useState<boolean>(false);
   const [nameSession, setNameSession] = useState<string>(name ? name : "");
 
+  const pathname = usePathname();
+
+  const { setIsLoadingPage } = useLoadingPageContext();
+
   const checkRole = (menu: AdminMenuType) => {
     if (role) {
       const isRole = menu.role.includes(role);
@@ -47,7 +53,12 @@ const Navbar: React.FC<NavbarProps> = ({ name, role }) => {
 
       return (
         <li className="nav-admin__link" key={menu.name}>
-          <Link href={menu.link}>{menu.name}</Link>
+          <Link
+            href={menu.link}
+            onClick={() => handleSetLoadingPage(menu.link)}
+          >
+            {menu.name}
+          </Link>
         </li>
       );
     }
@@ -66,6 +77,10 @@ const Navbar: React.FC<NavbarProps> = ({ name, role }) => {
   useEffect(() => {
     getLogo();
   }, []);
+
+  const handleSetLoadingPage = (link: string) => {
+    if (pathname !== link) setIsLoadingPage(true);
+  };
 
   return (
     <React.Fragment>

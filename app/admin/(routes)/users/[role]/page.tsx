@@ -5,6 +5,7 @@ import PageLoading from "@/components/PageLoading";
 import Title from "@/components/admin/Title";
 import UserSearch from "@/components/admin/user/UserSearch";
 import UserTable from "@/components/admin/user/UserTable";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
 import { AdminUserType } from "@/types/UserType";
 import axios from "axios";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -16,7 +17,7 @@ const Users = () => {
 
   const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
 
-  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
+  const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
   const [totalPage, setTotalPage] = useState<number>(0);
 
@@ -67,6 +68,10 @@ const Users = () => {
       router.push("/404");
     }
   }, [getUsers, role]);
+
+  useEffect(() => {
+    setIsLoadingPage(false);
+  }, []);
 
   if (isLoadingPage) {
     return <PageLoading />;

@@ -11,12 +11,14 @@ import { useSearchParams } from "next/navigation";
 
 import { ToastContainer, toast } from "react-toastify";
 import OrderFilter from "@/components/admin/order/OrderFilter";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
 
 const Orders = () => {
   const [orders, setOrders] = useState<OrdersType[]>([]);
   const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
-  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
   const [totalPage, setTotalPage] = useState<number>(0);
+
+  const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
   const searchParams = useSearchParams();
 
@@ -55,6 +57,10 @@ const Orders = () => {
   useEffect(() => {
     getOrders();
   }, [searchValue, statusParams, pageParams]);
+
+  useEffect(() => {
+    setIsLoadingPage(false);
+  }, []);
 
   if (isLoadingPage) {
     return <PageLoading />;

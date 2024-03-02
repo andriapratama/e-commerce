@@ -1,12 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Title from "@/components/admin/Title";
 import PageLoading from "@/components/PageLoading";
 import ProductAddForm from "@/components/admin/product-add/ProductAddForm";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
 
 const ProductAdd = () => {
-  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
+  const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
+
+  useEffect(() => {
+    setIsLoadingPage(false);
+  }, []);
 
   if (isLoadingPage) {
     return <PageLoading />;

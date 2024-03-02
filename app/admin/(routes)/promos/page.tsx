@@ -9,12 +9,14 @@ import { ToastContainer, toast } from "react-toastify";
 import ContentLoading from "@/components/ContentLoading";
 import PromoTable from "@/components/admin/promo/PromoTable";
 import React, { useCallback, useEffect, useState } from "react";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
 
 const Promos = () => {
-  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
   const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
   const [promos, setPromos] = useState<PromoType[]>([]);
   const router = useRouter();
+
+  const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
   const getPromos = useCallback(async () => {
     try {
@@ -36,6 +38,10 @@ const Promos = () => {
   useEffect(() => {
     getPromos();
   }, [getPromos]);
+
+  useEffect(() => {
+    setIsLoadingPage(false);
+  }, []);
 
   if (isLoadingPage) {
     return <PageLoading />;

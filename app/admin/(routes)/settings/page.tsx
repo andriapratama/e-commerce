@@ -9,10 +9,15 @@ import { SettingType } from "@/types/admin/SettingType";
 import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import AdminLoading from "../loading";
+import PageLoading from "@/components/PageLoading";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import ContentLoading from "@/components/ContentLoading";
 
 const Setting = () => {
   const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
+
+  const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
+
   const [data, setData] = useState<SettingType>({
     id: "",
     image: "",
@@ -46,26 +51,34 @@ const Setting = () => {
     getSetting();
   }, []);
 
-  return (
-    <div className="admin__container">
-      <div className="admin__container-body">
-        <ToastContainer />
+  useEffect(() => {
+    setIsLoadingPage(false);
+  }, []);
 
-        <Title title="Pengaturan" />
+  if (isLoadingPage) {
+    return <PageLoading />;
+  } else {
+    return (
+      <div className="admin__container">
+        <div className="admin__container-body">
+          <ToastContainer />
 
-        {isLoadingContent ? (
-          <AdminLoading />
-        ) : (
-          <div className="w-full grid lg:grid-cols-2 grid-cols-1 gap-5">
-            <SettingLogo data={data} getSetting={getSetting} />
-            <SettingContact data={data} getSetting={getSetting} />
-            <SettingSosmed data={data} getSetting={getSetting} />
-            <SettingBank data={data} getSetting={getSetting} />
-          </div>
-        )}
+          <Title title="Pengaturan" />
+
+          {isLoadingContent ? (
+            <ContentLoading />
+          ) : (
+            <div className="w-full grid lg:grid-cols-2 grid-cols-1 gap-5">
+              <SettingLogo data={data} getSetting={getSetting} />
+              <SettingContact data={data} getSetting={getSetting} />
+              <SettingSosmed data={data} getSetting={getSetting} />
+              <SettingBank data={data} getSetting={getSetting} />
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default Setting;

@@ -1,9 +1,11 @@
 "use client";
 
 import ContentLoading from "@/components/ContentLoading";
+import PageLoading from "@/components/PageLoading";
 import NotFound from "@/components/admin/404";
 import Title from "@/components/admin/Title";
 import PromoDetailContent from "@/components/admin/promo-detail/PromoDetailContent";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
 import { PromoProductType, PromoType } from "@/types/PromoType";
 import axios from "axios";
 import { useParams } from "next/navigation";
@@ -12,7 +14,7 @@ import { ToastContainer, toast } from "react-toastify";
 
 const PromoDetail = () => {
   const [promo, setPromo] = useState<PromoType>({
-    createdAt: "",
+    createdAt: new Date(),
     description: "",
     firstPrice: 0,
     image: "",
@@ -26,6 +28,8 @@ const PromoDetail = () => {
   const [bonus, setBonus] = useState<PromoProductType[]>([]);
 
   const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
+
+  const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
   const [isNotFound, setIsNotFound] = useState<boolean>(false);
 
@@ -54,28 +58,37 @@ const PromoDetail = () => {
   useEffect(() => {
     getPromo();
   }, [getPromo]);
-  return (
-    <section className="admin__container">
-      <div className="admin__container-body">
-        <ToastContainer />
 
-        <Title title="Detail Promo" />
+  useEffect(() => {
+    setIsLoadingPage(false);
+  });
 
-        {isNotFound ? (
-          <NotFound />
-        ) : isLoadingContent ? (
-          <ContentLoading />
-        ) : (
-          <PromoDetailContent
-            getPromo={getPromo}
-            promo={promo}
-            provisions={provisions}
-            bonus={bonus}
-          />
-        )}
-      </div>
-    </section>
-  );
+  if (isLoadingPage) {
+    return <PageLoading />;
+  } else {
+    return (
+      <section className="admin__container">
+        <div className="admin__container-body">
+          <ToastContainer />
+
+          <Title title="Detail Promo" />
+
+          {isNotFound ? (
+            <NotFound />
+          ) : isLoadingContent ? (
+            <ContentLoading />
+          ) : (
+            <PromoDetailContent
+              getPromo={getPromo}
+              promo={promo}
+              provisions={provisions}
+              bonus={bonus}
+            />
+          )}
+        </div>
+      </section>
+    );
+  }
 };
 
 export default PromoDetail;

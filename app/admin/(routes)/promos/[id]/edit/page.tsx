@@ -25,6 +25,8 @@ import PromoEditBonus from "@/components/admin/promo-edit/PromoEditBonus";
 import { handleSetNumber } from "@/utils/HandleSetNumber";
 import PromoAddOpenProduct from "@/components/admin/promo-add/PromoAddOpenProduct";
 import WarningAlert from "@/components/admin/WarningAlert";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import PageLoading from "@/components/PageLoading";
 
 const formSchema = z.object({
   productProvisions: z.any().superRefine((val, ctx) => {
@@ -67,6 +69,8 @@ const PromoEditProducts = () => {
   const [name, setName] = useState<string>("");
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
   const router = useRouter();
 
@@ -310,122 +314,134 @@ const PromoEditProducts = () => {
     }
   };
 
-  return (
-    <section className="admin__container">
-      <div className="admin__container-body">
-        <ToastContainer />
+  useEffect(() => {
+    setIsLoadingPage(false);
+  }, []);
 
-        <Title title={`Edit Produk ${name}`} />
+  if (isLoadingPage) {
+    return <PageLoading />;
+  } else {
+    return (
+      <section className="admin__container">
+        <div className="admin__container-body">
+          <ToastContainer />
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full bg-white p-5 rounded shadow"
-          >
-            <PromoEditProvisions
-              form={form}
-              productProvisions={productProvisions}
-              handleDecrease={handleDecrease}
-              handleSetQuantity={handleSetQuantity}
-              handleIncrease={handleIncrease}
-              handleDelete={handleDelete}
-              subTotalProvision={subTotalProvision}
-              setIsOpenProduct={setIsOpenProduct}
-              setStatus={setStatus}
-            />
+          <Title title={`Edit Produk ${name}`} />
 
-            <PromoEditBonus
-              form={form}
-              productBonus={productBonus}
-              handleDecrease={handleDecrease}
-              handleSetQuantity={handleSetQuantity}
-              handleIncrease={handleIncrease}
-              handleDelete={handleDelete}
-              subTotalBonus={subTotalBonus}
-              setIsOpenProduct={setIsOpenProduct}
-              setStatus={setStatus}
-            />
-
-            <div className="lg:flex block gap-3 w-full mt-5">
-              <FormField
-                control={form.control}
-                name="firstPrice"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel className="text-gray-700">Harga Awal</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="mb-3"
-                        placeholder="Harga jual"
-                        {...field}
-                        value={firstPrice}
-                        onChange={(e) =>
-                          handleSetNumber(e.target.value, setFirstPrice)
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="w-full bg-white p-5 rounded shadow"
+            >
+              <PromoEditProvisions
+                form={form}
+                productProvisions={productProvisions}
+                handleDecrease={handleDecrease}
+                handleSetQuantity={handleSetQuantity}
+                handleIncrease={handleIncrease}
+                handleDelete={handleDelete}
+                subTotalProvision={subTotalProvision}
+                setIsOpenProduct={setIsOpenProduct}
+                setStatus={setStatus}
               />
-              <FormField
-                control={form.control}
-                name="promoPrice"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel className="text-gray-700">Harga Promo</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="mb-3 w-full"
-                        placeholder="Harga pokok"
-                        {...field}
-                        value={promoPrice}
-                        onChange={(e) =>
-                          handleSetNumber(e.target.value, setPromoPrice)
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+
+              <PromoEditBonus
+                form={form}
+                productBonus={productBonus}
+                handleDecrease={handleDecrease}
+                handleSetQuantity={handleSetQuantity}
+                handleIncrease={handleIncrease}
+                handleDelete={handleDelete}
+                subTotalBonus={subTotalBonus}
+                setIsOpenProduct={setIsOpenProduct}
+                setStatus={setStatus}
               />
-            </div>
 
-            <div className="w-full flex justify-end gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.push(`/admin/promos/${slug}`)}
-              >
-                Kembali
-              </Button>
-              <Button type="submit" variant="default">
-                Simpan
-              </Button>
-            </div>
-          </form>
-        </Form>
+              <div className="lg:flex block gap-3 w-full mt-5">
+                <FormField
+                  control={form.control}
+                  name="firstPrice"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel className="text-gray-700">
+                        Harga Awal
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          className="mb-3"
+                          placeholder="Harga jual"
+                          {...field}
+                          value={firstPrice}
+                          onChange={(e) =>
+                            handleSetNumber(e.target.value, setFirstPrice)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="promoPrice"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel className="text-gray-700">
+                        Harga Promo
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          className="mb-3 w-full"
+                          placeholder="Harga pokok"
+                          {...field}
+                          value={promoPrice}
+                          onChange={(e) =>
+                            handleSetNumber(e.target.value, setPromoPrice)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-        <PromoAddOpenProduct
-          isOpen={isOpenProduct}
-          setIsOpen={setIsOpenProduct}
-          productProvisions={productProvisions}
-          setProductProvisions={setProductProvisions}
-          productBonus={productBonus}
-          setProductBonus={setProductBonus}
-          status={status}
-          handleSumSubTotal={handleSumSubTotal}
-        />
+              <div className="w-full flex justify-end gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push(`/admin/promos/${slug}`)}
+                >
+                  Kembali
+                </Button>
+                <Button type="submit" variant="default">
+                  Simpan
+                </Button>
+              </div>
+            </form>
+          </Form>
 
-        <WarningAlert
-          isOpen={isOpenWarning}
-          setIsOpen={setIsOpenWarning}
-          isLoading={isLoading}
-          handleStoreData={handleStoreData}
-        />
-      </div>
-    </section>
-  );
+          <PromoAddOpenProduct
+            isOpen={isOpenProduct}
+            setIsOpen={setIsOpenProduct}
+            productProvisions={productProvisions}
+            setProductProvisions={setProductProvisions}
+            productBonus={productBonus}
+            setProductBonus={setProductBonus}
+            status={status}
+            handleSumSubTotal={handleSumSubTotal}
+          />
+
+          <WarningAlert
+            isOpen={isOpenWarning}
+            setIsOpen={setIsOpenWarning}
+            isLoading={isLoading}
+            handleStoreData={handleStoreData}
+          />
+        </div>
+      </section>
+    );
+  }
 };
 
 export default PromoEditProducts;

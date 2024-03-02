@@ -13,11 +13,12 @@ import ProductSearch from "@/components/admin/product/ProductSearch";
 import ProductSelect from "@/components/admin/product/ProductSelect";
 import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
 import { useGetSubCategoryHook } from "@/hooks/admin/GetSubCategoryHook";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
 
 const Product = () => {
   const [products, setProducts] = useState<AdminProductType[]>([]);
 
-  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
+  const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
   const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
 
@@ -95,6 +96,10 @@ const Product = () => {
       setSubCategory("");
     }
   }, [categoryParams, subCategoryParams]);
+
+  useEffect(() => {
+    setIsLoadingPage(false);
+  }, []);
 
   if (isLoadingPage) {
     return <PageLoading />;

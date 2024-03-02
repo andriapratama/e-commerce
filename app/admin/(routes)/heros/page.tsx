@@ -8,10 +8,13 @@ import { ToastContainer, toast } from "react-toastify";
 import React, { useCallback, useEffect, useState } from "react";
 import { HeroType } from "@/types/HeroType";
 import ContentLoading from "@/components/ContentLoading";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import PageLoading from "@/components/PageLoading";
 
 const Heros = () => {
   const [heros, setHeros] = useState<HeroType[]>([]);
   const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
+  const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
   const getHeros = useCallback(async () => {
     try {
@@ -30,22 +33,30 @@ const Heros = () => {
     getHeros();
   }, [getHeros]);
 
-  return (
-    <section className="admin__container">
-      <div className="admin__container-body">
-        <ToastContainer />
-        <Title title="Heros" />
+  useEffect(() => {
+    setIsLoadingPage(false);
+  }, []);
 
-        <HeroAdd getHeros={getHeros} />
+  if (isLoadingPage) {
+    return <PageLoading />;
+  } else {
+    return (
+      <section className="admin__container">
+        <div className="admin__container-body">
+          <ToastContainer />
+          <Title title="Heros" />
 
-        {isLoadingContent ? (
-          <ContentLoading />
-        ) : (
-          <HeroTable heros={heros} setHeros={setHeros} getHeros={getHeros} />
-        )}
-      </div>
-    </section>
-  );
+          <HeroAdd getHeros={getHeros} />
+
+          {isLoadingContent ? (
+            <ContentLoading />
+          ) : (
+            <HeroTable heros={heros} setHeros={setHeros} getHeros={getHeros} />
+          )}
+        </div>
+      </section>
+    );
+  }
 };
 
 export default Heros;

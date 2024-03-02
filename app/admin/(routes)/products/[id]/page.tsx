@@ -18,6 +18,8 @@ import ProductDetailData from "@/components/admin/product-detail/ProductDetailDa
 import ProductDetailFinanceLog from "@/components/admin/product-detail/ProductDetailFinanceLog";
 import ProductDetailStockLog from "@/components/admin/product-detail/ProductDetailStockLog";
 import ProductDetailStatusLog from "@/components/admin/product-detail/ProductDetailStatusLog";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import PageLoading from "@/components/PageLoading";
 
 const ProductDetail = () => {
   const [product, setProduct] = useState<AdminProductType>({
@@ -43,6 +45,8 @@ const ProductDetail = () => {
   const [stockList, setStockList] = useState<StockLogType[]>([]);
 
   const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
+
+  const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
   const router = useRouter();
 
@@ -111,59 +115,67 @@ const ProductDetail = () => {
 
   const { subCategories } = useGetSubCategoryHook();
 
-  return (
-    <section className="admin__container">
-      <div className="admin__container-body">
-        <ToastContainer />
-        <Title title="Detail Produk" />
+  useEffect(() => {
+    setIsLoadingPage(false);
+  }, []);
 
-        {isLoadingContent ? (
-          <ContentLoading className="mt-10" />
-        ) : (
-          <React.Fragment>
-            <div className="w-full flex justify-center mb-5">
-              <div className="lg:flex block w-full gap-3">
-                <div className="w-full flex justify-center items-start">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    width={400}
-                    height={600}
-                    className="object-cover lg:h-[650px] md:h-[500px] h-[400px] w-auto mb-3 rounded-md"
-                    priority
-                  />
-                </div>
+  if (isLoadingPage) {
+    return <PageLoading />;
+  } else {
+    return (
+      <section className="admin__container">
+        <div className="admin__container-body">
+          <ToastContainer />
+          <Title title="Detail Produk" />
 
-                <div className="w-full bg-white border rounded-md shadow-md p-5 h-max">
-                  <div className="w-full flex justify-end mb-3">
-                    <ProductEditButton
-                      product={product}
-                      categories={categories}
-                      subCategories={subCategories}
-                      paramsSlug={product.slug}
-                      getProduct={getProduct}
-                      getFinanceLog={getFinanceLog}
-                      getStatusLog={getStatusLog}
-                      getStockLog={getStockLog}
+          {isLoadingContent ? (
+            <ContentLoading className="mt-10" />
+          ) : (
+            <React.Fragment>
+              <div className="w-full flex justify-center mb-5">
+                <div className="lg:flex block w-full gap-3">
+                  <div className="w-full flex justify-center items-start">
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      width={400}
+                      height={600}
+                      className="object-cover lg:h-[650px] md:h-[500px] h-[400px] w-auto mb-3 rounded-md"
+                      priority
                     />
                   </div>
 
-                  <ProductDetailData product={product} />
+                  <div className="w-full bg-white border rounded-md shadow-md p-5 h-max">
+                    <div className="w-full flex justify-end mb-3">
+                      <ProductEditButton
+                        product={product}
+                        categories={categories}
+                        subCategories={subCategories}
+                        paramsSlug={product.slug}
+                        getProduct={getProduct}
+                        getFinanceLog={getFinanceLog}
+                        getStatusLog={getStatusLog}
+                        getStockLog={getStockLog}
+                      />
+                    </div>
+
+                    <ProductDetailData product={product} />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="flex justify-center">
-              <div className="lg:w-[80%] w-full">
-                <ProductDetailFinanceLog financeList={financeList} />
-                <ProductDetailStatusLog statusList={statusList} />
-                <ProductDetailStockLog stockList={stockList} />
+              <div className="flex justify-center">
+                <div className="lg:w-[80%] w-full">
+                  <ProductDetailFinanceLog financeList={financeList} />
+                  <ProductDetailStatusLog statusList={statusList} />
+                  <ProductDetailStockLog stockList={stockList} />
+                </div>
               </div>
-            </div>
-          </React.Fragment>
-        )}
-      </div>
-    </section>
-  );
+            </React.Fragment>
+          )}
+        </div>
+      </section>
+    );
+  }
 };
 
 export default ProductDetail;
