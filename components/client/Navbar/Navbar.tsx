@@ -14,6 +14,9 @@ import { Kaushan_Script } from "next/font/google";
 import localFont from "next/font/local";
 import { useSession } from "next-auth/react";
 import { useCartContext } from "@/context/CartContext";
+import ClientPageLoading from "@/components/ClientPageLoading";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { usePathname } from "next/navigation";
 
 const kaushan = Kaushan_Script({
   weight: "400",
@@ -34,6 +37,10 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ countCarts, role, categories }) => {
+  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
+
+  const pathname = usePathname();
+
   const menus: MenuType[] = [
     {
       name: "home",
@@ -98,7 +105,13 @@ const Navbar: React.FC<NavbarProps> = ({ countCarts, role, categories }) => {
         <div className="w-[90%] h-[60px] lg:h-[100px] flex justify-between items-center font-serif shadow-sm">
           <NavbarMobileMenu menus={menus} />
 
-          <Link href="/" className="gap-3 h-full items-center flex">
+          <Link
+            href="/"
+            className="gap-3 h-full items-center flex"
+            onClick={() => {
+              if (pathname !== "/") setIsLoadingPage(true);
+            }}
+          >
             <Image
               src="/logo.png"
               alt="logo"
@@ -122,9 +135,19 @@ const Navbar: React.FC<NavbarProps> = ({ countCarts, role, categories }) => {
 
           <NavbarMobileSearch />
 
-          <NavbarDesktopMenu categories={categories} menus={menus} />
+          <NavbarDesktopMenu
+            categories={categories}
+            menus={menus}
+            setIsLoadingPage={setIsLoadingPage}
+          />
 
-          <Link href="/cart" className="relative">
+          <Link
+            href="/cart"
+            className="relative"
+            onClick={() => {
+              if (pathname !== "/cart") setIsLoadingPage(true);
+            }}
+          >
             <div className="relative h-fit w-fit">
               {totalCarts ? (
                 <div className="absolute w-5 h-5 flex justify-center items-center rounded-full bg-red-500 text-xs -right-2 -top-2 text-white">
@@ -136,6 +159,15 @@ const Navbar: React.FC<NavbarProps> = ({ countCarts, role, categories }) => {
           </Link>
         </div>
       </nav>
+
+      <Dialog open={isLoadingPage} onOpenChange={setIsLoadingPage}>
+        <DialogContent
+          className="!bg-white !max-w-full !h-screen flex justify-center items-center !outline-none !duration-0"
+          closeButton={false}
+        >
+          <ClientPageLoading />
+        </DialogContent>
+      </Dialog>
     </React.Fragment>
   );
 };

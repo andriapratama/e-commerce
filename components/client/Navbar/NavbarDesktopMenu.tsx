@@ -4,15 +4,23 @@ import { CategoryFullType } from "@/types/CategoryType";
 import { MenuType } from "@/types/MenuType";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import React, { useState } from "react";
+import { usePathname } from "next/navigation";
+import React, { Dispatch, SetStateAction, useState } from "react";
 
 interface Props {
   categories: CategoryFullType[];
   menus: MenuType[];
+  setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
 }
 
-const NavbarDesktopMenu: React.FC<Props> = ({ categories, menus }) => {
+const NavbarDesktopMenu: React.FC<Props> = ({
+  categories,
+  menus,
+  setIsLoadingPage,
+}) => {
   const [isOpenCategories, setIsOpenCategories] = useState<boolean>(false);
+
+  const pathname = usePathname();
 
   const CategoriesContent = () => {
     return categories.map((category: CategoryFullType) => {
@@ -20,8 +28,12 @@ const NavbarDesktopMenu: React.FC<Props> = ({ categories, menus }) => {
         <li className="w-fit text-center mx-10 capitalize" key={category.name}>
           <Link
             className="hover:border-b border-black"
-            href={`/collections/?category=${category.name}&page=1`}
-            onClick={() => setIsOpenCategories(false)}
+            href={`/collections?category=${category.name}&page=1`}
+            onClick={() => {
+              setIsOpenCategories(false);
+
+              if (pathname !== "/collections") setIsLoadingPage(true);
+            }}
           >
             {category.name}
           </Link>
@@ -32,10 +44,13 @@ const NavbarDesktopMenu: React.FC<Props> = ({ categories, menus }) => {
                 return (
                   <li className="mb-3" key={subCategory.name}>
                     <Link
-                      href={`/collections/?category=${category.name}&subCategory=${subCategory.name}&page=1`}
+                      href={`/collections?category=${category.name}&subCategory=${subCategory.name}&page=1`}
                       className="font-normal hover:border-b border-black"
                       key={subCategory.name}
-                      onClick={() => setIsOpenCategories(false)}
+                      onClick={() => {
+                        setIsOpenCategories(false);
+                        if (pathname !== "/collections") setIsLoadingPage(true);
+                      }}
                     >
                       {subCategory.name}
                     </Link>
@@ -64,6 +79,9 @@ const NavbarDesktopMenu: React.FC<Props> = ({ categories, menus }) => {
                 <Link
                   href={menu.link}
                   className={`cursor-pointer hover:border-b-2 px-1 capitalize border-primary-color`}
+                  onClick={() => {
+                    if (pathname !== menu.link) setIsLoadingPage(true);
+                  }}
                 >
                   {menu.name}
                 </Link>
@@ -84,7 +102,10 @@ const NavbarDesktopMenu: React.FC<Props> = ({ categories, menus }) => {
               <div
                 key={menu.name}
                 className={`cursor-pointer hover:border-b-2 px-1 capitalize border-primary-color`}
-                onClick={() => signOut()}
+                onClick={() => {
+                  signOut();
+                  setIsLoadingPage(true);
+                }}
               >
                 {menu.name}
               </div>
@@ -95,6 +116,9 @@ const NavbarDesktopMenu: React.FC<Props> = ({ categories, menus }) => {
                 href={menu.link}
                 key={menu.name}
                 className={`cursor-pointer hover:border-b-2 px-1 capitalize border-primary-color`}
+                onClick={() => {
+                  if (pathname !== menu.link) setIsLoadingPage(true);
+                }}
               >
                 {menu.name}
               </Link>
