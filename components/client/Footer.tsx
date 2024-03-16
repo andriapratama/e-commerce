@@ -130,10 +130,7 @@ const Footer: React.FC<Props> = ({ settingValue }) => {
       </footer>
 
       <div className="fixed right-7 bottom-7 z-[99]">
-        <Link
-          href={`https://web.whatsapp.com/send/?phone=%2B${settingValue.whatsapp}&text&type=phone_number&app_absent=0`}
-          target="_blank"
-        >
+        <Link href={`https://wa.me/${settingValue.whatsapp}`} target="_blank">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             x="0px"

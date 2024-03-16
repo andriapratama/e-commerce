@@ -59,7 +59,7 @@ const OrderDetail = () => {
                   </div>
                   <div>
                     <Link
-                      href={`https://web.whatsapp.com/send/?phone=%2B${order.user.phone}&text&type=phone_number&app_absent=0`}
+                      href={`https://wa.me/${order.user.phone}`}
                       target="_blank"
                       className="w-fit hover:border-b border-blue-500 hover:text-blue-500"
                     >

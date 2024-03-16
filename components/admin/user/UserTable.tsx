@@ -73,7 +73,7 @@ const UserTable: React.FC<Props> = ({
                 </TableCell>
                 <TableCell>
                   <Link
-                    href={`https://web.whatsapp.com/send/?phone=%2B${user.phone}&text&type=phone_number&app_absent=0`}
+                    href={`https://wa.me/${user.phone}`}
                     target="_blank"
                     className="w-fit hover:border-b border-black"
                   >

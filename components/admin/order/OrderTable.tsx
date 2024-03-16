@@ -110,7 +110,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
                     </div>
                     <div className="w-full">
                       <Link
-                        href={`https://web.whatsapp.com/send/?phone=%2B${order.userPhone}&text&type=phone_number&app_absent=0`}
+                        href={`https://wa.me/${order.userPhone}`}
                         target="_blank"
                         className="w-fit hover:border-b border-black"
                       >
