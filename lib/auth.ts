@@ -65,9 +65,10 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Email dan password harus diisi.");
           }
 
-          user = await prismadb.user.findUnique({
+          user = await prismadb.user.findFirst({
             where: {
               email: credentials.email,
+              role: "member",
             },
           });
 
@@ -78,7 +79,7 @@ export const authOptions: NextAuthOptions = {
 
         let isPasswordValid = null;
 
-        if (user) {
+        if (user && user.password) {
           isPasswordValid = await bcrypt.compare(
             credentials.password,
             user.password

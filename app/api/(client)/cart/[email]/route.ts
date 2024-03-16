@@ -13,7 +13,7 @@ export const GET = async (
       );
     }
 
-    const findUser = await prismadb.user.findUnique({
+    const findUser = await prismadb.user.findFirst({
       where: {
         email: params.email,
         role: "member",

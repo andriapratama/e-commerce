@@ -15,9 +15,10 @@ export const PATCH = async (
       );
     }
 
-    const findUser = await prismadb.user.findUnique({
+    const findUser = await prismadb.user.findFirst({
       where: {
         email: params.email,
+        role: "member",
       },
     });
 
@@ -50,7 +51,7 @@ export const PATCH = async (
 
     const checkOldPassword = await bcrypt.compare(
       oldPassword,
-      findUser.password
+      findUser.password as string
     );
 
     if (!checkOldPassword) {
@@ -64,7 +65,7 @@ export const PATCH = async (
 
     await prismadb.user.update({
       where: {
-        email: params.email,
+        id: findUser.id,
       },
       data: {
         password: passwordHash,

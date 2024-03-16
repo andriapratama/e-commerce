@@ -25,7 +25,7 @@ export const ApiClientValidation = async () => {
 
   const email = session?.user.email;
 
-  const findUser = await prismadb.user.findUnique({
+  const findUser = await prismadb.user.findFirst({
     where: {
       email,
       role: "member",

@@ -14,7 +14,7 @@ export const GET = async (
       );
     }
 
-    const user = await prismadb.user.findUnique({
+    const user = await prismadb.user.findFirst({
       where: {
         email: params.email,
         role: "member",
@@ -63,9 +63,10 @@ export const PATCH = async (
       );
     }
 
-    const findUser = await prismadb.user.findUnique({
+    const findUser = await prismadb.user.findFirst({
       where: {
         email: params.email,
+        role: "member",
       },
     });
 
@@ -100,7 +101,7 @@ export const PATCH = async (
 
     await prismadb.user.update({
       where: {
-        email: params.email,
+        id: findUser.id,
       },
       data: {
         firstName,

@@ -35,7 +35,7 @@ export const POST = async (req: Request) => {
 
     const { firstName, lastName, email, password } = response.data;
 
-    const findEmail = await prismadb.user.findUnique({
+    const findEmail = await prismadb.user.findFirst({
       where: {
         email,
         role: "member",
