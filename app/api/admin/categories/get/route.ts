@@ -1,8 +1,7 @@
-import { authOptions } from "@/lib/auth";
+import { NextResponse } from "next/server";
+
 import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
-import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
 
 export const GET = async (req: Request) => {
   try {

@@ -1,15 +1,19 @@
-import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar/Navbar";
-import CollectionDetailContent from "@/components/client/collection-detail/CollectionDetailContent";
+import axios from "axios";
+import { getServerSession } from "next-auth";
+import dynamic from "next/dynamic";
+import { redirect } from "next/navigation";
+import React from "react";
+
 import { useCountCartsHook } from "@/hooks/client/CartHook";
-import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { useGetProductDetailHook } from "@/hooks/client/ProductHook";
 import { authOptions } from "@/lib/auth";
 import { ClientProductType } from "@/types/ProductType";
-import axios from "axios";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import React from "react";
+
+const Footer = dynamic(() => import("@/components/client/Footer"));
+const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
+const CollectionDetailContent = dynamic(
+  () => import("@/components/client/collection-detail/CollectionDetailContent")
+);
 
 const CollectionDetail = async ({ params }: { params: { id: string } }) => {
   const slug: string = params.id;
@@ -33,8 +37,6 @@ const CollectionDetail = async ({ params }: { params: { id: string } }) => {
   };
 
   let thisCountCarts: number = 0;
-
-  const { categories } = await useGetAllCategoriesHook();
 
   const session = await getServerSession(authOptions);
 
@@ -71,13 +73,9 @@ const CollectionDetail = async ({ params }: { params: { id: string } }) => {
   return (
     <section className="w-full">
       {session?.user.role === "member" ? (
-        <Navbar
-          countCarts={thisCountCarts}
-          categories={categories}
-          role={session?.user.role}
-        />
+        <Navbar countCarts={thisCountCarts} role={session?.user.role} />
       ) : (
-        <Navbar categories={categories} />
+        <Navbar />
       )}
       {isProduct404 ? (
         <div className="w-full lg:min-h-[calc(100vh-490px)] md:min-h-[calc(100vh-480px)] min-h-[calc(100vh-60px)] lg:mt-[100px] mt-[60px] flex justify-center items-center">

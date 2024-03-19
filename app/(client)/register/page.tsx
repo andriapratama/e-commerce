@@ -1,12 +1,16 @@
-import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar/Navbar";
-import RegisterForm from "@/components/client/register/RegisterForm";
-import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
-import { authOptions } from "@/lib/auth";
 import axios from "axios";
 import { getServerSession } from "next-auth";
+import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
+
+import { authOptions } from "@/lib/auth";
+
+const Footer = dynamic(() => import("@/components/client/Footer"));
+const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
+const RegisterForm = dynamic(
+  () => import("@/components/client/register/RegisterForm")
+);
 
 const Register = async () => {
   const session = await getServerSession(authOptions);
@@ -15,15 +19,13 @@ const Register = async () => {
     redirect("/");
   }
 
-  const { categories } = await useGetAllCategoriesHook();
-
   const setting = await axios.get(`${process.env.WEB_URL}/api/setting/get`);
 
   const settingValue = setting.data.data;
 
   return (
     <section className="w-full">
-      <Navbar categories={categories} />
+      <Navbar />
       <RegisterForm />
       <Footer settingValue={settingValue} />
     </section>

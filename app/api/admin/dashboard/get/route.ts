@@ -1,9 +1,18 @@
+import { NextRequest, NextResponse } from "next/server";
+
 import { _months } from "@/constant/month";
 import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
-import { NextResponse } from "next/server";
 
-export const GET = async (req: Request) => {
+export const GET = async (req: NextRequest) => {
+  const searchParams = req.nextUrl.searchParams;
+
+  const typeParams = searchParams.get("type");
+  const dateParams = searchParams.get("date");
+  const monthParams = searchParams.get("month");
+  const yearParams = searchParams.get("year");
+  const productPageParams = searchParams.get("product-page");
+
   try {
     const { validation } = await ApiAdminValidation();
 
@@ -13,13 +22,6 @@ export const GET = async (req: Request) => {
         { status: validation.status }
       );
     }
-
-    const url = new URL(req.url);
-    const typeParams = url.searchParams.get("type");
-    const dateParams = url.searchParams.get("date");
-    const monthParams = url.searchParams.get("month");
-    const yearParams = url.searchParams.get("year");
-    const productPageParams = url.searchParams.get("product-page");
 
     let gte: string = "";
     let lte: string = "";

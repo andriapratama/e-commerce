@@ -1,18 +1,22 @@
-import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar/Navbar";
+import axios from "axios";
+import { getServerSession } from "next-auth";
+import dynamic from "next/dynamic";
+import { redirect } from "next/navigation";
+import React from "react";
+
 import { useCountCartsHook } from "@/hooks/client/CartHook";
-import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import {
   useGetOnePromoHook,
   useGetPromoStockHook,
 } from "@/hooks/client/PromoHook";
 import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
-import PromoDetailContent from "@/components/client/promo-detail/PromoDetailContent";
-import React from "react";
 import { PromoType } from "@/types/PromoType";
-import { redirect } from "next/navigation";
-import axios from "axios";
+
+const Footer = dynamic(() => import("@/components/client/Footer"));
+const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
+const PromoDetailContent = dynamic(
+  () => import("@/components/client/promo-detail/PromoDetailContent")
+);
 
 const PromoDetail = async ({ params }: { params: { id: string } }) => {
   const slug: string = params.id;
@@ -30,8 +34,6 @@ const PromoDetail = async ({ params }: { params: { id: string } }) => {
   };
 
   let isPromo404: boolean = false;
-
-  const { categories } = await useGetAllCategoriesHook();
 
   try {
     const { promo } = await useGetOnePromoHook(slug);
@@ -78,13 +80,9 @@ const PromoDetail = async ({ params }: { params: { id: string } }) => {
   return (
     <section className="w-full">
       {session?.user.role === "member" ? (
-        <Navbar
-          role={session?.user.role}
-          categories={categories}
-          countCarts={thisCountCarts}
-        />
+        <Navbar role={session?.user.role} countCarts={thisCountCarts} />
       ) : (
-        <Navbar categories={categories} />
+        <Navbar />
       )}
 
       {isPromo404 ? (

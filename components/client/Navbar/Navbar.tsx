@@ -1,22 +1,23 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { MenuType } from "@/types/MenuType";
 import { ShoppingCart } from "lucide-react";
-import { CategoryFullType } from "@/types/CategoryType";
-import NavbarSearch from "./NavbarSearch";
+import { useSession } from "next-auth/react";
+import { Kaushan_Script } from "next/font/google";
+import localFont from "next/font/local";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React, { useEffect, useState } from "react";
+
+import ClientPageLoading from "@/components/ClientPageLoading";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useCartContext } from "@/context/CartContext";
+import { MenuType } from "@/types/MenuType";
+
 import NavbarDesktopMenu from "./NavbarDesktopMenu";
 import NavbarMobileMenu from "./NavbarMobileMenu";
 import NavbarMobileSearch from "./NavbarMobileSearch";
-import { Kaushan_Script } from "next/font/google";
-import localFont from "next/font/local";
-import { useSession } from "next-auth/react";
-import { useCartContext } from "@/context/CartContext";
-import ClientPageLoading from "@/components/ClientPageLoading";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { usePathname } from "next/navigation";
+import NavbarSearch from "./NavbarSearch";
 
 const kaushan = Kaushan_Script({
   weight: "400",
@@ -33,10 +34,9 @@ const prostestRiot = localFont({
 interface NavbarProps {
   role?: string;
   countCarts?: number;
-  categories: CategoryFullType[];
 }
 
-const Navbar: React.FC<NavbarProps> = ({ countCarts, role, categories }) => {
+const Navbar: React.FC<NavbarProps> = ({ countCarts, role }) => {
   const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
 
   const pathname = usePathname();
@@ -119,7 +119,7 @@ const Navbar: React.FC<NavbarProps> = ({ countCarts, role, categories }) => {
               width={100}
               className="object-contain lg:w-[70px] lg:h-[70px] h-[30px] w-[30px]"
             />
-            <div className="text-lg hidden sm:block">
+            <div className="text-lg hidden lg:block">
               <div className={`text-3xl ${prostestRiot.className}`}>
                 <span className="text-white">BOTTLE</span> TIME
               </div>
@@ -136,7 +136,6 @@ const Navbar: React.FC<NavbarProps> = ({ countCarts, role, categories }) => {
           <NavbarMobileSearch />
 
           <NavbarDesktopMenu
-            categories={categories}
             menus={menus}
             setIsLoadingPage={setIsLoadingPage}
           />

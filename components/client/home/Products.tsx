@@ -1,9 +1,11 @@
 "use client";
 
-import React from "react";
-import ProductCard from "../ProductCard";
+import axios from "axios";
 import Autoplay from "embla-carousel-autoplay";
-import { ClientProductType } from "@/types/ProductType";
+import { useSession } from "next-auth/react";
+import React from "react";
+import useSWR, { Fetcher } from "swr";
+
 import {
   Carousel,
   CarouselContent,
@@ -11,83 +13,92 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { useSession } from "next-auth/react";
+import { ClientProductType } from "@/types/ProductType";
+
+import ProductCard from "../ProductCard";
 
 interface ProductProps {
-  products: ClientProductType[];
   title: string;
+  statusProduct: "best" | "sale" | "new";
 }
 
-const Products: React.FC<ProductProps> = ({ products, title }) => {
+const Products: React.FC<ProductProps> = ({ title, statusProduct }) => {
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   );
 
   const { status } = useSession();
 
-  if (products.length < 1) {
-    return null;
-  } else {
-    return (
-      <React.Fragment>
-        <section className="relative w-full flex justify-center md:mt-[100px] mt-14">
-          <div className="lg:w-[80%] sm:w-[90%] w-[80%]">
-            <div
-              className={`md:text-5xl text-3xl w-full text-center mb-10 md:mb-14 capitalize font-serif`}
-            >
-              {title}
-            </div>
+  const fetcher: Fetcher<{
+    data: { products: ClientProductType[] };
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
 
-            <Carousel
-              className="w-full"
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              plugins={[plugin.current]}
-              onMouseEnter={plugin.current.stop}
-              onMouseLeave={plugin.current.play}
-            >
-              <CarouselContent className="-ml-1">
-                {products.map((product, index) => (
-                  <CarouselItem
-                    key={index}
-                    className={`pl-1 ${
-                      products.length === 3
-                        ? "lg:basis-1/3 md:basis-1/2"
-                        : products.length === 2
-                        ? "md:basis-1/2"
-                        : products.length === 1
-                        ? "md:basis-full"
-                        : "lg:basis-1/4 md:basis-1/2"
-                    }`}
-                  >
-                    <div className="p-1">
-                      <ProductCard
-                        product={product}
-                        key={product.slug}
-                        status={status}
-                      />
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious
-                className={`invisible ${
-                  products.length < 5 ? "lg:invisible" : "lg:visible"
-                }`}
-              />
-              <CarouselNext
-                className={`invisible ${
-                  products.length < 5 ? "lg:invisible" : "lg:visible"
-                }`}
-              />
-            </Carousel>
+  const { data } = useSWR(`/api/products/get?status=${statusProduct}`, fetcher);
+
+  const products = data?.data.products;
+
+  if (!products) return null;
+
+  return (
+    <React.Fragment>
+      <section className="relative w-full flex justify-center md:mt-[100px] mt-14">
+        <div className="lg:w-[80%] sm:w-[90%] w-[80%]">
+          <div
+            className={`md:text-5xl text-3xl w-full text-center mb-10 md:mb-14 capitalize font-serif`}
+          >
+            {title}
           </div>
-        </section>
-      </React.Fragment>
-    );
-  }
+
+          <Carousel
+            className="w-full"
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            plugins={[plugin.current]}
+            onMouseEnter={plugin.current.stop}
+            onMouseLeave={plugin.current.play}
+          >
+            <CarouselContent className="-ml-1">
+              {products.map((product, index) => (
+                <CarouselItem
+                  key={index}
+                  className={`pl-1 ${
+                    products.length === 3
+                      ? "lg:basis-1/3 md:basis-1/2"
+                      : products.length === 2
+                      ? "md:basis-1/2"
+                      : products.length === 1
+                      ? "md:basis-full"
+                      : "lg:basis-1/4 md:basis-1/2"
+                  }`}
+                >
+                  <div className="p-1">
+                    <ProductCard
+                      product={product}
+                      key={product.slug}
+                      status={status}
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious
+              className={`invisible ${
+                products.length < 5 ? "lg:invisible" : "lg:visible"
+              }`}
+            />
+            <CarouselNext
+              className={`invisible ${
+                products.length < 5 ? "lg:invisible" : "lg:visible"
+              }`}
+            />
+          </Carousel>
+        </div>
+      </section>
+    </React.Fragment>
+  );
 };
 
 export default Products;

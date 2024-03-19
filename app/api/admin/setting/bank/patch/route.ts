@@ -1,9 +1,14 @@
-import prismadb from "@/lib/prismadb";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 
-export const PATCH = async (req: Request) => {
+export const PATCH = async (req: NextRequest) => {
+  const searchParams = req.nextUrl.searchParams;
+
+  const idParams = searchParams.get("id");
+
   try {
     const { validation } = await ApiAdminValidation();
 
@@ -13,10 +18,6 @@ export const PATCH = async (req: Request) => {
         { status: validation.status }
       );
     }
-
-    const url = new URL(req.url);
-
-    const idParams = url.searchParams.get("id");
 
     const body = await req.json();
 

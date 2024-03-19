@@ -1,29 +1,32 @@
 "use client";
 
-import { CategoryFullType } from "@/types/CategoryType";
-import { MenuType } from "@/types/MenuType";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { Dispatch, SetStateAction, useState } from "react";
 
+import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
+import { CategoryFullType } from "@/types/CategoryType";
+import { MenuType } from "@/types/MenuType";
+
 interface Props {
-  categories: CategoryFullType[];
   menus: MenuType[];
   setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
 }
 
-const NavbarDesktopMenu: React.FC<Props> = ({
-  categories,
-  menus,
-  setIsLoadingPage,
-}) => {
+const NavbarDesktopMenu: React.FC<Props> = ({ menus, setIsLoadingPage }) => {
   const [isOpenCategories, setIsOpenCategories] = useState<boolean>(false);
+
+  const { data } = useGetAllCategoriesHook();
 
   const pathname = usePathname();
 
   const CategoriesContent = () => {
-    return categories.map((category: CategoryFullType) => {
+    if (!data?.data) {
+      return null;
+    }
+
+    return data?.data.map((category: CategoryFullType) => {
       return (
         <li className="w-fit text-center mx-10 capitalize" key={category.name}>
           <Link
@@ -92,7 +95,7 @@ const NavbarDesktopMenu: React.FC<Props> = ({
                   }`}
                 >
                   <ul className="flex text-black w-fit h-fit pt-2 bg-white rounded-md border">
-                    {CategoriesContent()}
+                    <CategoriesContent />
                   </ul>
                 </div>
               </div>

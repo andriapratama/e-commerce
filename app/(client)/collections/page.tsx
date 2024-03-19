@@ -1,14 +1,18 @@
-import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar/Navbar";
-import CollectionContent from "@/components/client/collection/CollectionContent";
-import { useCountCartsHook } from "@/hooks/client/CartHook";
-import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
-import { useGetAllProductsHook } from "@/hooks/client/ProductHook";
-import { authOptions } from "@/lib/auth";
 import axios from "axios";
 import { getServerSession } from "next-auth";
+import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
+
+import { useCountCartsHook } from "@/hooks/client/CartHook";
+import { useGetAllProductsHook } from "@/hooks/client/ProductHook";
+import { authOptions } from "@/lib/auth";
+
+const Footer = dynamic(() => import("@/components/client/Footer"));
+const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
+const CollectionContent = dynamic(
+  () => import("@/components/client/collection/CollectionContent")
+);
 
 const Collections = async ({ searchParams }: any) => {
   const categoryParams: string = searchParams.category;
@@ -27,8 +31,6 @@ const Collections = async ({ searchParams }: any) => {
     statusParams,
     pageParams
   );
-
-  const { categories } = await useGetAllCategoriesHook();
 
   const session = await getServerSession(authOptions);
 
@@ -53,19 +55,11 @@ const Collections = async ({ searchParams }: any) => {
   return (
     <section className="w-full">
       {session?.user.role === "member" ? (
-        <Navbar
-          countCarts={thisCountCarts}
-          categories={categories}
-          role={session?.user.role}
-        />
+        <Navbar countCarts={thisCountCarts} role={session?.user.role} />
       ) : (
-        <Navbar categories={categories} />
+        <Navbar />
       )}
-      <CollectionContent
-        categories={categories}
-        products={products}
-        totalPage={totalPage}
-      />
+      <CollectionContent products={products} totalPage={totalPage} />
       <Footer settingValue={settingValue} />
     </section>
   );

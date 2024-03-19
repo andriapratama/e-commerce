@@ -1,9 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
-import { PromoType } from "@/types/PromoType";
+import axios from "axios";
 import Autoplay from "embla-carousel-autoplay";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useState } from "react";
+import useSWR, { Fetcher } from "swr";
+
+import ClientPageLoading from "@/components/ClientPageLoading";
 import {
   Carousel,
   CarouselContent,
@@ -11,20 +15,28 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import Link from "next/link";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import ClientPageLoading from "@/components/ClientPageLoading";
+import { PromoType } from "@/types/PromoType";
 
-interface Props {
-  promos: PromoType[];
-}
-
-const Promo: React.FC<Props> = ({ promos }) => {
+const Promo = () => {
   const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
 
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   );
+
+  const fetcher: Fetcher<{
+    data: PromoType[];
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
+
+  const { data } = useSWR("/api/promo/get", fetcher);
+
+  const promos = data?.data;
+
+  if (!promos) {
+    return null;
+  }
 
   return (
     <React.Fragment>
@@ -63,14 +75,16 @@ const Promo: React.FC<Props> = ({ promos }) => {
                     className="p-1"
                     onClick={() => setIsLoadingPage(true)}
                   >
-                    <Image
-                      src={promo.image}
-                      alt={promo.name}
-                      width={500}
-                      height={300}
-                      className="w-full h-auto object-cover rounded"
-                      priority
-                    />
+                    <div className="w-full 2xl:h-[270px] h-[200px] overflow-hidden">
+                      <Image
+                        src={promo.image}
+                        alt={promo.name}
+                        width={500}
+                        height={300}
+                        className="w-full h-full object-cover rounded"
+                        priority
+                      />
+                    </div>
                   </Link>
                 </CarouselItem>
               ))}

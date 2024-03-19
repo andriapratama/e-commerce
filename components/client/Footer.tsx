@@ -1,16 +1,23 @@
 "use client";
 
-import { SettingType } from "@/types/SettingType";
-import {
-  FacebookIcon,
-  Instagram,
-  Map,
-  Phone,
-  Send,
-  Twitter,
-} from "lucide-react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import React from "react";
+
+import { SettingType } from "@/types/SettingType";
+
+const FacebookIcon = dynamic(() =>
+  import("lucide-react").then((icon) => icon.FacebookIcon)
+);
+const Instagram = dynamic(() =>
+  import("lucide-react").then((icon) => icon.Instagram)
+);
+const Map = dynamic(() => import("lucide-react").then((icon) => icon.Map));
+const Phone = dynamic(() => import("lucide-react").then((icon) => icon.Phone));
+const Send = dynamic(() => import("lucide-react").then((icon) => icon.Send));
+const Twitter = dynamic(() =>
+  import("lucide-react").then((icon) => icon.Twitter)
+);
 
 const menus = [
   {

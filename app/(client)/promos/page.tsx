@@ -1,21 +1,20 @@
-import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar/Navbar";
-import PromoContent from "@/components/client/promo/PromoContent";
-import { useCountCartsHook } from "@/hooks/client/CartHook";
-import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
-import { useGetAllPromoHook } from "@/hooks/client/PromoHook";
-import { authOptions } from "@/lib/auth";
 import axios from "axios";
 import { getServerSession } from "next-auth";
+import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
 
+import { useCountCartsHook } from "@/hooks/client/CartHook";
+import { authOptions } from "@/lib/auth";
+
+const Footer = dynamic(() => import("@/components/client/Footer"));
+const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
+const PromoContent = dynamic(
+  () => import("@/components/client/promo/PromoContent")
+);
+
 const Promos = async () => {
   let thisCountCarts: number = 0;
-
-  const { categories } = await useGetAllCategoriesHook();
-
-  const { promos } = await useGetAllPromoHook();
 
   const session = await getServerSession(authOptions);
 
@@ -40,15 +39,11 @@ const Promos = async () => {
   return (
     <section className="!w-full overflow-hidden">
       {session?.user.role === "member" ? (
-        <Navbar
-          categories={categories}
-          countCarts={thisCountCarts}
-          role={session?.user.role}
-        />
+        <Navbar countCarts={thisCountCarts} role={session?.user.role} />
       ) : (
-        <Navbar categories={categories} />
+        <Navbar />
       )}
-      <PromoContent promos={promos} />
+      <PromoContent />
       <Footer settingValue={settingValue} />
     </section>
   );

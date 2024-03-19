@@ -1,15 +1,17 @@
 "use client";
 
-import { CategoryFullType } from "@/types/CategoryType";
-import React, { useEffect, useState } from "react";
-import SearchByCategory from "./SearchByCategory";
-import CollectionProducts from "./CollectionProducts";
-import { ClientProductType } from "@/types/ProductType";
-import Pagination from "../Pagination";
 import { useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+
+import { CategoryFullType } from "@/types/CategoryType";
+import { ClientProductType } from "@/types/ProductType";
+
+import Pagination from "../Pagination";
+import CollectionProducts from "./CollectionProducts";
+import SearchByCategory from "./SearchByCategory";
 
 interface CollectionContentProps {
-  categories: CategoryFullType[];
+  categories?: CategoryFullType[];
   products: ClientProductType[];
   totalPage: number;
 }

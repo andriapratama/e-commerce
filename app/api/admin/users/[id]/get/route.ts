@@ -1,11 +1,16 @@
+import { NextRequest, NextResponse } from "next/server";
+
 import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
-import { NextResponse } from "next/server";
 
 export const GET = async (
-  req: Request,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) => {
+  const searchParams = req.nextUrl.searchParams;
+
+  const pageParams = searchParams.get("page");
+
   try {
     const { validation } = await ApiAdminValidation();
 
@@ -19,9 +24,6 @@ export const GET = async (
     if (!params.id) {
       return NextResponse.json({ message: "Id is required" }, { status: 400 });
     }
-
-    const url = new URL(req.url);
-    const pageParams = url.searchParams.get("page");
 
     const page = parseInt(pageParams ? pageParams : "1");
 

@@ -1,18 +1,18 @@
+import { NextRequest, NextResponse } from "next/server";
+
 import prismadb from "@/lib/prismadb";
 import { ClientProductType } from "@/types/ProductType";
-import { NextResponse } from "next/server";
 
-export const GET = async (req: Request) => {
+export const GET = async (req: NextRequest) => {
+  const searchParams = req.nextUrl.searchParams;
+
+  const searchValueParams: string | null = searchParams.get("search");
+  const pageParams: string | null = searchParams.get("page");
+  const categoryParams: string | null = searchParams.get("category");
+  const subCategoryParams: string | null = searchParams.get("subCategory");
+  const statusParams: string | null = searchParams.get("status");
+
   try {
-    const url = new URL(req.url);
-
-    const searchParams: string | null = url.searchParams.get("search");
-    const pageParams: string | null = url.searchParams.get("page");
-    const categoryParams: string | null = url.searchParams.get("category");
-    const subCategoryParams: string | null =
-      url.searchParams.get("subCategory");
-    const statusParams: string | null = url.searchParams.get("status");
-
     const page: number = parseInt(pageParams ? pageParams : "1");
 
     let total: number = 0;
@@ -120,7 +120,7 @@ export const GET = async (req: Request) => {
         },
         select,
       });
-    } else if (searchParams) {
+    } else if (searchValueParams) {
       products = await prismadb.product.findMany({
         where: {
           NOT: {
@@ -128,7 +128,7 @@ export const GET = async (req: Request) => {
           },
           OR: [
             {
-              name: { contains: searchParams },
+              name: { contains: searchValueParams },
             },
           ],
         },
@@ -190,7 +190,7 @@ export const GET = async (req: Request) => {
       { status: 200 }
     );
   } catch (error) {
-    console.log("[PRODUCT_GET]", error);
+    console.log("[PRODUCT_GET_CLIENT]", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };

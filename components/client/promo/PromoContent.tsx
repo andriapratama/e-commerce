@@ -1,18 +1,30 @@
 "use client";
 
-import { PromoType } from "@/types/PromoType";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import useSWR, { Fetcher } from "swr";
+
 import ClientPageLoading from "@/components/ClientPageLoading";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { PromoType } from "@/types/PromoType";
 
-interface Props {
-  promos: PromoType[];
-}
-
-const PromoContent: React.FC<Props> = ({ promos }) => {
+const PromoContent = () => {
   const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
+
+  const fetcher: Fetcher<{
+    data: PromoType[];
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
+
+  const { data } = useSWR("/api/promo/get", fetcher);
+
+  const promos = data?.data;
+
+  if (!promos) {
+    return null;
+  }
 
   return (
     <React.Fragment>

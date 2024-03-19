@@ -1,12 +1,14 @@
-import { CategoryFullType } from "@/types/CategoryType";
 import axios from "axios";
+import useSWR, { Fetcher } from "swr";
 
-export const useGetAllCategoriesHook = async () => {
-  const categoriesRes = await axios.get(
-    `${process.env.WEB_URL}/api/categories`
-  );
+import { CategoryFullType } from "@/types/CategoryType";
 
-  const categories: CategoryFullType[] = categoriesRes.data.data;
+export const useGetAllCategoriesHook = () => {
+  const fetcher: Fetcher<{ data: CategoryFullType[]; message: string }> = (
+    url: string
+  ) => axios.get(url).then((res) => res.data);
 
-  return { categories };
+  const category = useSWR("/api/categories", fetcher);
+
+  return { ...category };
 };

@@ -1,8 +1,13 @@
+import { NextRequest, NextResponse } from "next/server";
+
 import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
-import { NextResponse } from "next/server";
 
-export const GET = async (req: Request) => {
+export const GET = async (req: NextRequest) => {
+  const searchParams = req.nextUrl.searchParams;
+
+  const resPage = searchParams.get("page");
+
   try {
     const { validation } = await ApiAdminValidation();
 
@@ -12,10 +17,6 @@ export const GET = async (req: Request) => {
         { status: validation.status }
       );
     }
-
-    const url = new URL(req.url);
-
-    const resPage = url.searchParams.get("page");
 
     const page = parseInt(resPage ? resPage : "0");
 

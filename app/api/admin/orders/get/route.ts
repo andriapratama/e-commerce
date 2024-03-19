@@ -1,8 +1,15 @@
+import { NextRequest, NextResponse } from "next/server";
+
 import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
-import { NextResponse } from "next/server";
 
-export const GET = async (req: Request) => {
+export const GET = async (req: NextRequest) => {
+  const searchParams = req.nextUrl.searchParams;
+
+  const searchValueParams = searchParams.get("search");
+  const pageParams = searchParams.get("page");
+  const statusParams = searchParams.get("status");
+
   try {
     const { validation } = await ApiAdminValidation();
 
@@ -12,11 +19,6 @@ export const GET = async (req: Request) => {
         { status: validation.status }
       );
     }
-
-    const url = new URL(req.url);
-    const searchParams = url.searchParams.get("search");
-    const pageParams = url.searchParams.get("page");
-    const statusParams = url.searchParams.get("status");
 
     const page = parseInt(pageParams ? pageParams : "1");
 
@@ -41,12 +43,12 @@ export const GET = async (req: Request) => {
 
     let total: number = 0;
 
-    if (searchParams) {
+    if (searchValueParams) {
       orders = await prismadb.order.findMany({
         where: {
           OR: [
             {
-              invoice: { contains: searchParams },
+              invoice: { contains: searchValueParams },
             },
           ],
         },

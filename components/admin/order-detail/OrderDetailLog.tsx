@@ -1,9 +1,7 @@
 "use client";
 
 import React from "react";
-import { ConvertDate } from "@/utils/ConvertDate";
-import { ConvertTime } from "@/utils/ConvertTime";
-import { OrderLogType } from "@/types/admin/OrderType";
+
 import {
   Table,
   TableBody,
@@ -12,6 +10,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { OrderLogType } from "@/types/admin/OrderType";
+import { ConvertDate } from "@/utils/ConvertDate";
+import { ConvertTime } from "@/utils/ConvertTime";
 
 interface OrderDetailLogProps {
   orderLogs: OrderLogType[];
@@ -37,7 +38,7 @@ const OrderDetailLog: React.FC<OrderDetailLogProps> = ({ orderLogs }) => {
             orderLogs.map((orderLog: OrderLogType, index) => (
               <TableRow key={index}>
                 <TableCell className="text-center">
-                  {ConvertDate(orderLog.createdAt)}
+                  {ConvertDate(orderLog.createdAt.toLocaleDateString())}
                 </TableCell>
                 <TableCell className="text-center">
                   {ConvertTime(orderLog.createdAt)}

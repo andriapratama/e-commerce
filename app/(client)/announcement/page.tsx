@@ -1,16 +1,18 @@
-import AnnouncementContent from "@/components/client/announcement/AnnouncementContent";
-import Navbar from "@/components/client/Navbar/Navbar";
-import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
-import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
-import { authOptions } from "@/lib/auth";
-import { UserType } from "@/types/UserType";
 import { getServerSession } from "next-auth";
+import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
 
-const Announcement = async () => {
-  const { categories } = await useGetAllCategoriesHook();
+import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
+import { authOptions } from "@/lib/auth";
+import { UserType } from "@/types/UserType";
 
+const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
+const AnnouncementContent = dynamic(
+  () => import("@/components/client/announcement/AnnouncementContent")
+);
+
+const Announcement = async () => {
   const session = await getServerSession(authOptions);
 
   let thisUser: UserType = {
@@ -47,7 +49,7 @@ const Announcement = async () => {
 
   return (
     <section className="w-full realtive">
-      <Navbar categories={categories} />
+      <Navbar />
 
       {session?.user.role === "member" ? (
         <AnnouncementContent active={thisUser.active} />

@@ -1,22 +1,26 @@
-import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar/Navbar";
-import CheckoutLocalContent from "@/components/client/checkout-local/CheckoutLocalContent";
-import CheckoutContent from "@/components/client/checkout/CheckoutContent";
+import axios from "axios";
+import { getServerSession } from "next-auth";
+import dynamic from "next/dynamic";
+import { redirect } from "next/navigation";
+import React from "react";
+
 import { useCountCartsHook } from "@/hooks/client/CartHook";
-import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { useGetAllDataCheckoutByEmail } from "@/hooks/client/CheckoutHook";
 import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
 import { authOptions } from "@/lib/auth";
 import { CartType } from "@/types/CartType";
 import { UserType } from "@/types/UserType";
-import axios from "axios";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import React from "react";
+
+const Footer = dynamic(() => import("@/components/client/Footer"));
+const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
+const CheckoutLocalContent = dynamic(
+  () => import("@/components/client/checkout-local/CheckoutLocalContent")
+);
+const CheckoutContent = dynamic(
+  () => import("@/components/client/checkout/CheckoutContent")
+);
 
 const Checkout = async () => {
-  const { categories } = await useGetAllCategoriesHook();
-
   const session = await getServerSession(authOptions);
 
   let thisCountCarts: number = 0;
@@ -81,17 +85,13 @@ const Checkout = async () => {
     <section className="w-full">
       {session?.user.role === "member" ? (
         <>
-          <Navbar
-            countCarts={thisCountCarts}
-            categories={categories}
-            role={session?.user.role}
-          />
+          <Navbar countCarts={thisCountCarts} role={session?.user.role} />
 
           <CheckoutContent carts={thisCarts} user={thisUser} />
         </>
       ) : (
         <>
-          <Navbar categories={categories} />
+          <Navbar />
 
           <CheckoutLocalContent />
         </>

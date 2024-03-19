@@ -1,22 +1,24 @@
-import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar/Navbar";
-import ProfileContent from "@/components/client/profile/ProfileContent";
+import axios from "axios";
+import { getServerSession } from "next-auth";
+import dynamic from "next/dynamic";
+import { redirect } from "next/navigation";
+import React from "react";
+
 import { useCountCartsHook } from "@/hooks/client/CartHook";
-import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
 import { authOptions } from "@/lib/auth";
 import { UserType } from "@/types/UserType";
-import axios from "axios";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import React from "react";
+
+const Footer = dynamic(() => import("@/components/client/Footer"));
+const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
+const ProfileContent = dynamic(
+  () => import("@/components/client/profile/ProfileContent")
+);
 
 const Profil = async () => {
   const session = await getServerSession(authOptions);
 
   if (session?.user.role === "member") {
-    const { categories } = await useGetAllCategoriesHook();
-
     let thisUser: UserType = {
       firstName: "",
       lastName: "",
@@ -61,11 +63,7 @@ const Profil = async () => {
 
     return (
       <section className="w-full">
-        <Navbar
-          countCarts={thisCountCarts}
-          categories={categories}
-          role={session?.user.role}
-        />
+        <Navbar countCarts={thisCountCarts} role={session?.user.role} />
         <ProfileContent user={thisUser} />
         <Footer settingValue={settingValue} />
       </section>

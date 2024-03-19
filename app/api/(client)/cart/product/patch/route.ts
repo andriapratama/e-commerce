@@ -1,6 +1,7 @@
-import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+
+import prismadb from "@/lib/prismadb";
 
 export const PATCH = async (req: Request) => {
   try {
@@ -46,7 +47,10 @@ export const PATCH = async (req: Request) => {
     }
 
     if (!findCart.product) {
-      return null;
+      return NextResponse.json(
+        { message: "Product not found" },
+        { status: 404 }
+      );
     }
 
     const findProduct = await prismadb.product.findUnique({

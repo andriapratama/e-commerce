@@ -127,7 +127,7 @@ const PromoDetailContent: React.FC<Props> = ({ promo, totalStock }) => {
         handleSetCarts(newCarts);
       } else {
         let newCarts = [...carts];
-        newCarts[findProductIndex].quantity += 1;
+        newCarts[findProductIndex].quantity += quantity;
 
         handleSetCarts(newCarts);
       }
@@ -143,8 +143,8 @@ const PromoDetailContent: React.FC<Props> = ({ promo, totalStock }) => {
       <ToastContainer />
 
       <div className="w-full flex justify-center mt-[80px] lg:mt-[150px]">
-        <div className="md:w-[80%] w-[90%] flex gap-5">
-          <div className="w-[60%] flex justify-center relative">
+        <div className="md:w-[80%] w-[90%] lg:flex block gap-5">
+          <div className="lg:w-[60%] w-full flex justify-center relative">
             <Image
               src={promo.image}
               alt={promo.name}
@@ -156,7 +156,7 @@ const PromoDetailContent: React.FC<Props> = ({ promo, totalStock }) => {
             />
           </div>
 
-          <div className="w-[40%] font-serif">
+          <div className="lg:w-[40%] w-full mt-5 lg:mt-0 font-serif">
             <h2 className="capitalize lg:text-2xl text-xl mb-3">
               {promo.name}
             </h2>

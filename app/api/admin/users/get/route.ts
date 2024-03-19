@@ -1,9 +1,15 @@
+import { NextRequest, NextResponse } from "next/server";
+
 import prismadb from "@/lib/prismadb";
 import { AdminUserType } from "@/types/UserType";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
-import { NextResponse } from "next/server";
 
-export const GET = async (req: Request) => {
+export const GET = async (req: NextRequest) => {
+  const searchParams = req.nextUrl.searchParams;
+
+  const searchValueParams = searchParams.get("search");
+  const pageParams = searchParams.get("page");
+  const roleParams = searchParams.get("role");
   try {
     const { validation } = await ApiAdminValidation();
 
@@ -14,12 +20,6 @@ export const GET = async (req: Request) => {
       );
     }
 
-    const url = new URL(req.url);
-
-    const searchParams = url.searchParams.get("search");
-    const pageParams = url.searchParams.get("page");
-    const roleParams = url.searchParams.get("role");
-
     if (!roleParams) {
       return NextResponse.json(
         { message: "Role is required" },
@@ -28,7 +28,7 @@ export const GET = async (req: Request) => {
     }
 
     const page = parseInt(pageParams ? pageParams : "1");
-    const search = searchParams ? searchParams : "";
+    const search = searchValueParams ? searchValueParams : "";
 
     let total: number = 0;
 

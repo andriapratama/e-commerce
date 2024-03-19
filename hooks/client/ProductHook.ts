@@ -1,5 +1,6 @@
-import { ClientProductType } from "@/types/ProductType";
 import axios from "axios";
+
+import { ClientProductType } from "@/types/ProductType";
 
 export const useGetProductDetailHook = async (id: string) => {
   const productRes = await axios.get(
@@ -39,14 +40,4 @@ export const useGetAllProductsHook = async (
   const totalPage: number = productsRes.data.data.totalPage;
 
   return { products, totalPage };
-};
-
-export const useGetProductsByStatusHook = async (status: string) => {
-  const productsRes = await axios.get(
-    `${process.env.WEB_URL}/api/products/get?status=${status}`
-  );
-
-  const products: ClientProductType[] = productsRes.data.data.products;
-
-  return { products };
 };

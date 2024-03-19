@@ -1,7 +1,9 @@
 "use client";
 
-import React, { Dispatch, SetStateAction } from "react";
 import { MoreHorizontal } from "lucide-react";
+import Link from "next/link";
+import React, { Dispatch, SetStateAction } from "react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +19,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PromoType } from "@/types/PromoType";
-import Link from "next/link";
 import { ConvertDate } from "@/utils/ConvertDate";
 
 interface PromoTableProps {
@@ -46,7 +47,7 @@ const PromoTable: React.FC<PromoTableProps> = ({
             <TableRow key={promo.slug}>
               <TableCell className="text-center">{index + 1}</TableCell>
               <TableCell className="capitalize">
-                {ConvertDate(promo.createdAt)}
+                {ConvertDate(promo.createdAt.toLocaleDateString())}
               </TableCell>
               <TableCell className="capitalize">{promo.name}</TableCell>
               <TableCell className="text-center capitalize">

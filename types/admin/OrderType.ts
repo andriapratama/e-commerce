@@ -59,5 +59,5 @@ export interface OrderLogType {
     | "done"
     | "cancel";
   employeeName: string;
-  createdAt: string;
+  createdAt: Date;
 }
