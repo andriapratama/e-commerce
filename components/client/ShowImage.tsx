@@ -1,8 +1,9 @@
 "use client";
 
-import React, { Dispatch, SetStateAction } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Image from "next/image";
+import React, { Dispatch, SetStateAction } from "react";
+
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface ShowImageProps {
   isOpen: boolean;
@@ -17,8 +18,8 @@ const ShowImage: React.FC<ShowImageProps> = ({ isOpen, setIsOpen, image }) => {
         <Image
           src={image}
           alt="preview"
-          height={1000}
-          width={300}
+          height={2000}
+          width={600}
           className="object-cover h-[90vh] w-full"
         />
       </DialogContent>

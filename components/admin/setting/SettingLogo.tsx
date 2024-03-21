@@ -1,29 +1,14 @@
 "use client";
 
-import { z } from "zod";
 import axios from "axios";
-import Image from "next/image";
-import { toast } from "react-toastify";
-import React, { useState } from "react";
 import { ImageIcon } from "lucide-react";
+import Image from "next/image";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import WarningAlert from "../WarningAlert";
-import { Input } from "@/components/ui/input";
+import { toast } from "react-toastify";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SettingType } from "@/types/admin/SettingType";
-import {
-  ImageInputType,
-  ACCEPTED_IMAGE_TYPES,
-  MAX_FILE_SIZE,
-} from "@/types/admin/Image";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
 import {
   Dialog,
   DialogContent,
@@ -31,6 +16,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  ACCEPTED_IMAGE_TYPES,
+  ImageInputType,
+  MAX_FILE_SIZE,
+} from "@/types/admin/Image";
+import { SettingType } from "@/types/admin/SettingType";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import WarningAlert from "../WarningAlert";
 
 const formSchema = z.object({
   image: z
@@ -86,7 +88,7 @@ const SettingLogo: React.FC<Props> = ({ data, getSetting }) => {
         formData
       );
 
-      toast.success("Gambar promo berhasil diubah");
+      toast.success("Logo berhasil diubah");
 
       getSetting();
 

@@ -1,9 +1,11 @@
 import axios from "axios";
+import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
 
+import { keywords } from "@/constant/Keywords";
 import { useCountCartsHook } from "@/hooks/client/CartHook";
 import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
 import { authOptions } from "@/lib/auth";
@@ -14,6 +16,35 @@ const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
 const ProfileContent = dynamic(
   () => import("@/components/client/profile/ProfileContent")
 );
+
+export async function generateMetadata(): Promise<Metadata> {
+  let logo: string = "";
+
+  try {
+    const res = await axios.get(`${process.env.WEB_URL}/api/setting/logo/get`);
+
+    logo = res.data.data.image;
+  } catch (error) {}
+
+  const desc =
+    "Manage your profile effortlessly. Personalize your experience and stay updated.";
+
+  const title = "Profile | Bottle Time";
+
+  return {
+    title: title,
+    description: desc,
+    openGraph: {
+      type: "website",
+      url: `${process.env.WEB_URL}/profile`,
+      title: title,
+      description: desc,
+      siteName: "Bottle Time",
+      images: [logo],
+    },
+    keywords: ["bottle time", "bottle times", ...keywords],
+  };
+}
 
 const Profil = async () => {
   const session = await getServerSession(authOptions);
@@ -57,15 +88,11 @@ const Profil = async () => {
       if (isCountCarts404) redirect("/denied");
     }
 
-    const setting = await axios.get(`${process.env.WEB_URL}/api/setting/get`);
-
-    const settingValue = setting.data.data;
-
     return (
       <section className="w-full">
         <Navbar countCarts={thisCountCarts} role={session?.user.role} />
         <ProfileContent user={thisUser} />
-        <Footer settingValue={settingValue} />
+        <Footer />
       </section>
     );
   } else {

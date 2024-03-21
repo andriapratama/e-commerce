@@ -1,9 +1,10 @@
-import axios from "axios";
+import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
 
+import { keywords } from "@/constant/Keywords";
 import { useCountCartsHook } from "@/hooks/client/CartHook";
 import {
   useGetOnePromoHook,
@@ -17,6 +18,50 @@ const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
 const PromoDetailContent = dynamic(
   () => import("@/components/client/promo-detail/PromoDetailContent")
 );
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  const slug: string = params.id;
+
+  let thisPromo: PromoType = {
+    createdAt: new Date(),
+    description: "",
+    firstPrice: 0,
+    image: "",
+    imagePathname: "",
+    name: "",
+    promoPrice: 0,
+    slug: "",
+    status: "archive",
+  };
+
+  try {
+    const { promo } = await useGetOnePromoHook(slug);
+
+    thisPromo = promo;
+  } catch (error: any) {}
+
+  const desc = thisPromo.description;
+
+  const title = `${thisPromo.name} | Bottle Time`;
+
+  return {
+    title: title,
+    description: desc ? desc : "",
+    openGraph: {
+      type: "website",
+      url: `${process.env.WEB_URL}/collections/${thisPromo.slug}`,
+      title: title,
+      description: desc ? desc : "",
+      siteName: "Bottle Time",
+      images: [thisPromo.image],
+    },
+    keywords: ["bottle time", "bottle times", ...keywords],
+  };
+}
 
 const PromoDetail = async ({ params }: { params: { id: string } }) => {
   const slug: string = params.id;
@@ -73,10 +118,6 @@ const PromoDetail = async ({ params }: { params: { id: string } }) => {
     }
   }
 
-  const setting = await axios.get(`${process.env.WEB_URL}/api/setting/get`);
-
-  const settingValue = setting.data.data;
-
   return (
     <section className="w-full">
       {session?.user.role === "member" ? (
@@ -92,7 +133,7 @@ const PromoDetail = async ({ params }: { params: { id: string } }) => {
       ) : (
         <PromoDetailContent promo={thisPromo} totalStock={thisTotalStock} />
       )}
-      <Footer settingValue={settingValue} />
+      <Footer />
     </section>
   );
 };

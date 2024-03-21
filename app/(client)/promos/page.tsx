@@ -1,9 +1,11 @@
 import axios from "axios";
+import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
 
+import { keywords } from "@/constant/Keywords";
 import { useCountCartsHook } from "@/hooks/client/CartHook";
 import { authOptions } from "@/lib/auth";
 
@@ -12,6 +14,35 @@ const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
 const PromoContent = dynamic(
   () => import("@/components/client/promo/PromoContent")
 );
+
+export async function generateMetadata(): Promise<Metadata> {
+  let logo: string = "";
+
+  try {
+    const res = await axios.get(`${process.env.WEB_URL}/api/setting/logo/get`);
+
+    logo = res.data.data.image;
+  } catch (error) {}
+
+  const desc =
+    "Unlock exclusive offers! Explore our latest promotions for unbeatable deals. Shop now and save big.";
+
+  const title = "Promos | Bottle Time";
+
+  return {
+    title: title,
+    description: desc,
+    openGraph: {
+      type: "website",
+      url: `${process.env.WEB_URL}/promos`,
+      title: title,
+      description: desc,
+      siteName: "Bottle Time",
+      images: [logo],
+    },
+    keywords: ["bottle time", "bottle times", ...keywords],
+  };
+}
 
 const Promos = async () => {
   let thisCountCarts: number = 0;
@@ -32,10 +63,6 @@ const Promos = async () => {
     }
   }
 
-  const setting = await axios.get(`${process.env.WEB_URL}/api/setting/get`);
-
-  const settingValue = setting.data.data;
-
   return (
     <section className="!w-full overflow-hidden">
       {session?.user.role === "member" ? (
@@ -44,7 +71,7 @@ const Promos = async () => {
         <Navbar />
       )}
       <PromoContent />
-      <Footer settingValue={settingValue} />
+      <Footer />
     </section>
   );
 };

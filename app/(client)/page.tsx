@@ -27,20 +27,19 @@ export async function generateMetadata(): Promise<Metadata> {
   } catch (error) {}
 
   const desc =
-    "Welcome to the Bottle Time online shop. Here they sell various types of drinks such as beer, spirits and wine which are located in Bali.";
+    "Treat yourself to top-tier beverages! Explore premium beer, spirits, and wine at [Store Name]. Fast delivery available.";
 
   const title = "Home | Bottle Time";
 
   return {
     title: title,
     description: desc,
-    icons: logo,
     openGraph: {
       type: "website",
-      url: "www.bottle-time.com",
+      url: process.env.WEB_URL,
       title: title,
       description: desc,
-      siteName: "Home",
+      siteName: "Bottle Time",
       images: [logo],
     },
     keywords: ["bottle time", "bottle times", ...keywords],
@@ -81,10 +80,6 @@ const Home = async () => {
     }
   }
 
-  const setting = await axios.get(`${process.env.WEB_URL}/api/setting/get`);
-
-  const settingValue = setting.data.data;
-
   return (
     <React.Fragment>
       <ToastContainer />
@@ -100,7 +95,7 @@ const Home = async () => {
         <Products title="new" statusProduct="new" />
         <Products title="sale" statusProduct="sale" />
         <Promo />
-        <Footer settingValue={settingValue} />
+        <Footer />
       </main>
     </React.Fragment>
   );

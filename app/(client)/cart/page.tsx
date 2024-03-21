@@ -1,9 +1,11 @@
 import axios from "axios";
+import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
 
+import { keywords } from "@/constant/Keywords";
 import {
   useCountCartsHook,
   useGetAllCartsByEmail,
@@ -17,6 +19,35 @@ const CartLocalTable = dynamic(
   () => import("@/components/client/cart-local/CartLocalTable")
 );
 const CartTable = dynamic(() => import("@/components/client/cart/CartTable"));
+
+export async function generateMetadata(): Promise<Metadata> {
+  let logo: string = "";
+
+  try {
+    const res = await axios.get(`${process.env.WEB_URL}/api/setting/logo/get`);
+
+    logo = res.data.data.image;
+  } catch (error) {}
+
+  const desc =
+    "Your cart: where great tastes meet convenience. Shop now for a delightful experience.";
+
+  const title = "Cart | Bottle Time";
+
+  return {
+    title: title,
+    description: desc,
+    openGraph: {
+      type: "website",
+      url: `${process.env.WEB_URL}/cart`,
+      title: title,
+      description: desc,
+      siteName: "Bottle Time",
+      images: [logo],
+    },
+    keywords: ["bottle time", "bottle times", ...keywords],
+  };
+}
 
 const Cart = async () => {
   const session = await getServerSession(authOptions);
@@ -51,10 +82,6 @@ const Cart = async () => {
     }
   }
 
-  const setting = await axios.get(`${process.env.WEB_URL}/api/setting/get`);
-
-  const settingValue = setting.data.data;
-
   return (
     <section className="w-full">
       {session?.user.role === "member" ? (
@@ -71,7 +98,7 @@ const Cart = async () => {
         </React.Fragment>
       )}
 
-      <Footer settingValue={settingValue} />
+      <Footer />
     </section>
   );
 };

@@ -1,9 +1,11 @@
 import axios from "axios";
+import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
 
+import { keywords } from "@/constant/Keywords";
 import { authOptions } from "@/lib/auth";
 
 const Footer = dynamic(() => import("@/components/client/Footer"));
@@ -12,6 +14,35 @@ const RegisterForm = dynamic(
   () => import("@/components/client/register/RegisterForm")
 );
 
+export async function generateMetadata(): Promise<Metadata> {
+  let logo: string = "";
+
+  try {
+    const res = await axios.get(`${process.env.WEB_URL}/api/setting/logo/get`);
+
+    logo = res.data.data.image;
+  } catch (error) {}
+
+  const desc =
+    "Join us now! Register for exclusive perks and seamless shopping experience.";
+
+  const title = "Register | Bottle Time";
+
+  return {
+    title: title,
+    description: desc,
+    openGraph: {
+      type: "website",
+      url: `${process.env.WEB_URL}/register`,
+      title: title,
+      description: desc,
+      siteName: "Bottle Time",
+      images: [logo],
+    },
+    keywords: ["bottle time", "bottle times", ...keywords],
+  };
+}
+
 const Register = async () => {
   const session = await getServerSession(authOptions);
 
@@ -19,15 +50,11 @@ const Register = async () => {
     redirect("/");
   }
 
-  const setting = await axios.get(`${process.env.WEB_URL}/api/setting/get`);
-
-  const settingValue = setting.data.data;
-
   return (
     <section className="w-full">
       <Navbar />
       <RegisterForm />
-      <Footer settingValue={settingValue} />
+      <Footer />
     </section>
   );
 };
