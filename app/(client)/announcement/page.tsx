@@ -1,3 +1,5 @@
+import axios from "axios";
+import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
@@ -11,6 +13,34 @@ const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
 const AnnouncementContent = dynamic(
   () => import("@/components/client/announcement/AnnouncementContent")
 );
+
+export async function generateMetadata(): Promise<Metadata> {
+  let logo: string = "";
+
+  try {
+    const res = await axios.get(`${process.env.WEB_URL}/api/setting/logo/get`);
+
+    logo = res.data.data.image;
+  } catch (error) {}
+
+  const desc =
+    "Your cart: where great tastes meet convenience. Shop now for a delightful experience.";
+
+  const title = "Cart | Bottle Time";
+
+  return {
+    title: title,
+    description: desc,
+    openGraph: {
+      type: "website",
+      url: `${process.env.WEB_URL}/announcement`,
+      title: title,
+      description: desc,
+      siteName: "Bottle Time",
+      images: [logo],
+    },
+  };
+}
 
 const Announcement = async () => {
   const session = await getServerSession(authOptions);

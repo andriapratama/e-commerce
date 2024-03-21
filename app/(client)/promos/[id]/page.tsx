@@ -53,7 +53,7 @@ export async function generateMetadata({
     description: desc ? desc : "",
     openGraph: {
       type: "website",
-      url: `${process.env.WEB_URL}/collections/${thisPromo.slug}`,
+      url: `${process.env.WEB_URL}/promos/${thisPromo.slug}`,
       title: title,
       description: desc ? desc : "",
       siteName: "Bottle Time",
