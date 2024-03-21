@@ -1,5 +1,5 @@
 export interface StockLogType {
-  createdAt: string;
+  createdAt: Date;
   employee: { name: string };
   note: string;
   previousStock: number;

@@ -1,4 +1,4 @@
-export const ConvertDate = (value: string) => {
+export const ConvertDate = (value: Date) => {
   const date = new Date(value);
 
   const day = date.getDate();

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+
 import {
   Table,
   TableBody,
@@ -10,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ConvertDate } from "@/utils/ConvertDate";
+
 import ProductDetailShowNote from "./ProductDetailShowNote";
 
 interface ProductStockLogType {
@@ -18,7 +20,7 @@ interface ProductStockLogType {
   stockNow: number;
   status: "first" | "update" | "decrease" | "increase";
   note: string;
-  createdAt: string;
+  createdAt: Date;
   employee: { name: string };
   invoice?: string;
 }

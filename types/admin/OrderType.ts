@@ -8,7 +8,7 @@ export interface OrdersType {
   userPhone: string;
   userEmail: string;
   totalItem: number;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface OrderDetailType {

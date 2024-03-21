@@ -1,20 +1,20 @@
 "use client";
 
-import { ClientProductType } from "@/types/ProductType";
-import { ConvertIDR } from "@/utils/ConvertIDR";
+import axios from "axios";
 import { ShoppingCart } from "lucide-react";
-import { Lugrasimo, Junge } from "next/font/google";
+import { Junge, Lugrasimo } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import LoadingGif from "../LoadingGif";
-import { CartLocalType } from "@/types/CartType";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+
 import { useCartContext } from "@/context/CartContext";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import ClientPageLoading from "../ClientPageLoading";
+import { CartLocalType } from "@/types/CartType";
+import { ClientProductType } from "@/types/ProductType";
+import { ConvertIDR } from "@/utils/ConvertIDR";
+
+import LoadingGif from "../LoadingGif";
 
 const lugrasimo = Lugrasimo({
   weight: "400",
@@ -37,8 +37,6 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, status }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
 
   const { carts, handleSetCarts } = useCartContext();
 
@@ -114,7 +112,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, status }) => {
           className="w-full flex justify-center h-fit relative cursor-pointer"
           onClick={() => {
             router.push(`/collections/${product.slug}`);
-            setIsLoadingPage(true);
           }}
         >
           <Image
@@ -184,15 +181,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, status }) => {
           )}
         </div>
       </div>
-
-      <Dialog open={isLoadingPage} onOpenChange={setIsLoadingPage}>
-        <DialogContent
-          className="!bg-white !max-w-full !h-screen flex justify-center items-center !outline-none !duration-0"
-          closeButton={false}
-        >
-          <ClientPageLoading />
-        </DialogContent>
-      </Dialog>
     </React.Fragment>
   );
 };

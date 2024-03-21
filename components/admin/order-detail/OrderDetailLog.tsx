@@ -38,7 +38,7 @@ const OrderDetailLog: React.FC<OrderDetailLogProps> = ({ orderLogs }) => {
             orderLogs.map((orderLog: OrderLogType, index) => (
               <TableRow key={index}>
                 <TableCell className="text-center">
-                  {ConvertDate(orderLog.createdAt.toLocaleDateString())}
+                  {ConvertDate(orderLog.createdAt)}
                 </TableCell>
                 <TableCell className="text-center">
                   {ConvertTime(orderLog.createdAt)}

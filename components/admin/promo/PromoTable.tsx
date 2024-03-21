@@ -47,7 +47,7 @@ const PromoTable: React.FC<PromoTableProps> = ({
             <TableRow key={promo.slug}>
               <TableCell className="text-center">{index + 1}</TableCell>
               <TableCell className="capitalize">
-                {ConvertDate(promo.createdAt.toLocaleDateString())}
+                {ConvertDate(promo.createdAt)}
               </TableCell>
               <TableCell className="capitalize">{promo.name}</TableCell>
               <TableCell className="text-center capitalize">

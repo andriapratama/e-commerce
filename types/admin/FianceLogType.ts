@@ -1,6 +1,6 @@
 export interface FinanceLogType {
   cost: number;
-  createdAt: string;
+  createdAt: Date;
   employee: { name: string };
   note: string;
   price: number;

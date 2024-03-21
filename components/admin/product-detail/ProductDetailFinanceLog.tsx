@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+
 import {
   Table,
   TableBody,
@@ -11,13 +12,14 @@ import {
 } from "@/components/ui/table";
 import { ConvertDate } from "@/utils/ConvertDate";
 import { ConvertIDR } from "@/utils/ConvertIDR";
+
 import ProductDetailShowNote from "./ProductDetailShowNote";
 
 interface ProductFinanceLogType {
   price: number;
   cost: number;
   note: string;
-  createdAt: string;
+  createdAt: Date;
   employee: { name: string };
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+
 import {
   Table,
   TableBody,
@@ -11,14 +12,15 @@ import {
 } from "@/components/ui/table";
 import { ConvertDate } from "@/utils/ConvertDate";
 import { ConvertIDR } from "@/utils/ConvertIDR";
-import ProductDetailShowNote from "./ProductDetailShowNote";
+
 import StatusProduct from "../StatusProduct";
+import ProductDetailShowNote from "./ProductDetailShowNote";
 
 interface ProductStatusLogType {
   status: "new" | "active" | "best" | "sale" | "archive";
   salePrice: number;
   note: string;
-  createdAt: string;
+  createdAt: Date;
   employee: { name: string };
 }
 

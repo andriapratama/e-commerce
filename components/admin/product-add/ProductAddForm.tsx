@@ -1,30 +1,16 @@
 "use client";
 
-import { z } from "zod";
 import axios from "axios";
-import Image from "next/image";
-import BackButton from "./BackButton";
-import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Image as IconImage } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { handleSetSlug } from "@/utils/HandleSetSlug";
-import { SubCategoryType } from "@/types/CategoryType";
-import ButtonLoading from "@/components/ButtonLoading";
-import AutosizeTextArea from "@/utils/AutosizeTextArea";
-import { handleSetNumber } from "@/utils/HandleSetNumber";
-import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
-import { useGetSubCategoryHook } from "@/hooks/admin/GetSubCategoryHook";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import {
-  ACCEPTED_IMAGE_TYPES,
-  ImageInputType,
-  MAX_FILE_SIZE,
-} from "@/types/admin/Image";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { z } from "zod";
+
+import ButtonLoading from "@/components/ButtonLoading";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -33,6 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -40,6 +27,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
+import { useGetSubCategoryHook } from "@/hooks/admin/GetSubCategoryHook";
+import {
+  ACCEPTED_IMAGE_TYPES,
+  ImageInputType,
+  MAX_FILE_SIZE,
+} from "@/types/admin/Image";
+import { SubCategoryType } from "@/types/CategoryType";
+import AutosizeTextArea from "@/utils/AutosizeTextArea";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
+import { handleSetSlug } from "@/utils/HandleSetSlug";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import BackButton from "./BackButton";
 
 interface ProductAddFormProps {
   setIsLoadingPage: Dispatch<SetStateAction<boolean>>;

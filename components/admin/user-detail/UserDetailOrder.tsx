@@ -1,6 +1,16 @@
 "use client";
 
+import { MoreHorizontal } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { Dispatch, SetStateAction } from "react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -9,21 +19,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AdminUserOrderType } from "@/types/UserType";
 import { ConvertDate } from "@/utils/ConvertDate";
 import { ConvertIDR } from "@/utils/ConvertIDR";
-import { AdminUserOrderType } from "@/types/UserType";
-import { StatusPayment } from "../StatusPayment";
-import StatusOrder from "../StatusOrder";
-import { MoreHorizontal } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import Link from "next/link";
+
 import Pagination from "../Pagination";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import StatusOrder from "../StatusOrder";
+import { StatusPayment } from "../StatusPayment";
 
 interface Props {
   orders: AdminUserOrderType[];
@@ -72,7 +74,7 @@ const UserDetailOrder: React.FC<Props> = ({
           {orders.length > 0 ? (
             orders.map((order: AdminUserOrderType, index) => (
               <TableRow key={index}>
-                <TableCell>{ConvertDate(order.createdAt.toString())}</TableCell>
+                <TableCell>{ConvertDate(order.createdAt)}</TableCell>
                 <TableCell>{order.invoice}</TableCell>
                 <TableCell className="text-center">{order.totalItem}</TableCell>
                 <TableCell>{ConvertIDR(order.grandTotal)}</TableCell>

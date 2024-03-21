@@ -1,5 +1,5 @@
 export interface StatusLogType {
-  createdAt: string;
+  createdAt: Date;
   employee: { name: string };
   note: string;
   salePrice: number;
