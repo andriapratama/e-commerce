@@ -32,7 +32,6 @@
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
     "date-fns": "^3.3.1",
-    "dom-to-pdf": "^0.3.2",
     "embla-carousel-autoplay": "^8.0.0-rc19",
     "embla-carousel-react": "^8.0.0-rc19",
     "lucide-react": "^0.284.0",

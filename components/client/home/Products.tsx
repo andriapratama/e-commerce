@@ -1,10 +1,8 @@
 "use client";
 
-import axios from "axios";
 import Autoplay from "embla-carousel-autoplay";
 import { useSession } from "next-auth/react";
 import React from "react";
-import useSWR, { Fetcher } from "swr";
 
 import {
   Carousel,
@@ -19,24 +17,15 @@ import ProductCard from "../ProductCard";
 
 interface ProductProps {
   title: string;
-  statusProduct: "best" | "sale" | "new";
+  products: ClientProductType[];
 }
 
-const Products: React.FC<ProductProps> = ({ title, statusProduct }) => {
+const Products: React.FC<ProductProps> = ({ title, products }) => {
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   );
 
   const { status } = useSession();
-
-  const fetcher: Fetcher<{
-    data: { products: ClientProductType[] };
-    message: string;
-  }> = (url: string) => axios.get(url).then((res) => res.data);
-
-  const { data } = useSWR(`/api/products/get?status=${statusProduct}`, fetcher);
-
-  const products = data?.data.products;
 
   if (!products) return null;
 

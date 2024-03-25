@@ -1,10 +1,8 @@
 "use client";
 
-import axios from "axios";
 import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
 import React, { useState } from "react";
-import useSWR, { Fetcher } from "swr";
 
 import {
   Carousel,
@@ -15,21 +13,16 @@ import {
 } from "@/components/ui/carousel";
 import { HeroClientType } from "@/types/HeroType";
 
-const Hero = () => {
+interface Props {
+  heros: HeroClientType[];
+}
+
+const Hero: React.FC<Props> = ({ heros }) => {
   const [isActive, setIsActive] = useState<boolean>(false);
 
   const plugin = React.useRef(
     Autoplay({ delay: 10000, stopOnInteraction: true })
   );
-
-  const fetcher: Fetcher<{
-    data: HeroClientType[];
-    message: string;
-  }> = (url: string) => axios.get(url).then((res) => res.data);
-
-  const { data } = useSWR("/api/hero/get", fetcher);
-
-  const heros = data?.data;
 
   if (!heros) {
     return null;

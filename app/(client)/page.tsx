@@ -8,8 +8,12 @@ import { ToastContainer } from "react-toastify";
 
 import { keywords } from "@/constant/Keywords";
 import { useCountCartsHook } from "@/hooks/client/CartHook";
+import { useGetAllHerosData } from "@/hooks/client/HeroHook";
+import { useGetSpecialProductsHook } from "@/hooks/client/useGetSpecialProductsHook";
 import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
 import { authOptions } from "@/lib/auth";
+import { HeroClientType } from "@/types/HeroType";
+import { ClientProductType } from "@/types/ProductType";
 
 const Footer = dynamic(() => import("@/components/client/Footer"));
 const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
@@ -80,6 +84,26 @@ const Home = async () => {
     }
   }
 
+  let thisHeros: HeroClientType[] = [];
+  let bestProducts: ClientProductType[] = [];
+  let newProducts: ClientProductType[] = [];
+  let saleProducts: ClientProductType[] = [];
+
+  try {
+    const { heros } = await useGetAllHerosData();
+
+    const { products: bestProduct } = await useGetSpecialProductsHook("best");
+
+    const { products: newProduct } = await useGetSpecialProductsHook("new");
+
+    const { products } = await useGetSpecialProductsHook("sale");
+
+    thisHeros = heros;
+    bestProducts = bestProduct;
+    newProducts = newProduct;
+    saleProducts = products;
+  } catch (error) {}
+
   return (
     <React.Fragment>
       <ToastContainer />
@@ -90,10 +114,10 @@ const Home = async () => {
         ) : (
           <Navbar />
         )}
-        <Hero />
-        <Products title="best seller" statusProduct="best" />
-        <Products title="new" statusProduct="new" />
-        <Products title="sale" statusProduct="sale" />
+        <Hero heros={thisHeros} />
+        <Products title="best seller" products={bestProducts} />
+        <Products title="new" products={newProducts} />
+        <Products title="sale" products={saleProducts} />
         <Promo />
         <Footer />
       </main>

@@ -1,5 +1,6 @@
-import { HeroClientType } from "@/types/HeroType";
 import axios from "axios";
+
+import { HeroClientType } from "@/types/HeroType";
 
 export const useGetAllHerosData = async () => {
   const res = await axios.get(`${process.env.WEB_URL}/api/hero/get`);
