@@ -2,8 +2,9 @@
 
 import axios from "axios";
 import dynamic from "next/dynamic";
-import React, { useCallback, useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import React, { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import useSWR, { Fetcher } from "swr";
 
 import ContentLoading from "@/components/ContentLoading";
 import PageLoading from "@/components/PageLoading";
@@ -22,10 +23,6 @@ const EmployeeEdit = dynamic(
 );
 
 const Employees = () => {
-  const [employees, setEmployees] = useState<EmployeeType[]>([]);
-
-  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
-
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
   const [editEmployee, setEditEmployee] = useState({
@@ -34,22 +31,12 @@ const Employees = () => {
     role: "",
   });
 
-  const getEmployees = useCallback(async () => {
-    try {
-      const res = await axios.get(`/api/admin/employees/get`);
+  const fetcher: Fetcher<{
+    data: EmployeeType[] | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
 
-      setEmployees(res.data.data);
-
-      setIsLoadingContent(false);
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-      setIsLoadingContent(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    getEmployees();
-  }, [getEmployees]);
+  const { data, isLoading } = useSWR("/api/admin/employees/get", fetcher);
 
   useEffect(() => {
     setIsLoadingPage(false);
@@ -68,19 +55,18 @@ const Employees = () => {
           <div className="flex justify-between md:flex-nowrap flex-wrap gap-3 w-full">
             {editEmployee.name ? (
               <EmployeeEdit
-                getEmployees={getEmployees}
                 editEmployee={editEmployee}
                 setEditEmployee={setEditEmployee}
               />
             ) : (
-              <EmployeeAdd getEmployees={getEmployees} />
+              <EmployeeAdd />
             )}
 
-            {isLoadingContent ? (
+            {isLoading ? (
               <ContentLoading />
             ) : (
               <EmployeeTable
-                employees={employees}
+                employees={data?.data}
                 setEditEmployee={setEditEmployee}
               />
             )}

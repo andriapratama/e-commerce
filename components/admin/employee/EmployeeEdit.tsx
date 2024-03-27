@@ -1,14 +1,13 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import axios from "axios";
-import * as z from "zod";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import ButtonLoading from "@/components/ButtonLoading";
-import { EmployeeType } from "@/types/admin/EmployeeType";
 import { toast } from "react-toastify";
-import { Input } from "@/components/ui/input";
+import { useSWRConfig } from "swr";
+import * as z from "zod";
+
+import ButtonLoading from "@/components/ButtonLoading";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,6 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -25,6 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { EmployeeType } from "@/types/admin/EmployeeType";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "Username minimal 3 karakter" }),
@@ -33,13 +35,11 @@ const formSchema = z.object({
 });
 
 interface EmployeeEditProps {
-  getEmployees: () => void;
   editEmployee: EmployeeType;
   setEditEmployee: Dispatch<SetStateAction<EmployeeType>>;
 }
 
 const EmployeeEdit: React.FC<EmployeeEditProps> = ({
-  getEmployees,
   editEmployee,
   setEditEmployee,
 }) => {
@@ -47,6 +47,8 @@ const EmployeeEdit: React.FC<EmployeeEditProps> = ({
   const [username, setUsername] = useState<string>("");
   const [role, setRole] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { mutate } = useSWRConfig();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -81,7 +83,7 @@ const EmployeeEdit: React.FC<EmployeeEditProps> = ({
         role: "",
       });
 
-      getEmployees();
+      mutate("/api/admin/employees/get");
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {

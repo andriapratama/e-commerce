@@ -2,14 +2,12 @@
 
 import axios from "axios";
 import React, { useState } from "react";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import WarningAlert from "../WarningAlert";
-import EmployeeAddResult from "./EmployeeAddResult";
-import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
-import { Input } from "@/components/ui/input";
+import { useSWRConfig } from "swr";
+import * as z from "zod";
+
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -18,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -25,6 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import WarningAlert from "../WarningAlert";
+import EmployeeAddResult from "./EmployeeAddResult";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "Username minimal 3 karakter" }),
@@ -32,11 +35,7 @@ const formSchema = z.object({
   role: z.string().min(1, { message: "Pilih role pegawai" }),
 });
 
-interface EmployeeAddProps {
-  getEmployees: () => void;
-}
-
-const EmployeeAdd: React.FC<EmployeeAddProps> = ({ getEmployees }) => {
+const EmployeeAdd = () => {
   const [name, setName] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [role, setRole] = useState<string>("");
@@ -45,6 +44,8 @@ const EmployeeAdd: React.FC<EmployeeAddProps> = ({ getEmployees }) => {
   const [isOpenAddResult, setIsOpenAddResult] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
+
+  const { mutate } = useSWRConfig();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -79,7 +80,7 @@ const EmployeeAdd: React.FC<EmployeeAddProps> = ({ getEmployees }) => {
 
       toast.success("Data karyawan berhasil disimpan!");
 
-      getEmployees();
+      mutate("/api/admin/employees/get");
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {

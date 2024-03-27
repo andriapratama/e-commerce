@@ -1,5 +1,14 @@
 "use client";
 
+import { MoreHorizontal } from "lucide-react";
+import { Dispatch, SetStateAction } from "react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -8,18 +17,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
 import { EmployeeType } from "@/types/admin/EmployeeType";
-import { Dispatch, SetStateAction } from "react";
 
 interface EmployeeTableProps {
-  employees: EmployeeType[];
+  employees: EmployeeType[] | undefined;
   setEditEmployee: Dispatch<SetStateAction<EmployeeType>>;
 }
 

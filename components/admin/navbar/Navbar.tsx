@@ -1,14 +1,20 @@
 "use client";
 
+import axios from "axios";
 import { Menu } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React, { useState } from "react";
+import useSWR, { Fetcher } from "swr";
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTrigger,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -16,16 +22,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { signOut } from "next-auth/react";
-import { toast } from "react-toastify";
-import axios from "axios";
-import Image from "next/image";
-import { AdminMenuType } from "@/types/MenuType";
 import { adminMenus } from "@/constant/AdminMenus";
-import NavbarEditProfile from "./NavbarEditProfile";
-import NavbarChangePassword from "./NavbarChangePassword";
 import { useLoadingPageContext } from "@/context/LoadingPageContext";
-import { usePathname } from "next/navigation";
+import { AdminMenuType } from "@/types/MenuType";
+
+import NavbarChangePassword from "./NavbarChangePassword";
+import NavbarEditProfile from "./NavbarEditProfile";
 
 interface NavbarProps {
   name: string | null | undefined;
@@ -33,7 +35,6 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ name, role }) => {
-  const [image, setImage] = useState<string>("");
   const [isOpenEditProfile, setIsOpenEditProfile] = useState<boolean>(false);
   const [isOpenChangePassword, setIsOpenChangePassword] =
     useState<boolean>(false);
@@ -64,19 +65,12 @@ const Navbar: React.FC<NavbarProps> = ({ name, role }) => {
     }
   };
 
-  const getLogo = useCallback(async () => {
-    try {
-      const res = await axios.get("/api/setting/logo/get");
+  const fetcher: Fetcher<{
+    data: { image: string } | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
 
-      setImage(res.data.data.image);
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-    }
-  }, []);
-
-  useEffect(() => {
-    getLogo();
-  }, []);
+  const { data } = useSWR("/api/setting/logo/get", fetcher);
 
   const handleSetLoadingPage = (link: string) => {
     if (pathname !== link) setIsLoadingPage(true);
@@ -85,9 +79,9 @@ const Navbar: React.FC<NavbarProps> = ({ name, role }) => {
   return (
     <React.Fragment>
       <nav className="w-full flex justify-between px-5 items-center h-12 border-b-2 border-slate-300 fixed bg-white z-20 shadow-md">
-        {image && (
+        {!data?.data ? null : (
           <Image
-            src={image}
+            src={data?.data?.image}
             alt="logo"
             width={100}
             height={100}
