@@ -1,16 +1,19 @@
 "use client";
 
-import ContentLoading from "@/components/ContentLoading";
-import PageLoading from "@/components/PageLoading";
-import Title from "@/components/admin/Title";
-import UserSearch from "@/components/admin/user/UserSearch";
-import UserTable from "@/components/admin/user/UserTable";
-import { useLoadingPageContext } from "@/context/LoadingPageContext";
-import { AdminUserType } from "@/types/UserType";
 import axios from "axios";
+import dynamic from "next/dynamic";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+
+import ContentLoading from "@/components/ContentLoading";
+import PageLoading from "@/components/PageLoading";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import { AdminUserType } from "@/types/UserType";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const UserSearch = dynamic(() => import("@/components/admin/user/UserSearch"));
+const UserTable = dynamic(() => import("@/components/admin/user/UserTable"));
 
 const Users = () => {
   const [users, setUsers] = useState<AdminUserType[]>([]);

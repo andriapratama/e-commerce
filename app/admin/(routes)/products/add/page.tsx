@@ -1,10 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Title from "@/components/admin/Title";
+import dynamic from "next/dynamic";
+import React, { useEffect } from "react";
+
 import PageLoading from "@/components/PageLoading";
-import ProductAddForm from "@/components/admin/product-add/ProductAddForm";
 import { useLoadingPageContext } from "@/context/LoadingPageContext";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const ProductAddForm = dynamic(
+  () => import("@/components/admin/product-add/ProductAddForm")
+);
 
 const ProductAdd = () => {
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();

@@ -1,16 +1,23 @@
 "use client";
 
-import ContentLoading from "@/components/ContentLoading";
-import PageLoading from "@/components/PageLoading";
-import Title from "@/components/admin/Title";
-import UserDetailData from "@/components/admin/user-detail/UserDetailData";
-import UserDetailOrder from "@/components/admin/user-detail/UserDetailOrder";
-import { useLoadingPageContext } from "@/context/LoadingPageContext";
-import { AdminUserOrderType, AdminUserType } from "@/types/UserType";
 import axios from "axios";
+import dynamic from "next/dynamic";
 import { useParams, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+
+import ContentLoading from "@/components/ContentLoading";
+import PageLoading from "@/components/PageLoading";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import { AdminUserOrderType, AdminUserType } from "@/types/UserType";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const UserDetailData = dynamic(
+  () => import("@/components/admin/user-detail/UserDetailData")
+);
+const UserDetailOrder = dynamic(
+  () => import("@/components/admin/user-detail/UserDetailOrder")
+);
 
 const UserDetail = () => {
   const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);

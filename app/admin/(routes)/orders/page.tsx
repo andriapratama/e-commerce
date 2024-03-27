@@ -1,17 +1,21 @@
 "use client";
 
 import axios from "axios";
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
-import OrderFilter from "@/components/admin/order/OrderFilter";
-import OrderTable from "@/components/admin/order/OrderTable";
-import Title from "@/components/admin/Title";
 import ContentLoading from "@/components/ContentLoading";
 import PageLoading from "@/components/PageLoading";
 import { useLoadingPageContext } from "@/context/LoadingPageContext";
 import { OrdersType } from "@/types/admin/OrderType";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const OrderFilter = dynamic(
+  () => import("@/components/admin/order/OrderFilter")
+);
+const OrderTable = dynamic(() => import("@/components/admin/order/OrderTable"));
 
 const Orders = () => {
   const [orders, setOrders] = useState<OrdersType[]>([]);

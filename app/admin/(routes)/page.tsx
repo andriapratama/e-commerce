@@ -1,20 +1,31 @@
 "use client";
 
 import axios from "axios";
-import Title from "@/components/admin/Title";
-import { ConvertIDR } from "@/utils/ConvertIDR";
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { ConvertDateId } from "@/utils/ConvertDateId";
-import { ToastContainer, toast } from "react-toastify";
-import ContentLoading from "@/components/ContentLoading";
 import React, { useCallback, useEffect, useState } from "react";
-import DashboardCard from "@/components/admin/dashboard/DashboardCard";
-import { ProductMinStockType, ProductSoldType } from "@/types/ProductType";
-import DashboardSetDate from "@/components/admin/dashboard/DashboardSetDate";
-import DashboardProductSold from "@/components/admin/dashboard/DashboardProductSold";
-import DashboardProductMinStock from "@/components/admin/dashboard/DashboardProductMinStock";
-import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import { toast, ToastContainer } from "react-toastify";
+
+import ContentLoading from "@/components/ContentLoading";
 import PageLoading from "@/components/PageLoading";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import { ProductMinStockType, ProductSoldType } from "@/types/ProductType";
+import { ConvertDateId } from "@/utils/ConvertDateId";
+import { ConvertIDR } from "@/utils/ConvertIDR";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const DashboardCard = dynamic(
+  () => import("@/components/admin/dashboard/DashboardCard")
+);
+const DashboardProductMinStock = dynamic(
+  () => import("@/components/admin/dashboard/DashboardProductMinStock")
+);
+const DashboardProductSold = dynamic(
+  () => import("@/components/admin/dashboard/DashboardProductSold")
+);
+const DashboardSetDate = dynamic(
+  () => import("@/components/admin/dashboard/DashboardSetDate")
+);
 
 const Dashboard = () => {
   const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);

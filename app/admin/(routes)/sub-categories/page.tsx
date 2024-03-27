@@ -1,17 +1,26 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
-import Title from "@/components/admin/Title";
 import { ToastContainer } from "react-toastify";
-import { SubCategoryType } from "@/types/CategoryType";
+
 import ContentLoading from "@/components/ContentLoading";
+import PageLoading from "@/components/PageLoading";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
 import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
 import { useGetSubCategoryHook } from "@/hooks/admin/GetSubCategoryHook";
-import SubCategoryAdd from "@/components/admin/sub-category/SubCategoryAdd";
-import SubCategoryEdit from "@/components/admin/sub-category/SubCategoryEdit";
-import SubCategoryTable from "@/components/admin/sub-category/SubCategoryTable";
-import { useLoadingPageContext } from "@/context/LoadingPageContext";
-import PageLoading from "@/components/PageLoading";
+import { SubCategoryType } from "@/types/CategoryType";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const SubCategoryAdd = dynamic(
+  () => import("@/components/admin/sub-category/SubCategoryAdd")
+);
+const SubCategoryEdit = dynamic(
+  () => import("@/components/admin/sub-category/SubCategoryEdit")
+);
+const SubCategoryTable = dynamic(
+  () => import("@/components/admin/sub-category/SubCategoryTable")
+);
 
 const SubCategories = () => {
   const [editData, setEditData] = useState<SubCategoryType>({

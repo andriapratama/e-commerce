@@ -1,16 +1,25 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import Title from "@/components/admin/Title";
-import EmployeeAdd from "@/components/admin/employee/EmployeeAdd";
-import EmployeeEdit from "@/components/admin/employee/EmployeeEdit";
-import EmployeeTable from "@/components/admin/employee/EmployeeTable";
+import dynamic from "next/dynamic";
+import React, { useCallback, useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+
 import ContentLoading from "@/components/ContentLoading";
-import { EmployeeType } from "@/types/admin/EmployeeType";
-import { useLoadingPageContext } from "@/context/LoadingPageContext";
 import PageLoading from "@/components/PageLoading";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import { EmployeeType } from "@/types/admin/EmployeeType";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const EmployeeTable = dynamic(
+  () => import("@/components/admin/employee/EmployeeTable")
+);
+const EmployeeAdd = dynamic(
+  () => import("@/components/admin/employee/EmployeeAdd")
+);
+const EmployeeEdit = dynamic(
+  () => import("@/components/admin/employee/EmployeeEdit")
+);
 
 const Employees = () => {
   const [employees, setEmployees] = useState<EmployeeType[]>([]);

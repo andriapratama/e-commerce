@@ -1,15 +1,18 @@
 "use client";
 
 import axios from "axios";
-import Title from "@/components/admin/Title";
-import HeroAdd from "@/components/admin/hero/HeroAdd";
-import HeroTable from "@/components/admin/hero/HeroTable";
-import { ToastContainer, toast } from "react-toastify";
+import dynamic from "next/dynamic";
 import React, { useCallback, useEffect, useState } from "react";
-import { HeroType } from "@/types/HeroType";
+import { toast, ToastContainer } from "react-toastify";
+
 import ContentLoading from "@/components/ContentLoading";
-import { useLoadingPageContext } from "@/context/LoadingPageContext";
 import PageLoading from "@/components/PageLoading";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import { HeroType } from "@/types/HeroType";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const HeroAdd = dynamic(() => import("@/components/admin/hero/HeroAdd"));
+const HeroTable = dynamic(() => import("@/components/admin/hero/HeroTable"));
 
 const Heros = () => {
   const [heros, setHeros] = useState<HeroType[]>([]);

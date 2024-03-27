@@ -1,17 +1,28 @@
 "use client";
 
-import Title from "@/components/admin/Title";
-import SettingBank from "@/components/admin/setting/SettingBank";
-import SettingContact from "@/components/admin/setting/SettingContact";
-import SettingLogo from "@/components/admin/setting/SettingLogo";
-import SettingSosmed from "@/components/admin/setting/SettingSosmed";
-import { SettingType } from "@/types/admin/SettingType";
 import axios from "axios";
+import dynamic from "next/dynamic";
 import React, { useCallback, useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+
+import ContentLoading from "@/components/ContentLoading";
 import PageLoading from "@/components/PageLoading";
 import { useLoadingPageContext } from "@/context/LoadingPageContext";
-import ContentLoading from "@/components/ContentLoading";
+import { SettingType } from "@/types/admin/SettingType";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const SettingBank = dynamic(
+  () => import("@/components/admin/setting/SettingBank")
+);
+const SettingContact = dynamic(
+  () => import("@/components/admin/setting/SettingContact")
+);
+const SettingLogo = dynamic(
+  () => import("@/components/admin/setting/SettingLogo")
+);
+const SettingSosmed = dynamic(
+  () => import("@/components/admin/setting/SettingSosmed")
+);
 
 const Setting = () => {
   const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);

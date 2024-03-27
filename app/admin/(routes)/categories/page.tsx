@@ -1,16 +1,25 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
-import Title from "@/components/admin/Title";
-import CategoryEdit from "@/components/admin/category/CategoryEdit";
-import CategoryInput from "@/components/admin/category/CategoryInput";
-import CategoryTable from "@/components/admin/category/CategoryTable";
+
 import ContentLoading from "@/components/ContentLoading";
+import PageLoading from "@/components/PageLoading";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
 import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
 import { CategoryType } from "@/types/CategoryType";
-import { useLoadingPageContext } from "@/context/LoadingPageContext";
-import PageLoading from "@/components/PageLoading";
+
+const CategoryEdit = dynamic(
+  () => import("@/components/admin/category/CategoryEdit")
+);
+const CategoryInput = dynamic(
+  () => import("@/components/admin/category/CategoryInput")
+);
+const CategoryTable = dynamic(
+  () => import("@/components/admin/category/CategoryTable")
+);
+const Title = dynamic(() => import("@/components/admin/Title"));
 
 const Categories = () => {
   const [editCategory, setEditCategory] = useState<CategoryType>({

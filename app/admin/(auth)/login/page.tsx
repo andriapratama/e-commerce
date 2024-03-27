@@ -1,8 +1,13 @@
-import React from "react";
-import { authOptions } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
-import LoginContent from "@/components/admin/login/LoginContent";
+import dynamic from "next/dynamic";
+import { redirect } from "next/navigation";
+import React from "react";
+
+import { authOptions } from "@/lib/auth";
+
+const LoginContent = dynamic(
+  () => import("@/components/admin/login/LoginContent")
+);
 
 const AdminLogin = async () => {
   let isAutehncticated = false;
@@ -19,7 +24,6 @@ const AdminLogin = async () => {
       </div>
     );
   } catch (error) {
-    console.log(error);
   } finally {
     if (isAutehncticated === true) redirect("/admin/orders");
   }

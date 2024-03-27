@@ -1,20 +1,32 @@
 "use client";
 
-import React, { useEffect } from "react";
-import Title from "@/components/admin/Title";
-import { ToastContainer } from "react-toastify";
-import { ConvertTime } from "@/utils/ConvertTime";
-import PageLoading from "@/components/PageLoading";
-import { ConvertDateId } from "@/utils/ConvertDateId";
-import { useGetOrderHook } from "@/hooks/admin/GetOrderHook";
-import OrderDetailInfo from "@/components/admin/order-detail/OrderDetailInfo";
-import OrderDetailCard from "@/components/admin/order-detail/OrderDetailCard";
-import OrderDetailTable from "@/components/admin/order-detail/OrderDetailTable";
-import OrderDetailLog from "@/components/admin/order-detail/OrderDetailLog";
-import OrderDetailButton from "@/components/admin/order-detail/OrderDetailButton";
+import dynamic from "next/dynamic";
 import Link from "next/link";
+import React, { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+
+import PageLoading from "@/components/PageLoading";
 import { useLoadingPageContext } from "@/context/LoadingPageContext";
-import AdminLoading from "../../loading";
+import { useGetOrderHook } from "@/hooks/admin/GetOrderHook";
+import { ConvertDateId } from "@/utils/ConvertDateId";
+import { ConvertTime } from "@/utils/ConvertTime";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const OrderDetailInfo = dynamic(
+  () => import("@/components/admin/order-detail/OrderDetailInfo")
+);
+const OrderDetailCard = dynamic(
+  () => import("@/components/admin/order-detail/OrderDetailCard")
+);
+const OrderDetailTable = dynamic(
+  () => import("@/components/admin/order-detail/OrderDetailTable")
+);
+const OrderDetailLog = dynamic(
+  () => import("@/components/admin/order-detail/OrderDetailLog")
+);
+const OrderDetailButton = dynamic(
+  () => import("@/components/admin/order-detail/OrderDetailButton")
+);
 
 const OrderDetail = () => {
   const { order, isLoadingContent, getOrder, orderLogs, setIsLoadingContent } =

@@ -1,25 +1,38 @@
 "use client";
 
 import axios from "axios";
+import dynamic from "next/dynamic";
 import Image from "next/image";
-import Title from "@/components/admin/Title";
-import { ToastContainer, toast } from "react-toastify";
 import { useParams, useRouter } from "next/navigation";
-import { AdminProductType } from "@/types/ProductType";
-import ContentLoading from "@/components/ContentLoading";
-import { StockLogType } from "@/types/admin/StockLogType";
-import { StatusLogType } from "@/types/admin/StatusLogType";
-import { FinanceLogType } from "@/types/admin/FianceLogType";
 import React, { useCallback, useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+
+import ContentLoading from "@/components/ContentLoading";
+import PageLoading from "@/components/PageLoading";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
 import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
 import { useGetSubCategoryHook } from "@/hooks/admin/GetSubCategoryHook";
-import ProductEditButton from "@/components/admin/product-edit/ProductEditButton";
-import ProductDetailData from "@/components/admin/product-detail/ProductDetailData";
-import ProductDetailFinanceLog from "@/components/admin/product-detail/ProductDetailFinanceLog";
-import ProductDetailStockLog from "@/components/admin/product-detail/ProductDetailStockLog";
-import ProductDetailStatusLog from "@/components/admin/product-detail/ProductDetailStatusLog";
-import { useLoadingPageContext } from "@/context/LoadingPageContext";
-import PageLoading from "@/components/PageLoading";
+import { FinanceLogType } from "@/types/admin/FianceLogType";
+import { StatusLogType } from "@/types/admin/StatusLogType";
+import { StockLogType } from "@/types/admin/StockLogType";
+import { AdminProductType } from "@/types/ProductType";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const ProductEditButton = dynamic(
+  () => import("@/components/admin/product-edit/ProductEditButton")
+);
+const ProductDetailData = dynamic(
+  () => import("@/components/admin/product-detail/ProductDetailData")
+);
+const ProductDetailFinanceLog = dynamic(
+  () => import("@/components/admin/product-detail/ProductDetailFinanceLog")
+);
+const ProductDetailStockLog = dynamic(
+  () => import("@/components/admin/product-detail/ProductDetailStockLog")
+);
+const ProductDetailStatusLog = dynamic(
+  () => import("@/components/admin/product-detail/ProductDetailStatusLog")
+);
 
 const ProductDetail = () => {
   const [product, setProduct] = useState<AdminProductType>({

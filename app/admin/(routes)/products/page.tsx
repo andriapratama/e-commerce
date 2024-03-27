@@ -1,19 +1,28 @@
 "use client";
 
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { AdminProductType } from "@/types/ProductType";
-import Title from "@/components/admin/Title";
-import ProductTable from "@/components/admin/product/ProductTable";
-import PageLoading from "@/components/PageLoading";
+
 import ContentLoading from "@/components/ContentLoading";
-import ProductSearch from "@/components/admin/product/ProductSearch";
-import ProductSelect from "@/components/admin/product/ProductSelect";
+import PageLoading from "@/components/PageLoading";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
 import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
 import { useGetSubCategoryHook } from "@/hooks/admin/GetSubCategoryHook";
-import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import { AdminProductType } from "@/types/ProductType";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const ProductTable = dynamic(
+  () => import("@/components/admin/product/ProductTable")
+);
+const ProductSearch = dynamic(
+  () => import("@/components/admin/product/ProductSearch")
+);
+const ProductSelect = dynamic(
+  () => import("@/components/admin/product/ProductSelect")
+);
 
 const Product = () => {
   const [products, setProducts] = useState<AdminProductType[]>([]);

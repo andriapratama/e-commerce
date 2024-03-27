@@ -1,16 +1,21 @@
 "use client";
 
-import ContentLoading from "@/components/ContentLoading";
-import PageLoading from "@/components/PageLoading";
-import NotFound from "@/components/admin/404";
-import Title from "@/components/admin/Title";
-import PromoDetailContent from "@/components/admin/promo-detail/PromoDetailContent";
-import { useLoadingPageContext } from "@/context/LoadingPageContext";
-import { PromoProductType, PromoType } from "@/types/PromoType";
 import axios from "axios";
+import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+
+import ContentLoading from "@/components/ContentLoading";
+import PageLoading from "@/components/PageLoading";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import { PromoProductType, PromoType } from "@/types/PromoType";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const NotFound = dynamic(() => import("@/components/admin/404"));
+const PromoDetailContent = dynamic(
+  () => import("@/components/admin/promo-detail/PromoDetailContent")
+);
 
 const PromoDetail = () => {
   const [promo, setPromo] = useState<PromoType>({

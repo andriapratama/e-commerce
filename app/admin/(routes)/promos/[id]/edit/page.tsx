@@ -1,8 +1,16 @@
 "use client";
 
+import axios from "axios";
+import dynamic from "next/dynamic";
+import { useParams, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast, ToastContainer } from "react-toastify";
+import { z } from "zod";
+
+import { ProductInputType } from "@/components/admin/promo-add/PromoAddForm";
+import PageLoading from "@/components/PageLoading";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -11,22 +19,23 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import axios from "axios";
-import { ProductInputType } from "@/components/admin/promo-add/PromoAddForm";
-import { ToastContainer, toast } from "react-toastify";
-import Title from "@/components/admin/Title";
-import PromoEditProvisions from "@/components/admin/promo-edit/PromoEditProvision";
-import { useParams, useRouter } from "next/navigation";
-import { PromoProductType } from "@/types/PromoType";
-import PromoEditBonus from "@/components/admin/promo-edit/PromoEditBonus";
-import { handleSetNumber } from "@/utils/HandleSetNumber";
-import PromoAddOpenProduct from "@/components/admin/promo-add/PromoAddOpenProduct";
-import WarningAlert from "@/components/admin/WarningAlert";
+import { Input } from "@/components/ui/input";
 import { useLoadingPageContext } from "@/context/LoadingPageContext";
-import PageLoading from "@/components/PageLoading";
+import { PromoProductType } from "@/types/PromoType";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const PromoAddOpenProduct = dynamic(
+  () => import("@/components/admin/promo-add/PromoAddOpenProduct")
+);
+const PromoEditBonus = dynamic(
+  () => import("@/components/admin/promo-edit/PromoEditBonus")
+);
+const PromoEditProvisions = dynamic(
+  () => import("@/components/admin/promo-edit/PromoEditProvision")
+);
+const WarningAlert = dynamic(() => import("@/components/admin/WarningAlert"));
 
 const formSchema = z.object({
   productProvisions: z.any().superRefine((val, ctx) => {

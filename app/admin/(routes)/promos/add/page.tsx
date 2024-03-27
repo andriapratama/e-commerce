@@ -1,11 +1,16 @@
 "use client";
 
-import PageLoading from "@/components/PageLoading";
-import Title from "@/components/admin/Title";
-import PromoAddForm from "@/components/admin/promo-add/PromoAddForm";
-import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import dynamic from "next/dynamic";
 import React, { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
+
+import PageLoading from "@/components/PageLoading";
+import { useLoadingPageContext } from "@/context/LoadingPageContext";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const PromoAddForm = dynamic(
+  () => import("@/components/admin/promo-add/PromoAddForm")
+);
 
 const PromosAdd = () => {
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();

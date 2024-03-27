@@ -1,9 +1,13 @@
-import AdminNavbar from "@/components/admin/navbar/Navbar";
-import { Suspense } from "react";
-import AdminLoading from "./loading";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
+
 import LoadingPageContextProvider from "@/context/LoadingPageContext";
+import { authOptions } from "@/lib/auth";
+
+import AdminLoading from "./loading";
+
+const AdminNavbar = dynamic(() => import("@/components/admin/navbar/Navbar"));
 
 export default async function AdminLayout({
   children,

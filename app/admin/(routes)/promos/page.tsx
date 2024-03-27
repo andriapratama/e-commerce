@@ -1,15 +1,18 @@
 "use client";
 
 import axios from "axios";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import Title from "@/components/admin/Title";
-import { PromoType } from "@/types/PromoType";
-import PageLoading from "@/components/PageLoading";
-import { ToastContainer, toast } from "react-toastify";
-import ContentLoading from "@/components/ContentLoading";
-import PromoTable from "@/components/admin/promo/PromoTable";
 import React, { useCallback, useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+
+import ContentLoading from "@/components/ContentLoading";
+import PageLoading from "@/components/PageLoading";
 import { useLoadingPageContext } from "@/context/LoadingPageContext";
+import { PromoType } from "@/types/PromoType";
+
+const Title = dynamic(() => import("@/components/admin/Title"));
+const PromoTable = dynamic(() => import("@/components/admin/promo/PromoTable"));
 
 const Promos = () => {
   const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);

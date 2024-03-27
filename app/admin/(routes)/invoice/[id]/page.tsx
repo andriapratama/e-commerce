@@ -1,18 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
-import { useGetOrderHook } from "@/hooks/admin/GetOrderHook";
-import InvoiceTable from "@/components/admin/invoice/InvoiceTable";
-import { ConvertIDR } from "@/utils/ConvertIDR";
-import PageLoading from "@/components/PageLoading";
-import { useGetSettingHook } from "@/hooks/admin/SettingHook";
-import Image from "next/image";
-import { ImageIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
+import { ImageIcon } from "lucide-react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useParams } from "next/navigation";
-import ButtonLoading from "@/components/ButtonLoading";
+import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+
+import PageLoading from "@/components/PageLoading";
+import { Button } from "@/components/ui/button";
+import { useGetOrderHook } from "@/hooks/admin/GetOrderHook";
+import { useGetSettingHook } from "@/hooks/admin/SettingHook";
+import { ConvertIDR } from "@/utils/ConvertIDR";
+
+const InvoiceTable = dynamic(
+  () => import("@/components/admin/invoice/InvoiceTable")
+);
+const ButtonLoading = dynamic(() => import("@/components/ButtonLoading"));
 
 const Invoice = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
