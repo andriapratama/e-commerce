@@ -29,8 +29,7 @@ const Categories = () => {
 
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
-  const { categories, getCategories, isLoadingContent } =
-    useGetCategoriesHook();
+  const { categories, isLoadingContent } = useGetCategoriesHook();
 
   useEffect(() => {
     setIsLoadingPage(false);
@@ -47,12 +46,11 @@ const Categories = () => {
           <div className="flex justify-between md:flex-nowrap flex-wrap gap-3 w-full">
             {editCategory.name ? (
               <CategoryEdit
-                getCategories={getCategories}
-                editCategory={editCategory}
                 setEditCategory={setEditCategory}
+                editCategory={editCategory}
               />
             ) : (
-              <CategoryInput getCategories={getCategories} />
+              <CategoryInput />
             )}
             {isLoadingContent ? (
               <ContentLoading />

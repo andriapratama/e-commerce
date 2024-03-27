@@ -1,8 +1,14 @@
 "use client";
 
-import { Dispatch, SetStateAction } from "react";
-import { CategoryType } from "@/types/CategoryType";
 import { MoreHorizontal } from "lucide-react";
+import { Dispatch, SetStateAction } from "react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -11,15 +17,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { CategoryType } from "@/types/CategoryType";
 
 interface CategoryTableProps {
-  categories: CategoryType[];
+  categories: CategoryType[] | undefined;
   setEditCategory: Dispatch<SetStateAction<CategoryType>>;
 }
 
@@ -38,7 +39,19 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
             <TableHead>Aksi</TableHead>
           </TableRow>
         </TableHeader>
-        {categories.length > 0 ? (
+
+        {!categories ? (
+          <TableBody>
+            <TableRow>
+              <TableCell
+                colSpan={4}
+                className="text-center font-semibold text-lg text-gray-700"
+              >
+                Data kosong
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        ) : (
           <TableBody>
             {categories.map((category, index) => (
               <TableRow key={category.name}>
@@ -67,17 +80,6 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
                 </TableCell>
               </TableRow>
             ))}
-          </TableBody>
-        ) : (
-          <TableBody>
-            <TableRow>
-              <TableCell
-                colSpan={4}
-                className="text-center font-semibold text-lg text-gray-700"
-              >
-                Data kosong
-              </TableCell>
-            </TableRow>
           </TableBody>
         )}
       </Table>

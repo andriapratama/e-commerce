@@ -1,39 +1,23 @@
 import axios from "axios";
-import { toast } from "react-toastify";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
+import useSWR, { Fetcher } from "swr";
+
 import { CategoryType } from "@/types/CategoryType";
 
 export const useGetCategoriesHook = () => {
-  const [categories, setCategories] = useState<CategoryType[]>([]);
-
   const [category, setCategory] = useState<string>("");
 
-  const [isLoadingContent, setIsLoadingContent] = useState(true);
+  const fetcher: Fetcher<{
+    data: CategoryType[] | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
 
-  const getCategories = useCallback(async () => {
-    try {
-      const res = await axios.get(`/api/admin/categories/get`);
-
-      setCategories(res.data.data);
-
-      setIsLoadingContent(false);
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-      setIsLoadingContent(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    getCategories();
-  }, [getCategories]);
+  const { data, isLoading } = useSWR("/api/admin/categories/get", fetcher);
 
   return {
     category,
     setCategory,
-    categories,
-    setCategories,
-    getCategories,
-    isLoadingContent,
-    setIsLoadingContent,
+    categories: data?.data,
+    isLoadingContent: isLoading,
   };
 };

@@ -1,14 +1,13 @@
 "use client";
 
-import * as z from "zod";
 import axios from "axios";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
+import * as z from "zod";
+
 import ButtonLoading from "@/components/ButtonLoading";
-import { handleSetSlug } from "@/utils/HandleSetSlug";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,6 +17,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { handleSetSlug } from "@/utils/HandleSetSlug";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -28,14 +30,12 @@ const formSchema = z.object({
   }),
 });
 
-interface CategoryInputProps {
-  getCategories: () => void;
-}
-
-const CategoryInput: React.FC<CategoryInputProps> = ({ getCategories }) => {
+const CategoryInput = () => {
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { mutate } = useSWRConfig();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,7 +59,7 @@ const CategoryInput: React.FC<CategoryInputProps> = ({ getCategories }) => {
 
       toast.success("Kategori berhasil dibuat!");
 
-      getCategories();
+      mutate("/api/admin/categories/get");
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {

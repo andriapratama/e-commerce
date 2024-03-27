@@ -1,8 +1,13 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
 import * as z from "zod";
+
+import ButtonLoading from "@/components/ButtonLoading";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,12 +18,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { CategoryType } from "@/types/CategoryType";
-import { toast } from "react-toastify";
-import axios from "axios";
-import ButtonLoading from "@/components/ButtonLoading";
 import { handleSetSlug } from "@/utils/HandleSetSlug";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -30,19 +32,19 @@ const formSchema = z.object({
 });
 
 interface CategoryEditProps {
-  getCategories: () => void;
   editCategory: CategoryType;
   setEditCategory: Dispatch<SetStateAction<CategoryType>>;
 }
 
 const CategoryEdit: React.FC<CategoryEditProps> = ({
-  getCategories,
   editCategory,
   setEditCategory,
 }) => {
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { mutate } = useSWRConfig();
 
   useEffect(() => {
     setName(editCategory.name);
@@ -76,7 +78,7 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({
         slug: "",
       });
 
-      getCategories();
+      mutate("/api/admin/categories/get");
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {
