@@ -1,15 +1,14 @@
 "use client";
 
-import { z } from "zod";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
-import WarningAlert from "../WarningAlert";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SettingType } from "@/types/admin/SettingType";
 import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
+import { z } from "zod";
+
+import ProfileSelectInterCodePhone from "@/components/client/SelectInterCodePhone";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -25,12 +24,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { SettingType } from "@/types/admin/SettingType";
 import {
-  ValidatePhoneNumber,
   InterPhoneCodes,
+  ValidatePhoneNumber,
 } from "@/utils/ValidatePhoneNumber";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import WarningAlert from "../WarningAlert";
 import SettingItem from "./SettingItem";
-import ProfileSelectInterCodePhone from "@/components/client/SelectInterCodePhone";
 
 const formSchema = z.object({
   whatsapp: z
@@ -42,11 +45,14 @@ const formSchema = z.object({
 });
 
 interface Props {
-  data: SettingType;
-  getSetting: () => void;
+  data: SettingType | undefined;
 }
 
-const SettingSosmed: React.FC<Props> = ({ data, getSetting }) => {
+const SettingSosmed: React.FC<Props> = ({ data }) => {
+  if (!data) {
+    return null;
+  }
+
   const [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -57,6 +63,8 @@ const SettingSosmed: React.FC<Props> = ({ data, getSetting }) => {
   const [validPhone, setValidPhone] = useState<boolean>(false);
   const [phoneCode, setPhoneCode] = useState<string>("");
   const [isOpenPhoneCode, setIsOpenPhoneCode] = useState<boolean>(false);
+
+  const { mutate } = useSWRConfig();
 
   const { handleCheckPhoneNumber } = ValidatePhoneNumber();
 
@@ -139,7 +147,7 @@ const SettingSosmed: React.FC<Props> = ({ data, getSetting }) => {
 
       toast.success("Data sosmed berhasil diubah");
 
-      getSetting();
+      mutate("/api/admin/setting/get");
 
       setIsOpenEdit(false);
       setIsOpenWarning(false);

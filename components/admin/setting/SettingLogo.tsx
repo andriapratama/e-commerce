@@ -6,6 +6,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -48,11 +49,14 @@ const formSchema = z.object({
 });
 
 interface Props {
-  data: SettingType;
-  getSetting: () => void;
+  data: SettingType | undefined;
 }
 
-const SettingLogo: React.FC<Props> = ({ data, getSetting }) => {
+const SettingLogo: React.FC<Props> = ({ data }) => {
+  if (!data) {
+    return null;
+  }
+
   const [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
 
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
@@ -64,6 +68,8 @@ const SettingLogo: React.FC<Props> = ({ data, getSetting }) => {
     preview: "",
     pathName: "",
   });
+
+  const { mutate } = useSWRConfig();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -84,13 +90,15 @@ const SettingLogo: React.FC<Props> = ({ data, getSetting }) => {
       formData.append("image", image.image);
 
       await axios.patch(
-        `/api/admin/setting/logo/patch?id=${data.id}&imagePathname=${data.imagePathname}`,
+        `/api/admin/setting/logo/patch?id=${data && data.id}&imagePathname=${
+          data && data.imagePathname
+        }`,
         formData
       );
 
       toast.success("Logo berhasil diubah");
 
-      getSetting();
+      mutate("/api/admin/setting/get");
 
       setIsOpenWarning(false);
       setIsOpenEdit(false);

@@ -1,14 +1,15 @@
 "use client";
 
-import React from "react";
-import WarningAlert from "../WarningAlert";
-import { Input } from "@/components/ui/input";
-import { Label } from "@radix-ui/react-label";
+import React, { Dispatch, SetStateAction } from "react";
+
 import { Button } from "@/components/ui/button";
-import { ConvertIDR } from "@/utils/ConvertIDR";
-import { Dispatch, SetStateAction } from "react";
-import { useODEditTransactionHook } from "@/hooks/admin/OrderDetailHook";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { useODEditTransactionHook } from "@/hooks/admin/OrderDetailHook";
+import { ConvertIDR } from "@/utils/ConvertIDR";
+import { Label } from "@radix-ui/react-label";
+
+import WarningAlert from "../WarningAlert";
 
 interface Props {
   isOpen: boolean;
@@ -18,7 +19,6 @@ interface Props {
   shipping: number | null;
   discount: number | null;
   grandTotal: number;
-  getOrder: () => void;
 }
 
 const OrderDetailEditTransaction: React.FC<Props> = ({
@@ -28,7 +28,6 @@ const OrderDetailEditTransaction: React.FC<Props> = ({
   tax,
   shipping,
   discount,
-  getOrder,
 }) => {
   const {
     value,
@@ -42,14 +41,7 @@ const OrderDetailEditTransaction: React.FC<Props> = ({
     setIsOpenWarningAlert,
     isLoadingStore,
     handleStoreData,
-  } = useODEditTransactionHook(
-    setIsOpen,
-    shipping,
-    discount,
-    subTotal,
-    tax,
-    getOrder
-  );
+  } = useODEditTransactionHook(setIsOpen, shipping, discount, subTotal, tax);
 
   return (
     <React.Fragment>

@@ -1,21 +1,23 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 
 interface Props {
-  totalPage: number;
-  setIsLoadingContent: Dispatch<SetStateAction<boolean>>;
+  totalPage: number | undefined;
   pageParams: number;
   handleRouter: (page: number) => void;
 }
 
 const Pagination: React.FC<Props> = ({
   totalPage,
-  setIsLoadingContent,
   pageParams,
   handleRouter,
 }) => {
+  if (!totalPage) {
+    return null;
+  }
+
   const pageNow: number = pageParams;
 
   const paginationNumber = () => {
@@ -41,7 +43,6 @@ const Pagination: React.FC<Props> = ({
             }`}
             onClick={() => {
               handleRouter(page);
-              setIsLoadingContent(true);
             }}
             type="button"
             disabled={page === pageNow ? true : false}
@@ -63,7 +64,6 @@ const Pagination: React.FC<Props> = ({
         onClick={() => {
           const newPage = pageNow - 1;
           handleRouter(newPage);
-          setIsLoadingContent(true);
         }}
         type="button"
         disabled={pageNow === 1 ? true : false}
@@ -80,7 +80,6 @@ const Pagination: React.FC<Props> = ({
         onClick={() => {
           const newPage = pageNow + 1;
           handleRouter(newPage);
-          setIsLoadingContent(true);
         }}
         type="button"
         disabled={pageNow === totalPage ? true : false}

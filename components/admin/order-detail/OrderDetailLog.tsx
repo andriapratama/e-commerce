@@ -34,7 +34,7 @@ const OrderDetailLog: React.FC<OrderDetailLogProps> = ({ orderLogs }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {orderLogs.length > 0 ? (
+          {orderLogs ? (
             orderLogs.map((orderLog: OrderLogType, index) => (
               <TableRow key={index}>
                 <TableCell className="text-center">

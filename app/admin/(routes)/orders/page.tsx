@@ -3,8 +3,9 @@
 import axios from "axios";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import React, { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+import useSWR, { Fetcher } from "swr";
 
 import ContentLoading from "@/components/ContentLoading";
 import PageLoading from "@/components/PageLoading";
@@ -18,10 +19,6 @@ const OrderFilter = dynamic(
 const OrderTable = dynamic(() => import("@/components/admin/order/OrderTable"));
 
 const Orders = () => {
-  const [orders, setOrders] = useState<OrdersType[]>([]);
-  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
-  const [totalPage, setTotalPage] = useState<number>(0);
-
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
   const searchParams = useSearchParams();
@@ -30,37 +27,30 @@ const Orders = () => {
   const statusParams = searchParams.get("status");
   const pageParams = searchParams.get("page");
 
-  const getOrders = useCallback(async () => {
-    try {
-      const api: string = "/api/admin/orders/get";
+  const fetcher: Fetcher<{
+    data: { orders: OrdersType[]; totalPage: number } | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
 
-      let router: string = "";
+  const api: string = "/api/admin/orders/get";
 
-      if (searchValue) {
-        router = `${api}?search=${searchValue}`;
-      } else if (statusParams) {
-        router = `${api}?status=${statusParams}&page=${pageParams}`;
-      } else if (pageParams) {
-        router = `${api}?page=${pageParams}`;
-      } else {
-        router = `${api}`;
-      }
+  let router: string = "";
 
-      const res = await axios.get(router);
+  if (searchValue) {
+    router = `${api}?search=${searchValue}`;
+  } else if (statusParams) {
+    router = `${api}?status=${statusParams}&page=${pageParams}`;
+  } else if (pageParams) {
+    router = `${api}?page=${pageParams}`;
+  } else {
+    router = `${api}`;
+  }
 
-      setOrders(res.data.data.orders);
-      setTotalPage(res.data.data.totalPage);
+  const { data, isLoading, mutate } = useSWR(router, fetcher);
 
-      setIsLoadingContent(false);
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-      setIsLoadingContent(false);
-    }
-  }, [searchValue, statusParams, pageParams]);
-
-  useEffect(() => {
-    getOrders();
-  }, [searchValue, statusParams, pageParams]);
+  const handleUpdate = () => {
+    mutate();
+  };
 
   useEffect(() => {
     setIsLoadingPage(false);
@@ -76,16 +66,16 @@ const Orders = () => {
 
           <Title title="Orders" />
 
-          <OrderFilter setIsLoadingContent={setIsLoadingContent} />
+          <OrderFilter handleUpdate={handleUpdate} />
 
-          {isLoadingContent ? (
+          {isLoading ? (
             <ContentLoading />
           ) : (
             <OrderTable
-              orders={orders}
+              orders={data?.data?.orders}
               setIsLoadingPage={setIsLoadingPage}
-              setIsLoadingContent={setIsLoadingContent}
-              totalPage={totalPage}
+              totalPage={data?.data?.totalPage}
+              handleUpdate={handleUpdate}
             />
           )}
         </div>

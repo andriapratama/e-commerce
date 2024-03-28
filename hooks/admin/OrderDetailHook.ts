@@ -1,7 +1,8 @@
 import axios from "axios";
-import { toast } from "react-toastify";
 import { useParams } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
 
 interface ErrorType {
   error: boolean;
@@ -19,8 +20,7 @@ export const useODEditTransactionHook = (
   shipping: number | null,
   discount: number | null,
   subTotal: number,
-  tax: number,
-  getOrder: () => void
+  tax: number
 ) => {
   const params: { id: string } = useParams();
 
@@ -39,6 +39,8 @@ export const useODEditTransactionHook = (
   const [isOpenWarningAlert, setIsOpenWarningAlert] = useState<boolean>(false);
 
   const [isLoadingStore, setIsLoadingStore] = useState<boolean>(false);
+
+  const { mutate } = useSWRConfig();
 
   useEffect(() => {
     setValue({
@@ -160,7 +162,7 @@ export const useODEditTransactionHook = (
         discount: value.discount,
       });
 
-      getOrder();
+      mutate(`/api/admin/orders/${invoice}/order-detail/get`);
 
       setIsOpenWarningAlert(false);
       setIsLoadingStore(false);

@@ -1,9 +1,10 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useDebouncedCallback } from "use-debounce";
-import { Input } from "@/components/ui/input";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
+
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -14,10 +15,10 @@ import {
 } from "@/components/ui/select";
 
 interface Props {
-  setIsLoadingContent: Dispatch<SetStateAction<boolean>>;
+  handleUpdate: () => void;
 }
 
-const OrderFilter: React.FC<Props> = ({ setIsLoadingContent }) => {
+const OrderFilter: React.FC<Props> = ({ handleUpdate }) => {
   const [search, setSearch] = useState<string>("");
 
   const [status, setStatus] = useState<string>("");
@@ -43,13 +44,17 @@ const OrderFilter: React.FC<Props> = ({ setIsLoadingContent }) => {
 
   const handleSearch = useDebouncedCallback((value: string) => {
     router.push(`${pathName}?search=${value}`);
-  }, 500);
+
+    handleUpdate();
+  }, 1000);
 
   const handleSetStatus = (value: string) => {
     setStatus(value);
     setSearch("");
 
     router.push(`${pathName}?status=${value}&page=1`);
+
+    handleUpdate();
   };
   return (
     <div className="flex items-center py-4 gap-1">
@@ -61,7 +66,6 @@ const OrderFilter: React.FC<Props> = ({ setIsLoadingContent }) => {
           const value = e.target.value.toUpperCase();
           handleSearch(value);
           setSearch(value);
-          setIsLoadingContent(true);
           setStatus("");
         }}
       />

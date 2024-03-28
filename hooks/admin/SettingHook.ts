@@ -1,43 +1,18 @@
-import { SettingType } from "@/types/admin/SettingType";
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import useSWR, { Fetcher } from "swr";
+
+import { SettingType } from "@/types/admin/SettingType";
 
 export const useGetSettingHook = () => {
-  const [setting, setSetting] = useState<SettingType>({
-    id: "",
-    image: "",
-    imagePathname: "",
-    email: "",
-    address: "",
-    whatsapp: "",
-    instagram: "",
-    twitter: "",
-    facebook: "",
-    bank: "",
-    bankName: "",
-    bankNumber: "",
-    createdAt: null,
-    updatedAt: null,
-  });
+  const fetcher: Fetcher<{
+    data: SettingType | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
 
-  const getSetting = useCallback(async () => {
-    try {
-      const res = await axios.get("/api/admin/setting/get");
-
-      setSetting(res.data.data);
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-    }
-  }, []);
-
-  useEffect(() => {
-    getSetting();
-  }, []);
+  const { data, isLoading } = useSWR("/api/admin/setting/get", fetcher);
 
   return {
-    setting,
-    setSetting,
-    getSetting,
+    setting: data?.data,
+    isLoadingContent: isLoading,
   };
 };

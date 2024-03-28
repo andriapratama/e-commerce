@@ -1,26 +1,25 @@
 "use client";
 
 import axios from "axios";
-import { toast } from "react-toastify";
-import React, { Dispatch, SetStateAction, useState } from "react";
-import WarningAlert from "../WarningAlert";
 import { useParams, useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
+
 import { Button } from "@/components/ui/button";
 import { OrderLogType, OrderType } from "@/types/admin/OrderType";
+
+import WarningAlert from "../WarningAlert";
 import OrderDetailEditTransaction from "./OrderDetailEditTransaction";
 
 interface OrderDetailButtonProps {
   order: OrderType;
-  getOrder: () => void;
   orderLogs: OrderLogType[];
-  setIsLoadingContent: Dispatch<SetStateAction<boolean>>;
 }
 
 const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
   order,
-  getOrder,
   orderLogs,
-  setIsLoadingContent,
 }) => {
   const params: { id: string } = useParams();
 
@@ -29,9 +28,11 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
   const router = useRouter();
 
   const checkStatus = (status: string) => {
-    const res = orderLogs.find((val) => val.status === status);
+    if (orderLogs) {
+      const res = orderLogs.find((val) => val.status === status);
 
-    return res;
+      return res;
+    }
   };
 
   const [isOpenPaymentStatus, setIsOpenPaymentStatus] =
@@ -52,13 +53,19 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
   const [isOpenEditTransaction, setIsOpenEditTransaction] =
     useState<boolean>(false);
 
+  const { mutate } = useSWRConfig();
+
+  const handleGetOrder = () => {
+    mutate(`/api/admin/orders/${invoice}/order-detail/get`);
+  };
+
   const handleChangePaymentStatus = async () => {
     try {
       setIsLoadingStore(true);
 
       await axios.patch(`/api/admin/orders/${invoice}/payment-status/patch`);
 
-      getOrder();
+      handleGetOrder();
 
       toast.success("Status pembayaran telah diganti");
 
@@ -76,7 +83,7 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
 
       await axios.post(`/api/admin/orders/${invoice}/delivery/post`);
 
-      getOrder();
+      handleGetOrder();
 
       toast.success("Barang telah dikirim");
 
@@ -94,7 +101,7 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
 
       await axios.post(`/api/admin/orders/${invoice}/accepted/post`);
 
-      getOrder();
+      handleGetOrder();
 
       toast.success("Barang telah diterima");
 
@@ -112,7 +119,7 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
 
       await axios.post(`/api/admin/orders/${invoice}/done/post`);
 
-      getOrder();
+      handleGetOrder();
 
       toast.success("Pesanan telah selesai");
 
@@ -130,7 +137,7 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
 
       await axios.post(`/api/admin/invoice/${invoice}/post`);
 
-      getOrder();
+      handleGetOrder();
 
       toast.success("Invoice telah dikirim");
 
@@ -148,7 +155,7 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
 
       await axios.post(`/api/admin/orders/${invoice}/cancel/post`);
 
-      getOrder();
+      handleGetOrder();
 
       toast.success("Orderan telah dibatalkan");
 
@@ -217,7 +224,6 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
         <Button
           onClick={() => {
             router.push(`/admin/invoice/${invoice}`);
-            setIsLoadingContent(true);
           }}
         >
           Lihat Invoice
@@ -239,7 +245,6 @@ const OrderDetailButton: React.FC<OrderDetailButtonProps> = ({
         shipping={order.shipping}
         discount={order.discount}
         grandTotal={order.grandTotal ? order.grandTotal : 0}
-        getOrder={getOrder}
       />
 
       <WarningAlert

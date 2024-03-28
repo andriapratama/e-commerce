@@ -1,15 +1,13 @@
 "use client";
 
-import { z } from "zod";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
-import WarningAlert from "../WarningAlert";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SettingType } from "@/types/admin/SettingType";
 import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +23,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { SettingType } from "@/types/admin/SettingType";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import WarningAlert from "../WarningAlert";
 import SettingItem from "./SettingItem";
 
 const formSchema = z.object({
@@ -46,17 +49,22 @@ const formSchema = z.object({
 });
 
 interface Props {
-  data: SettingType;
-  getSetting: () => void;
+  data: SettingType | undefined;
 }
 
-const SettingBank: React.FC<Props> = ({ data, getSetting }) => {
+const SettingBank: React.FC<Props> = ({ data }) => {
+  if (!data) {
+    return null;
+  }
+
   const [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [bank, setBank] = useState<string>("");
   const [bankName, setBankName] = useState<string>("");
   const [bankNumber, setBankNumber] = useState<string>("");
+
+  const { mutate } = useSWRConfig();
 
   useEffect(() => {
     setBank(data.bank ? data.bank : "");
@@ -97,7 +105,7 @@ const SettingBank: React.FC<Props> = ({ data, getSetting }) => {
 
       toast.success("Data bank berhasil diubah");
 
-      getSetting();
+      mutate("/api/admin/setting/get");
 
       setIsOpenEdit(false);
       setIsOpenWarning(false);

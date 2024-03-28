@@ -29,8 +29,7 @@ const OrderDetailButton = dynamic(
 );
 
 const OrderDetail = () => {
-  const { order, isLoadingContent, getOrder, orderLogs, setIsLoadingContent } =
-    useGetOrderHook();
+  const { order, isLoadingContent } = useGetOrderHook();
 
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
@@ -48,7 +47,7 @@ const OrderDetail = () => {
 
           {isLoadingContent ? (
             <PageLoading />
-          ) : (
+          ) : order ? (
             <React.Fragment>
               <Title
                 title="Detail Order"
@@ -117,17 +116,12 @@ const OrderDetail = () => {
                   </div>
                 </div>
 
-                <OrderDetailButton
-                  order={order}
-                  getOrder={getOrder}
-                  orderLogs={orderLogs}
-                  setIsLoadingContent={setIsLoadingContent}
-                />
+                <OrderDetailButton order={order} orderLogs={order.orderLog} />
               </div>
 
-              <OrderDetailLog orderLogs={orderLogs} />
+              <OrderDetailLog orderLogs={order.orderLog} />
             </React.Fragment>
-          )}
+          ) : null}
         </div>
       </section>
     );

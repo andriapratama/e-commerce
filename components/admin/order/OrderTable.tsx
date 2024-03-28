@@ -30,17 +30,17 @@ import StatusOrder from "../StatusOrder";
 import { StatusPayment } from "../StatusPayment";
 
 interface OrderTableProps {
-  orders: OrdersType[];
+  orders: OrdersType[] | undefined;
   setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
-  setIsLoadingContent: Dispatch<SetStateAction<boolean>>;
-  totalPage: number;
+  totalPage: number | undefined;
+  handleUpdate: () => void;
 }
 
 const OrderTable: React.FC<OrderTableProps> = ({
   orders,
   setIsLoadingPage,
-  setIsLoadingContent,
   totalPage,
+  handleUpdate,
 }) => {
   const router = useRouter();
 
@@ -56,6 +56,8 @@ const OrderTable: React.FC<OrderTableProps> = ({
     current.set("page", page.toString());
 
     router.push(`${pathName}?${current.toString()}`);
+
+    handleUpdate();
   };
 
   const handleRouterPush = (invoice: string, status: string) => {
@@ -94,7 +96,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.length > 0 ? (
+            {orders ? (
               orders.map((order: OrdersType) => (
                 <TableRow key={order.invoice}>
                   <TableCell>{ConvertDate(order.createdAt)}</TableCell>
@@ -167,7 +169,6 @@ const OrderTable: React.FC<OrderTableProps> = ({
 
       <Pagination
         totalPage={totalPage}
-        setIsLoadingContent={setIsLoadingContent}
         handleRouter={handleRouterPagination}
         pageParams={pageParams ? parseInt(pageParams) : 1}
       />

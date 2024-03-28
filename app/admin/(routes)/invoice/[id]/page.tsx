@@ -45,6 +45,10 @@ const Invoice = () => {
 
   const { setting } = useGetSettingHook();
 
+  if (!order) {
+    return null;
+  }
+
   const user = order.user;
 
   const date = new Date(order.createdAt);
@@ -100,7 +104,7 @@ const Invoice = () => {
               <div className="w-[595px] h-fit bg-primary-color overflow-hidden relative">
                 <div className="w-full h-full px-10 pt-16 bg-white rounded-tl-[300px] relative">
                   <div className="w-full flex justify-center">
-                    {setting.image && setting.imagePathname ? (
+                    {setting && setting.image && setting.imagePathname ? (
                       <Image
                         src={setting.image}
                         alt={setting.imagePathname}
@@ -175,12 +179,14 @@ const Invoice = () => {
                       <div className="uppercase font-semibold text-primary-color">
                         payment information
                       </div>
-                      <div className="capitalize">{setting.bank}</div>
                       <div className="capitalize">
-                        account name: {setting.bankName}
+                        {setting && setting.bank}
                       </div>
                       <div className="capitalize">
-                        account number: {setting.bankNumber}
+                        account name: {setting && setting.bankName}
+                      </div>
+                      <div className="capitalize">
+                        account number: {setting && setting.bankNumber}
                       </div>
                     </div>
 
