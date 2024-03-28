@@ -1,12 +1,15 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import Image from "next/image";
-import WarningAlert from "../WarningAlert";
 import axios from "axios";
+import Image from "next/image";
+import { useParams } from "next/navigation";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -14,9 +17,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -24,11 +24,15 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
-  ImageInputType,
   ACCEPTED_IMAGE_TYPES,
+  ImageInputType,
   MAX_FILE_SIZE,
 } from "@/types/admin/Image";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import WarningAlert from "../WarningAlert";
 
 const formSchema = z.object({
   image: z
@@ -46,15 +50,11 @@ const formSchema = z.object({
 interface ProductEditImageProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  paramsSlug: string;
-  getProduct: () => void;
 }
 
 const ProductEditImage: React.FC<ProductEditImageProps> = ({
   isOpen,
   setIsOpen,
-  paramsSlug,
-  getProduct,
 }) => {
   const [image, setImage] = useState<ImageInputType>({
     image: undefined,
@@ -64,6 +64,12 @@ const ProductEditImage: React.FC<ProductEditImageProps> = ({
 
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const params = useParams();
+
+  const slugParams = params.id;
+
+  const { mutate } = useSWRConfig();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -92,13 +98,13 @@ const ProductEditImage: React.FC<ProductEditImageProps> = ({
       formData.append("image", image.image);
 
       await axios.patch(
-        `/api/admin/products/${paramsSlug}/image/patch`,
+        `/api/admin/products/${slugParams}/image/patch`,
         formData
       );
 
       toast.success("Gambar produk berhasil diubah");
 
-      getProduct();
+      mutate(`/api/admin/products/${slugParams}/data/get`);
 
       setIsOpenWarning(false);
       setIsOpen(false);

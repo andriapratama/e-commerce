@@ -1,6 +1,9 @@
 "use client";
 
+import axios from "axios";
+import { useParams } from "next/navigation";
 import React from "react";
+import useSWR, { Fetcher } from "swr";
 
 import {
   Table,
@@ -10,26 +13,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { FinanceLogType } from "@/types/admin/FianceLogType";
 import { ConvertDate } from "@/utils/ConvertDate";
 import { ConvertIDR } from "@/utils/ConvertIDR";
 
 import ProductDetailShowNote from "./ProductDetailShowNote";
 
-interface ProductFinanceLogType {
-  price: number;
-  cost: number;
-  note: string;
-  createdAt: Date;
-  employee: { name: string };
-}
+const ProductDetailFinanceLog = () => {
+  const params = useParams();
 
-interface ProductDetailFinanceLogProps {
-  financeList: ProductFinanceLogType[];
-}
+  const slugParams = params.id;
 
-const ProductDetailFinanceLog: React.FC<ProductDetailFinanceLogProps> = ({
-  financeList,
-}) => {
+  const fetcher: Fetcher<{
+    data: FinanceLogType[] | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
+
+  const { data } = useSWR(
+    `/api/admin/products/${slugParams}/finance/get`,
+    fetcher
+  );
+
   return (
     <div className="w-full bg-white border rounded-md shadow-md mb-5">
       <h2 className="p-5 border-b font-semibold capitalize text-base">
@@ -46,8 +50,8 @@ const ProductDetailFinanceLog: React.FC<ProductDetailFinanceLogProps> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {financeList.length > 0 ? (
-            financeList.map((value: ProductFinanceLogType, index) => (
+          {data?.data ? (
+            data.data.map((value: FinanceLogType, index) => (
               <TableRow key={index}>
                 <TableCell>{ConvertDate(value.createdAt)}</TableCell>
                 <TableCell>{ConvertIDR(value.price)}</TableCell>

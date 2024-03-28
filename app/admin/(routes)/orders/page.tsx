@@ -3,7 +3,7 @@
 import axios from "axios";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import useSWR, { Fetcher } from "swr";
 
@@ -21,6 +21,8 @@ const OrderTable = dynamic(() => import("@/components/admin/order/OrderTable"));
 const Orders = () => {
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
+  const [route, setRoute] = useState<string>("");
+
   const searchParams = useSearchParams();
 
   const searchValue = searchParams.get("search");
@@ -32,25 +34,21 @@ const Orders = () => {
     message: string;
   }> = (url: string) => axios.get(url).then((res) => res.data);
 
-  const api: string = "/api/admin/orders/get";
+  const { data, isLoading } = useSWR(route, fetcher);
 
-  let router: string = "";
+  useEffect(() => {
+    const api: string = "/api/admin/orders/get";
 
-  if (searchValue) {
-    router = `${api}?search=${searchValue}`;
-  } else if (statusParams) {
-    router = `${api}?status=${statusParams}&page=${pageParams}`;
-  } else if (pageParams) {
-    router = `${api}?page=${pageParams}`;
-  } else {
-    router = `${api}`;
-  }
-
-  const { data, isLoading, mutate } = useSWR(router, fetcher);
-
-  const handleUpdate = () => {
-    mutate();
-  };
+    if (searchValue) {
+      setRoute(`${api}?search=${searchValue}`);
+    } else if (statusParams) {
+      setRoute(`${api}?status=${statusParams}&page=${pageParams}`);
+    } else if (pageParams) {
+      setRoute(`${api}?page=${pageParams}`);
+    } else {
+      setRoute(`${api}`);
+    }
+  }, [searchValue, statusParams, pageParams]);
 
   useEffect(() => {
     setIsLoadingPage(false);
@@ -66,7 +64,7 @@ const Orders = () => {
 
           <Title title="Orders" />
 
-          <OrderFilter handleUpdate={handleUpdate} />
+          <OrderFilter />
 
           {isLoading ? (
             <ContentLoading />
@@ -75,7 +73,6 @@ const Orders = () => {
               orders={data?.data?.orders}
               setIsLoadingPage={setIsLoadingPage}
               totalPage={data?.data?.totalPage}
-              handleUpdate={handleUpdate}
             />
           )}
         </div>

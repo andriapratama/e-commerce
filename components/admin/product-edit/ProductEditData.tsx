@@ -1,20 +1,14 @@
 "use client";
 
-import { z } from "zod";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
-import WarningAlert from "../WarningAlert";
-import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { handleSetSlug } from "@/utils/HandleSetSlug";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AdminProductType } from "@/types/ProductType";
-import { handleSetNumber } from "@/utils/HandleSetNumber";
-import { CategoryType, SubCategoryType } from "@/types/CategoryType";
+import { useParams, useRouter } from "next/navigation";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import useSWR, { useSWRConfig } from "swr";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -37,15 +32,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { CategoryType, SubCategoryType } from "@/types/CategoryType";
+import { AdminProductType } from "@/types/ProductType";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
+import { handleSetSlug } from "@/utils/HandleSetSlug";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import WarningAlert from "../WarningAlert";
 
 interface ProductEditDataProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   product: AdminProductType;
-  categories: CategoryType[];
-  subCategories: SubCategoryType[];
-  paramsSlug: string;
-  getProduct: () => void;
+  categories: CategoryType[] | undefined;
+  subCategories: SubCategoryType[] | undefined;
 }
 
 const ProductEditData: React.FC<ProductEditDataProps> = ({
@@ -54,8 +55,6 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
   product,
   categories,
   subCategories,
-  paramsSlug,
-  getProduct,
 }) => {
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
@@ -76,6 +75,12 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const router = useRouter();
+
+  const params = useParams();
+
+  const slugParams = params.id;
+
+  const { mutate } = useSWRConfig();
 
   useEffect(() => {
     setName(product.name);
@@ -152,7 +157,7 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
       setIsLoading(true);
 
       const res = await axios.patch(
-        `/api/admin/products/${paramsSlug}/data/patch`,
+        `/api/admin/products/${slugParams}/data/patch`,
         {
           name: name,
           slug: slug,
@@ -167,10 +172,10 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
 
       const resSlug = res.data.data;
 
-      if (resSlug !== paramsSlug) {
+      if (resSlug !== slugParams) {
         router.push(`/admin/products/${resSlug}`);
       } else {
-        getProduct();
+        mutate(`/api/admin/products/${slugParams}/data/get`);
       }
 
       setIsOpenWarning(false);
@@ -185,13 +190,13 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
   };
 
   useEffect(() => {
-    const filterSubCategories = subCategories.filter(
+    const filterSubCategories = subCategories?.filter(
       (item) => item.category.slug === category
     );
 
     setSubCategory("");
 
-    if (filterSubCategories.length > 0) {
+    if (filterSubCategories && filterSubCategories.length > 0) {
       setIsSubCategoryDisable(false);
       setSubCategoryList(filterSubCategories);
     } else {
@@ -317,7 +322,7 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {categories.map((category) => (
+                          {categories?.map((category) => (
                             <SelectItem
                               value={category.name}
                               key={category.name}

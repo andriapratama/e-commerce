@@ -1,49 +1,33 @@
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import useSWR, { Fetcher } from "swr";
+
 import { SubCategoryType } from "@/types/CategoryType";
-import { useCallback, useEffect, useState } from "react";
 
 export const useGetSubCategoryHook = (category?: string) => {
-  const [subCategories, setSubCategories] = useState<SubCategoryType[]>([]);
+  const [route, setRoute] = useState<string>("");
 
   const [subCategory, setSubCategory] = useState<string>("");
 
-  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
+  const fetcher: Fetcher<{
+    data: SubCategoryType[] | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
 
-  const getSubCategories = useCallback(async () => {
-    try {
-      let route = "";
-
-      if (category) {
-        route = `/api/admin/sub-categories/get?category=${category}`;
-      } else {
-        route = `/api/admin/sub-categories/get`;
-      }
-
-      const res = await axios.get(route);
-
-      const subCategories: SubCategoryType[] = res.data.data;
-
-      setSubCategories(subCategories);
-
-      setIsLoadingContent(false);
-    } catch (error: any) {
-      toast.error(error.response.data.error);
-      setIsLoadingContent(false);
-    }
-  }, [category]);
+  const { data, isLoading } = useSWR(route, fetcher);
 
   useEffect(() => {
-    getSubCategories();
-  }, [getSubCategories]);
+    if (category) {
+      setRoute(`/api/admin/sub-categories/get?category=${category}`);
+    } else {
+      setRoute(`/api/admin/sub-categories/get`);
+    }
+  }, [category]);
 
   return {
     subCategory,
     setSubCategory,
-    subCategories,
-    setSubCategories,
-    isLoadingContent,
-    setIsLoadingContent,
-    getSubCategories,
+    subCategories: data?.data,
+    isLoadingContent: isLoading,
   };
 };

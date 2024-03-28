@@ -1,6 +1,9 @@
 "use client";
 
+import axios from "axios";
+import { useParams } from "next/navigation";
 import React from "react";
+import useSWR, { Fetcher } from "swr";
 
 import {
   Table,
@@ -10,28 +13,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { StockLogType } from "@/types/admin/StockLogType";
 import { ConvertDate } from "@/utils/ConvertDate";
 
 import ProductDetailShowNote from "./ProductDetailShowNote";
 
-interface ProductStockLogType {
-  previousStock: number;
-  stock: number;
-  stockNow: number;
-  status: "first" | "update" | "decrease" | "increase";
-  note: string;
-  createdAt: Date;
-  employee: { name: string };
+interface Stock extends StockLogType {
   invoice?: string;
 }
 
-interface ProductDetailStockLogProps {
-  stockList: ProductStockLogType[];
-}
+const ProductDetailStockLog = () => {
+  const params = useParams();
 
-const ProductDetailStockLog: React.FC<ProductDetailStockLogProps> = ({
-  stockList,
-}) => {
+  const slugParams = params.id;
+
+  const fetcher: Fetcher<{
+    data: Stock[] | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
+
+  const { data } = useSWR(
+    `/api/admin/products/${slugParams}/stock/get`,
+    fetcher
+  );
+
   return (
     <div className="w-full bg-white border rounded-md shadow-md mb-5">
       <h2 className="p-5 border-b font-semibold capitalize text-base">
@@ -50,8 +55,8 @@ const ProductDetailStockLog: React.FC<ProductDetailStockLogProps> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {stockList.length > 0 ? (
-            stockList.map((value, index) => (
+          {data?.data ? (
+            data.data.map((value: Stock, index) => (
               <TableRow key={index}>
                 <TableCell>{ConvertDate(value.createdAt)}</TableCell>
                 <TableCell className="text-center">

@@ -14,11 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface Props {
-  handleUpdate: () => void;
-}
-
-const OrderFilter: React.FC<Props> = ({ handleUpdate }) => {
+const OrderFilter = () => {
   const [search, setSearch] = useState<string>("");
 
   const [status, setStatus] = useState<string>("");
@@ -44,8 +40,6 @@ const OrderFilter: React.FC<Props> = ({ handleUpdate }) => {
 
   const handleSearch = useDebouncedCallback((value: string) => {
     router.push(`${pathName}?search=${value}`);
-
-    handleUpdate();
   }, 1000);
 
   const handleSetStatus = (value: string) => {
@@ -53,8 +47,6 @@ const OrderFilter: React.FC<Props> = ({ handleUpdate }) => {
     setSearch("");
 
     router.push(`${pathName}?status=${value}&page=1`);
-
-    handleUpdate();
   };
   return (
     <div className="flex items-center py-4 gap-1">

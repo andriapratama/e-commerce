@@ -3,18 +3,16 @@
 import axios from "axios";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { useParams } from "next/navigation";
+import React, { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+import useSWR, { Fetcher } from "swr";
 
 import ContentLoading from "@/components/ContentLoading";
 import PageLoading from "@/components/PageLoading";
 import { useLoadingPageContext } from "@/context/LoadingPageContext";
 import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
 import { useGetSubCategoryHook } from "@/hooks/admin/GetSubCategoryHook";
-import { FinanceLogType } from "@/types/admin/FianceLogType";
-import { StatusLogType } from "@/types/admin/StatusLogType";
-import { StockLogType } from "@/types/admin/StockLogType";
 import { AdminProductType } from "@/types/ProductType";
 
 const Title = dynamic(() => import("@/components/admin/Title"));
@@ -35,94 +33,21 @@ const ProductDetailStatusLog = dynamic(
 );
 
 const ProductDetail = () => {
-  const [product, setProduct] = useState<AdminProductType>({
-    name: "",
-    slug: "",
-    totalStock: 0,
-    minimumStock: 0,
-    price: 0,
-    cost: 0,
-    netFill: 0,
-    status: "active",
-    linkGojek: "",
-    description: "",
-    salePrice: 0,
-    category: { name: "" },
-    subCategory: null,
-    image: "",
-    createdAt: "",
-  });
-
-  const [financeList, setFinanceList] = useState<FinanceLogType[]>([]);
-  const [statusList, setStatusList] = useState<StatusLogType[]>([]);
-  const [stockList, setStockList] = useState<StockLogType[]>([]);
-
-  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
-
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
-
-  const router = useRouter();
 
   const params = useParams();
 
   const slug = params.id;
 
-  const api = `/api/admin/products/${slug}`;
+  const fetcher: Fetcher<{
+    data: AdminProductType | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
 
-  const getProduct = useCallback(async () => {
-    try {
-      const res = await axios.get(api + "/data/get");
-
-      setProduct(res.data.data);
-
-      getFinanceLog();
-      getStatusLog();
-      getStockLog();
-
-      setIsLoadingContent(false);
-    } catch (error: any) {
-      if (error.response.status === 404) {
-        router.push("/404");
-      } else {
-        toast.error(error.response.data.message);
-        setIsLoadingContent(false);
-      }
-    }
-  }, []);
-
-  const getFinanceLog = useCallback(async () => {
-    try {
-      const res = await axios.get(api + "/finance/get");
-
-      setFinanceList(res.data.data);
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-    }
-  }, []);
-
-  const getStatusLog = useCallback(async () => {
-    try {
-      const res = await axios.get(api + "/status/get");
-
-      setStatusList(res.data.data);
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-    }
-  }, []);
-
-  const getStockLog = useCallback(async () => {
-    try {
-      const res = await axios.get(api + "/stock/get");
-
-      setStockList(res.data.data);
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-    }
-  }, []);
-
-  useEffect(() => {
-    getProduct();
-  }, [getProduct]);
+  const { data, isLoading } = useSWR(
+    `/api/admin/products/${slug}/data/get`,
+    fetcher
+  );
 
   const { categories } = useGetCategoriesHook();
 
@@ -131,6 +56,10 @@ const ProductDetail = () => {
   useEffect(() => {
     setIsLoadingPage(false);
   }, []);
+
+  if (!data?.data) {
+    return null;
+  }
 
   if (isLoadingPage) {
     return <PageLoading />;
@@ -141,7 +70,7 @@ const ProductDetail = () => {
           <ToastContainer />
           <Title title="Detail Produk" />
 
-          {isLoadingContent ? (
+          {isLoading ? (
             <ContentLoading className="mt-10" />
           ) : (
             <React.Fragment>
@@ -149,8 +78,8 @@ const ProductDetail = () => {
                 <div className="lg:flex block w-full gap-3">
                   <div className="w-full flex justify-center items-start">
                     <Image
-                      src={product.image}
-                      alt={product.name}
+                      src={data.data.image}
+                      alt={data.data.name}
                       width={400}
                       height={600}
                       className="object-cover lg:h-[650px] md:h-[500px] h-[400px] w-auto mb-3 rounded-md"
@@ -161,26 +90,21 @@ const ProductDetail = () => {
                   <div className="w-full bg-white border rounded-md shadow-md p-5 h-max">
                     <div className="w-full flex justify-end mb-3">
                       <ProductEditButton
-                        product={product}
+                        product={data.data}
                         categories={categories}
                         subCategories={subCategories}
-                        paramsSlug={product.slug}
-                        getProduct={getProduct}
-                        getFinanceLog={getFinanceLog}
-                        getStatusLog={getStatusLog}
-                        getStockLog={getStockLog}
                       />
                     </div>
 
-                    <ProductDetailData product={product} />
+                    <ProductDetailData product={data.data} />
                   </div>
                 </div>
               </div>
               <div className="flex justify-center">
                 <div className="lg:w-[80%] w-full">
-                  <ProductDetailFinanceLog financeList={financeList} />
-                  <ProductDetailStatusLog statusList={statusList} />
-                  <ProductDetailStockLog stockList={stockList} />
+                  <ProductDetailFinanceLog />
+                  <ProductDetailStatusLog />
+                  <ProductDetailStockLog />
                 </div>
               </div>
             </React.Fragment>

@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { Dispatch, SetStateAction } from "react";
-import StatusProduct from "../StatusProduct";
-import { ConvertIDR } from "@/utils/ConvertIDR";
-import { AdminProductType } from "@/types/ProductType";
 import { MoreHorizontal } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Dispatch, SetStateAction } from "react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,20 +20,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AdminProductType } from "@/types/ProductType";
+import { ConvertIDR } from "@/utils/ConvertIDR";
+
 import Pagination from "../Pagination";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import StatusProduct from "../StatusProduct";
 
 interface ProductTableProps {
-  products: AdminProductType[];
-  totalPage: number;
+  products: AdminProductType[] | undefined;
+  totalPage: number | undefined;
   setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
-  setIsLoadingContent: Dispatch<SetStateAction<boolean>>;
 }
 
 const ProductTable: React.FC<ProductTableProps> = ({
   products,
   setIsLoadingPage,
-  setIsLoadingContent,
   totalPage,
 }) => {
   const router = useRouter();
@@ -79,7 +79,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products.length > 0 ? (
+          {products ? (
             products.map((product: AdminProductType) => (
               <TableRow key={product.slug}>
                 <TableCell className="flex justify-center">
@@ -146,7 +146,6 @@ const ProductTable: React.FC<ProductTableProps> = ({
 
       <Pagination
         totalPage={totalPage}
-        setIsLoadingContent={setIsLoadingContent}
         pageParams={parseInt(pageParams ? pageParams : "1")}
         handleRouter={handleRouterPagination}
       />

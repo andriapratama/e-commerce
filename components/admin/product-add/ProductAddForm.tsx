@@ -184,18 +184,20 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({
   };
 
   useEffect(() => {
-    const filterSubCategories = subCategories.filter(
-      (item) => item.category.slug === category
-    );
+    if (subCategories) {
+      const filterSubCategories = subCategories.filter(
+        (item) => item.category.slug === category
+      );
 
-    setSubCategory("");
+      setSubCategory("");
 
-    if (filterSubCategories.length > 0) {
-      setIsSubCategoryDisable(false);
-      setSubCategoryList(filterSubCategories);
-    } else {
-      setIsSubCategoryDisable(true);
-      setSubCategoryList([]);
+      if (filterSubCategories.length > 0) {
+        setIsSubCategoryDisable(false);
+        setSubCategoryList(filterSubCategories);
+      } else {
+        setIsSubCategoryDisable(true);
+        setSubCategoryList([]);
+      }
     }
   }, [category, setIsSubCategoryDisable, setSubCategoryList, setSubCategory]);
 
@@ -407,15 +409,17 @@ const ProductAddForm: React.FC<ProductAddFormProps> = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categories.map((categoryValue) => (
-                        <SelectItem
-                          value={categoryValue.slug}
-                          key={categoryValue.name}
-                          className="capitalize"
-                        >
-                          {categoryValue.name}
-                        </SelectItem>
-                      ))}
+                      {categories
+                        ? categories.map((categoryValue) => (
+                            <SelectItem
+                              value={categoryValue.slug}
+                              key={categoryValue.name}
+                              className="capitalize"
+                            >
+                              {categoryValue.name}
+                            </SelectItem>
+                          ))
+                        : null}
                     </SelectContent>
                   </Select>
                   <FormMessage className="!mt-1" />

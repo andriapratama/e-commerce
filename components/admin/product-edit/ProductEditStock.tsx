@@ -1,15 +1,13 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useState } from "react";
 import axios from "axios";
-import { z } from "zod";
+import { useParams } from "next/navigation";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { handleSetNumber } from "@/utils/HandleSetNumber";
-import { Textarea } from "@/components/ui/textarea";
-import WarningAlert from "../WarningAlert";
 import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,6 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -33,13 +32,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import WarningAlert from "../WarningAlert";
 
 interface ProductEditStockProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  paramsSlug: string;
-  getProduct: () => void;
-  getStockLog: () => void;
 }
 
 const formSchema = z.object({
@@ -51,9 +52,6 @@ const formSchema = z.object({
 const ProductEditStock: React.FC<ProductEditStockProps> = ({
   isOpen,
   setIsOpen,
-  paramsSlug,
-  getProduct,
-  getStockLog,
 }) => {
   const [stock, setStock] = useState<string>("");
   const [status, setStatus] = useState<string>("increase");
@@ -61,6 +59,12 @@ const ProductEditStock: React.FC<ProductEditStockProps> = ({
 
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const params = useParams();
+
+  const slugParams = params.id;
+
+  const { mutate } = useSWRConfig();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -79,7 +83,7 @@ const ProductEditStock: React.FC<ProductEditStockProps> = ({
     try {
       setIsLoading(true);
 
-      await axios.patch(`/api/admin/products/${paramsSlug}/stock/patch`, {
+      await axios.patch(`/api/admin/products/${slugParams}/stock/patch`, {
         stock: parseInt(stock),
         status: status,
         note: note,
@@ -87,8 +91,8 @@ const ProductEditStock: React.FC<ProductEditStockProps> = ({
 
       toast.success("Stok produk berhasil diubah");
 
-      getProduct();
-      getStockLog();
+      mutate(`/api/admin/products/${slugParams}/data/get`);
+      mutate(`/api/admin/products/${slugParams}/stock/get`);
 
       setIsOpenWarning(false);
       setIsOpen(false);

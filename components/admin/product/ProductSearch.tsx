@@ -1,9 +1,10 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+
+import { Input } from "@/components/ui/input";
 
 const ProductSearch = () => {
   const searchParams = useSearchParams();
@@ -18,7 +19,7 @@ const ProductSearch = () => {
 
   const handleSearch = useDebouncedCallback((value: string) => {
     router.push(`${pathname}?search=${value}`);
-  }, 500);
+  }, 1000);
 
   useEffect(() => {
     if (searchValueParams) {

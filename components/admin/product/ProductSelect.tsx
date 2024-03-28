@@ -1,8 +1,8 @@
 "use client";
 
-import { CategoryType } from "@/types/CategoryType";
-import React, { Dispatch, SetStateAction } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import React, { Dispatch, SetStateAction } from "react";
+
 import {
   Select,
   SelectContent,
@@ -11,10 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CategoryType } from "@/types/CategoryType";
 
 interface Props {
   status: "category" | "subCategory";
-  categories: CategoryType[];
+  categories: CategoryType[] | undefined;
   category: string;
   setCategory: Dispatch<SetStateAction<string>>;
 }
@@ -55,15 +56,17 @@ const ProductSelect: React.FC<Props> = ({
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {categories.map((category: CategoryType, index) => (
-            <SelectItem
-              key={index}
-              value={category.name}
-              className="capitalize"
-            >
-              {category.name}
-            </SelectItem>
-          ))}
+          {categories
+            ? categories.map((category: CategoryType, index) => (
+                <SelectItem
+                  key={index}
+                  value={category.name}
+                  className="capitalize"
+                >
+                  {category.name}
+                </SelectItem>
+              ))
+            : null}
         </SelectGroup>
       </SelectContent>
     </Select>

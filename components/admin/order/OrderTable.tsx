@@ -33,14 +33,12 @@ interface OrderTableProps {
   orders: OrdersType[] | undefined;
   setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
   totalPage: number | undefined;
-  handleUpdate: () => void;
 }
 
 const OrderTable: React.FC<OrderTableProps> = ({
   orders,
   setIsLoadingPage,
   totalPage,
-  handleUpdate,
 }) => {
   const router = useRouter();
 
@@ -56,8 +54,6 @@ const OrderTable: React.FC<OrderTableProps> = ({
     current.set("page", page.toString());
 
     router.push(`${pathName}?${current.toString()}`);
-
-    handleUpdate();
   };
 
   const handleRouterPush = (invoice: string, status: string) => {

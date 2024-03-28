@@ -1,6 +1,9 @@
 "use client";
 
+import axios from "axios";
+import { useParams } from "next/navigation";
 import React from "react";
+import useSWR, { Fetcher } from "swr";
 
 import {
   Table,
@@ -10,27 +13,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { StatusLogType } from "@/types/admin/StatusLogType";
 import { ConvertDate } from "@/utils/ConvertDate";
 import { ConvertIDR } from "@/utils/ConvertIDR";
 
 import StatusProduct from "../StatusProduct";
 import ProductDetailShowNote from "./ProductDetailShowNote";
 
-interface ProductStatusLogType {
-  status: "new" | "active" | "best" | "sale" | "archive";
-  salePrice: number;
-  note: string;
-  createdAt: Date;
-  employee: { name: string };
-}
+const ProductDetailStatusLog = () => {
+  const params = useParams();
 
-interface ProductDetailStatusLogProps {
-  statusList: ProductStatusLogType[];
-}
+  const slugParams = params.id;
 
-const ProductDetailStatusLog: React.FC<ProductDetailStatusLogProps> = ({
-  statusList,
-}) => {
+  const fetcher: Fetcher<{
+    data: StatusLogType[] | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
+
+  const { data } = useSWR(
+    `/api/admin/products/${slugParams}/status/get`,
+    fetcher
+  );
+
   return (
     <div className="w-full bg-white border rounded-md shadow-md mb-5">
       <h2 className="p-5 border-b font-semibold capitalize text-base">
@@ -47,8 +51,8 @@ const ProductDetailStatusLog: React.FC<ProductDetailStatusLogProps> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {statusList.length > 0 ? (
-            statusList.map((value, index) => (
+          {data?.data ? (
+            data.data.map((value: StatusLogType, index) => (
               <TableRow key={index}>
                 <TableCell>{ConvertDate(value.createdAt)}</TableCell>
                 <TableCell className="text-center capitalize">

@@ -3,8 +3,8 @@
 import axios from "axios";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from "react";
+import useSWR, { Fetcher } from "swr";
 
 import ContentLoading from "@/components/ContentLoading";
 import PageLoading from "@/components/PageLoading";
@@ -25,13 +25,9 @@ const ProductSelect = dynamic(
 );
 
 const Product = () => {
-  const [products, setProducts] = useState<AdminProductType[]>([]);
+  const [route, setRoute] = useState<string>("");
 
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
-
-  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
-
-  const [totalPage, setTotalPage] = useState<number>(0);
 
   const searchParams = useSearchParams();
 
@@ -47,39 +43,28 @@ const Product = () => {
 
   const router = useRouter();
 
-  const getProducts = useCallback(async () => {
-    try {
-      const pathName = "/api/admin/products/get";
+  const fetcher: Fetcher<{
+    data: { products: AdminProductType[]; totalPage: number } | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
 
-      let route = "";
-
-      if (categoryParams && subCategoryParams) {
-        route = `${pathName}?category=${categoryParams}&subCategory=${subCategoryParams}&page=${pageNow}`;
-      } else if (categoryParams) {
-        route = `${pathName}?category=${categoryParams}&page=${pageNow}`;
-      } else if (searchValueParams) {
-        route = `${pathName}?search=${searchValueParams}`;
-      } else {
-        route = `${pathName}?page=${pageNow}`;
-      }
-
-      const res = await axios.get(route);
-
-      setProducts(res.data.data.products);
-
-      setTotalPage(res.data.data.totalPage);
-
-      setIsLoadingContent(false);
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-
-      setIsLoadingContent(false);
-    }
-  }, [pageNow, searchValueParams, categoryParams, subCategoryParams]);
+  const { data, isLoading } = useSWR(route, fetcher);
 
   useEffect(() => {
-    getProducts();
-  }, [getProducts]);
+    const api = "/api/admin/products/get";
+
+    if (categoryParams && subCategoryParams) {
+      setRoute(
+        `${api}?category=${categoryParams}&subCategory=${subCategoryParams}&page=${pageNow}`
+      );
+    } else if (categoryParams) {
+      setRoute(`${api}?category=${categoryParams}&page=${pageNow}`);
+    } else if (searchValueParams) {
+      setRoute(`${api}?search=${searchValueParams}`);
+    } else {
+      setRoute(`${api}?page=${pageNow}`);
+    }
+  }, [pageNow, searchValueParams, categoryParams, subCategoryParams]);
 
   const handleAddProduct = () => {
     setIsLoadingPage(true);
@@ -131,24 +116,23 @@ const Product = () => {
               setCategory={setCategory}
             />
 
-            {subCategories.length > 0 && (
+            {subCategories && subCategories.length > 0 ? (
               <ProductSelect
                 status="subCategory"
                 categories={subCategories}
                 category={subCategory}
                 setCategory={setSubCategory}
               />
-            )}
+            ) : null}
           </div>
 
-          {isLoadingContent ? (
+          {isLoading ? (
             <ContentLoading className="mt-10" />
           ) : (
             <ProductTable
-              products={products}
+              products={data?.data?.products}
               setIsLoadingPage={setIsLoadingPage}
-              setIsLoadingContent={setIsLoadingContent}
-              totalPage={totalPage}
+              totalPage={data?.data?.totalPage}
             />
           )}
         </div>

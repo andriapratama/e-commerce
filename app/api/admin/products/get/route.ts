@@ -26,7 +26,7 @@ export const GET = async (req: NextRequest) => {
 
     let total: number = 0;
 
-    const take = 10;
+    const take = 20;
 
     const skip = (page - 1) * take;
 

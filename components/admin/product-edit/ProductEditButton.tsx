@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,34 +9,25 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import ProductEditData from "./ProductEditData";
-import { AdminProductType } from "@/types/ProductType";
 import { CategoryType, SubCategoryType } from "@/types/CategoryType";
+import { AdminProductType } from "@/types/ProductType";
+
+import ProductEditData from "./ProductEditData";
 import ProductEditFinance from "./ProductEditFinance";
-import ProductEditStock from "./ProductEditStock";
-import ProductEditStatus from "./ProductEditStatus";
 import ProductEditImage from "./ProductEditImage";
+import ProductEditStatus from "./ProductEditStatus";
+import ProductEditStock from "./ProductEditStock";
 
 interface ProductEditButtonProps {
   product: AdminProductType;
-  categories: CategoryType[];
-  subCategories: SubCategoryType[];
-  paramsSlug: string;
-  getProduct: () => void;
-  getFinanceLog: () => void;
-  getStatusLog: () => void;
-  getStockLog: () => void;
+  categories: CategoryType[] | undefined;
+  subCategories: SubCategoryType[] | undefined;
 }
 
 const ProductEditButton: React.FC<ProductEditButtonProps> = ({
   product,
   categories,
   subCategories,
-  paramsSlug,
-  getProduct,
-  getFinanceLog,
-  getStatusLog,
-  getStockLog,
 }) => {
   const [isOpenEditData, setIsOpenEditData] = useState<boolean>(false);
   const [isOpenEditFinance, setIsOpenEditFinance] = useState<boolean>(false);
@@ -88,41 +80,28 @@ const ProductEditButton: React.FC<ProductEditButtonProps> = ({
         product={product}
         categories={categories}
         subCategories={subCategories}
-        paramsSlug={paramsSlug}
-        getProduct={getProduct}
       />
 
       <ProductEditFinance
         isOpen={isOpenEditFinance}
         setIsOpen={setIsOpenEditFinance}
-        paramsSlug={paramsSlug}
         product={product}
-        getFinanceLog={getFinanceLog}
-        getProduct={getProduct}
       />
 
       <ProductEditStock
         isOpen={isOpenEditStock}
         setIsOpen={setIsOpenEditStock}
-        paramsSlug={paramsSlug}
-        getProduct={getProduct}
-        getStockLog={getStockLog}
       />
 
       <ProductEditStatus
         isOpen={isOpenEditStatus}
         setIsOpen={setIsOpenEditStatus}
         product={product}
-        paramsSlug={paramsSlug}
-        getProduct={getProduct}
-        getStatusLog={getStatusLog}
       />
 
       <ProductEditImage
         isOpen={isOpenEditImage}
         setIsOpen={setIsOpenEditImage}
-        paramsSlug={paramsSlug}
-        getProduct={getProduct}
       />
     </React.Fragment>
   );

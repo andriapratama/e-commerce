@@ -1,15 +1,13 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useState } from "react";
 import axios from "axios";
-import { z } from "zod";
+import { useParams } from "next/navigation";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { handleSetNumber } from "@/utils/HandleSetNumber";
-import { Textarea } from "@/components/ui/textarea";
-import WarningAlert from "../WarningAlert";
 import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,6 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -33,24 +32,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { AdminProductType } from "@/types/ProductType";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import WarningAlert from "../WarningAlert";
 
 interface ProductEditStatusProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   product: AdminProductType;
-  paramsSlug: string;
-  getProduct: () => void;
-  getStatusLog: () => void;
 }
 
 const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
   isOpen,
   setIsOpen,
   product,
-  paramsSlug,
-  getProduct,
-  getStatusLog,
 }) => {
   const [salePrice, setSalePrice] = useState<string>(
     product.salePrice.toString()
@@ -60,6 +58,12 @@ const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
 
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const params = useParams();
+
+  const slugParams = params.id;
+
+  const { mutate } = useSWRConfig();
 
   const formSchema =
     status === "sale"
@@ -102,7 +106,7 @@ const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
       setIsLoading(true);
 
       const res = await axios.patch(
-        `/api/admin/products/${paramsSlug}/status/patch`,
+        `/api/admin/products/${slugParams}/status/patch`,
         {
           salePrice: parseInt(salePrice),
           status: status,
@@ -121,8 +125,8 @@ const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
       setStatus(saleRes.sale);
       setNote("");
 
-      getProduct();
-      getStatusLog();
+      mutate(`/api/admin/products/${slugParams}/data/get`);
+      mutate(`/api/admin/products/${slugParams}/status/get`);
 
       setIsLoading(false);
     } catch (error: any) {

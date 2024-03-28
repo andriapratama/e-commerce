@@ -1,16 +1,13 @@
 "use client";
 
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import axios from "axios";
+import { useParams } from "next/navigation";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { Input } from "@/components/ui/input";
-import { handleSetNumber } from "@/utils/HandleSetNumber";
-import { Textarea } from "@/components/ui/textarea";
-import WarningAlert from "../WarningAlert";
-import { AdminProductType } from "@/types/ProductType";
+import { useSWRConfig } from "swr";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,14 +24,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { AdminProductType } from "@/types/ProductType";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import WarningAlert from "../WarningAlert";
 
 interface ProductEditFinanceProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   product: AdminProductType;
-  paramsSlug: string;
-  getProduct: () => void;
-  getFinanceLog: () => void;
 }
 
 const formSchema = z.object({
@@ -52,10 +53,7 @@ const formSchema = z.object({
 const ProductEditFinance: React.FC<ProductEditFinanceProps> = ({
   isOpen,
   setIsOpen,
-  paramsSlug,
   product,
-  getProduct,
-  getFinanceLog,
 }) => {
   const [price, setPrice] = useState<string>("");
   const [cost, setCost] = useState<string>("");
@@ -63,6 +61,12 @@ const ProductEditFinance: React.FC<ProductEditFinanceProps> = ({
 
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const params = useParams();
+
+  const slugParams = params.id;
+
+  const { mutate } = useSWRConfig();
 
   useEffect(() => {
     setPrice(product.price.toString());
@@ -95,14 +99,14 @@ const ProductEditFinance: React.FC<ProductEditFinanceProps> = ({
     try {
       setIsLoading(true);
 
-      await axios.patch(`/api/admin/products/${paramsSlug}/finance/patch`, {
+      await axios.patch(`/api/admin/products/${slugParams}/finance/patch`, {
         price: parseInt(price),
         cost: parseInt(cost),
         note: note,
       });
 
-      getProduct();
-      getFinanceLog();
+      mutate(`/api/admin/products/${slugParams}/data/get`);
+      mutate(`/api/admin/products/${slugParams}/finance/get`);
 
       setIsOpenWarning(false);
       setIsOpen(false);
