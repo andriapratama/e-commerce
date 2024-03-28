@@ -3,13 +3,14 @@
 import axios from "axios";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import React, { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import useSWR, { Fetcher } from "swr";
 
 import ContentLoading from "@/components/ContentLoading";
 import PageLoading from "@/components/PageLoading";
 import { useLoadingPageContext } from "@/context/LoadingPageContext";
-import { ProductMinStockType, ProductSoldType } from "@/types/ProductType";
+import { ProductSoldType } from "@/types/ProductType";
 import { ConvertDateId } from "@/utils/ConvertDateId";
 import { ConvertIDR } from "@/utils/ConvertIDR";
 
@@ -27,18 +28,15 @@ const DashboardSetDate = dynamic(
   () => import("@/components/admin/dashboard/DashboardSetDate")
 );
 
+interface DashboardType {
+  countTotalProductSold: number;
+  totalProductSold: ProductSoldType[];
+  totalSales: { sales: number; profit: number };
+  totalTransaction: number;
+}
+
 const Dashboard = () => {
-  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
-  const [profit, setProfit] = useState<number>(0);
-  const [sales, setSales] = useState<number>(0);
-  const [transaction, setTrasanction] = useState<number>(0);
-  const [productsSold, setProductsSold] = useState<ProductSoldType[]>([]);
-  const [productsMinStock, setProductsMinStock] = useState<
-    ProductMinStockType[]
-  >([]);
-  const [totalProductPage, setTotalProductPage] = useState<number>(0);
-  const [isLoadingProductContent, setIsLoadingProductContent] =
-    useState<boolean>(false);
+  const [route, setRoute] = useState<string>("");
 
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
@@ -50,63 +48,36 @@ const Dashboard = () => {
   const yearParams = searchParams.get("year");
   const productPageParams = searchParams.get("product-page");
 
-  const getData = useCallback(async () => {
-    try {
-      const api: string = "/api/admin/dashboard/get";
+  const fetcher: Fetcher<{
+    data: DashboardType | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
 
-      let route: string = "";
+  const { data, isLoading } = useSWR(route, fetcher);
 
-      const today = new Date();
+  useEffect(() => {
+    const api: string = "/api/admin/dashboard/get";
 
-      const page = productPageParams ? productPageParams : 1;
+    const today = new Date();
 
-      if (typeParams === "yearly" && yearParams) {
-        route = `${api}?type=yearly&year=${yearParams}&product-page=${page}`;
-      } else if (typeParams === "monthly") {
-        route = `${api}?type=monthly&year=${yearParams}&month=${monthParams}&product-page=${page}`;
-      } else if (typeParams === "daily") {
-        route = `${api}?type=daily&date=${dateParams}&product-page=${page}`;
-      } else {
-        route = `${api}?type=daily&date=${
+    const page = productPageParams ? productPageParams : 1;
+
+    if (typeParams === "yearly" && yearParams) {
+      setRoute(`${api}?type=yearly&year=${yearParams}&product-page=${page}`);
+    } else if (typeParams === "monthly") {
+      setRoute(
+        `${api}?type=monthly&year=${yearParams}&month=${monthParams}&product-page=${page}`
+      );
+    } else if (typeParams === "daily") {
+      setRoute(`${api}?type=daily&date=${dateParams}&product-page=${page}`);
+    } else {
+      setRoute(
+        `${api}?type=daily&date=${
           ConvertDateId(today).fullDateNumber
-        }&product-page=${page}`;
-      }
-
-      const res = await axios.get(route);
-
-      const data = res.data.data;
-
-      setProductsSold(data.totalProductSold);
-      setProfit(data.totalSales.profit);
-      setSales(data.totalSales.sales);
-      setTrasanction(data.totalTransaction);
-      setTotalProductPage(data.countTotalProductSold);
-
-      setIsLoadingContent(false);
-      setIsLoadingProductContent(false);
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-      setIsLoadingContent(false);
+        }&product-page=${page}`
+      );
     }
   }, [typeParams, yearParams, monthParams, dateParams, productPageParams]);
-
-  useEffect(() => {
-    getData();
-  }, [typeParams, yearParams, monthParams, dateParams, productPageParams]);
-
-  const getProductsMinStock = useCallback(async () => {
-    try {
-      const res = await axios.get("/api/admin/products/min-stock/get");
-
-      setProductsMinStock(res.data.data);
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-    }
-  }, []);
-
-  useEffect(() => {
-    getProductsMinStock();
-  }, []);
 
   useEffect(() => {
     setIsLoadingPage(false);
@@ -122,7 +93,7 @@ const Dashboard = () => {
 
           <Title title="Dashboard" />
 
-          {isLoadingContent ? (
+          {isLoading ? (
             <ContentLoading />
           ) : (
             <>
@@ -131,26 +102,36 @@ const Dashboard = () => {
               <div className="w-full grid grid-cols-3 gap-5 mb-5">
                 <DashboardCard
                   title="Total Pesanan"
-                  value={transaction ? `${transaction} pesanan` : "0"}
+                  value={
+                    data?.data?.totalTransaction
+                      ? `${data.data.totalTransaction} pesanan`
+                      : "0"
+                  }
                 />
                 <DashboardCard
                   title="Total Penjualan"
-                  value={ConvertIDR(sales)}
+                  value={ConvertIDR(
+                    data?.data?.totalSales.sales
+                      ? data?.data?.totalSales.sales
+                      : 0
+                  )}
                 />
                 <DashboardCard
                   title="Total Keuntungan"
-                  value={ConvertIDR(profit)}
+                  value={ConvertIDR(
+                    data?.data?.totalSales.profit
+                      ? data?.data?.totalSales.profit
+                      : 0
+                  )}
                 />
               </div>
 
               <div className="w-full grid grid-cols-2 gap-5">
                 <DashboardProductSold
-                  productsSold={productsSold}
-                  totalPage={totalProductPage}
-                  isLoadingProductContent={isLoadingProductContent}
-                  setIsLoadingProductContent={setIsLoadingProductContent}
+                  productsSold={data?.data?.totalProductSold}
+                  totalPage={data?.data?.countTotalProductSold}
                 />
-                <DashboardProductMinStock productsMinStock={productsMinStock} />
+                <DashboardProductMinStock />
               </div>
             </>
           )}

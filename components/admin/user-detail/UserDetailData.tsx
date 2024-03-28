@@ -1,11 +1,16 @@
-import { AdminUserType } from "@/types/UserType";
 import React from "react";
 
+import { AdminUserType } from "@/types/UserType";
+
 interface Props {
-  user: AdminUserType;
+  user: AdminUserType | undefined;
 }
 
 const UserDetailData: React.FC<Props> = ({ user }) => {
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="admin__card">
       <div className="w-full flex mb-2">

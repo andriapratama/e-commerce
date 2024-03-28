@@ -28,16 +28,14 @@ import StatusOrder from "../StatusOrder";
 import { StatusPayment } from "../StatusPayment";
 
 interface Props {
-  orders: AdminUserOrderType[];
+  orders: AdminUserOrderType[] | undefined;
   setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
-  setIsLoadingOrderContent: Dispatch<SetStateAction<boolean>>;
-  totalPage: number;
+  totalPage: number | undefined;
 }
 
 const UserDetailOrder: React.FC<Props> = ({
   orders,
   setIsLoadingPage,
-  setIsLoadingOrderContent,
   totalPage,
 }) => {
   const router = useRouter();
@@ -71,7 +69,7 @@ const UserDetailOrder: React.FC<Props> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {orders.length > 0 ? (
+          {orders ? (
             orders.map((order: AdminUserOrderType, index) => (
               <TableRow key={index}>
                 <TableCell>{ConvertDate(order.createdAt)}</TableCell>
@@ -122,7 +120,6 @@ const UserDetailOrder: React.FC<Props> = ({
       <div className="mb-5">
         <Pagination
           totalPage={totalPage}
-          setIsLoadingContent={setIsLoadingOrderContent}
           handleRouter={handleRouterPagination}
           pageParams={pageParams ? parseInt(pageParams) : 1}
         />

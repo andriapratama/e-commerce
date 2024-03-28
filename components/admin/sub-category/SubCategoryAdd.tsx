@@ -1,16 +1,14 @@
 "use client";
 
-import { z } from "zod";
 import axios from "axios";
-import { toast } from "react-toastify";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { handleSetSlug } from "@/utils/HandleSetSlug";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
+import { z } from "zod";
+
 import ButtonLoading from "@/components/ButtonLoading";
-import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -19,6 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -26,6 +25,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useGetCategoriesHook } from "@/hooks/admin/CategoryHook";
+import { handleSetSlug } from "@/utils/HandleSetSlug";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
   name: z.string().min(3, "Nama sub kategori minimal 3 karakter"),
@@ -33,16 +35,14 @@ const formSchema = z.object({
   category: z.string().min(1, "Kategori tidak boleh kosong"),
 });
 
-interface Props {
-  getSubCategories: () => void;
-}
-
-const SubCategoryAdd: React.FC<Props> = ({ getSubCategories }) => {
+const SubCategoryAdd = () => {
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
   const [categorySlug, setCategorySlug] = useState<string>("");
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { mutate } = useSWRConfig();
 
   const { categories } = useGetCategoriesHook();
 
@@ -65,7 +65,7 @@ const SubCategoryAdd: React.FC<Props> = ({ getSubCategories }) => {
         categorySlug,
       });
 
-      getSubCategories();
+      mutate("/api/admin/sub-categories/get");
 
       toast.success("Sub kategori berhasil disimpan");
 
@@ -143,7 +143,7 @@ const SubCategoryAdd: React.FC<Props> = ({ getSubCategories }) => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {categories.map((category) => (
+                  {categories?.map((category) => (
                     <SelectItem
                       value={category.slug}
                       key={category.name}

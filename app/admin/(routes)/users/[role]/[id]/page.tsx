@@ -3,8 +3,9 @@
 import axios from "axios";
 import dynamic from "next/dynamic";
 import { useParams, useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import React, { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import useSWR, { Fetcher } from "swr";
 
 import ContentLoading from "@/components/ContentLoading";
 import PageLoading from "@/components/PageLoading";
@@ -19,28 +20,14 @@ const UserDetailOrder = dynamic(
   () => import("@/components/admin/user-detail/UserDetailOrder")
 );
 
-const UserDetail = () => {
-  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
+interface User extends AdminUserType {
+  order: AdminUserOrderType[];
+}
 
-  const [isLoadingOrderContent, setIsLoadingOrderContent] =
-    useState<boolean>(false);
+const UserDetail = () => {
+  const [route, setRoute] = useState<string>("");
 
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
-
-  const [user, setUser] = useState<AdminUserType>({
-    id: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    role: "member",
-    address: null,
-    phone: null,
-    active: false,
-  });
-
-  const [orders, setOrders] = useState<AdminUserOrderType[]>([]);
-
-  const [totalPage, setTotalPage] = useState<number>(0);
 
   const params = useParams();
 
@@ -54,26 +41,16 @@ const UserDetail = () => {
 
   const pageNow = parseInt(pageParams ? pageParams : "1");
 
-  const getUser = useCallback(async () => {
-    try {
-      const res = await axios.get(`/api/admin/users/${id}/get?page=${pageNow}`);
+  const fetcher: Fetcher<{
+    data: { user: User; totalPage: number } | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
 
-      setUser(res.data.data.user);
-
-      setOrders(res.data.data.user.order);
-
-      setTotalPage(res.data.data.totalPage);
-
-      setIsLoadingContent(false);
-      setIsLoadingOrderContent(false);
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-    }
-  }, [id, pageNow]);
+  const { data, isLoading } = useSWR(route, fetcher);
 
   useEffect(() => {
-    getUser();
-  }, [getUser]);
+    setRoute(`/api/admin/users/${id}/get?page=${pageNow}`);
+  }, [id, pageNow]);
 
   useEffect(() => {
     setIsLoadingPage(false);
@@ -97,22 +74,17 @@ const UserDetail = () => {
             }`}
           />
 
-          {isLoadingContent ? (
+          {isLoading ? (
             <ContentLoading className="mt-10" />
           ) : (
             <React.Fragment>
-              <UserDetailData user={user} />
+              <UserDetailData user={data?.data?.user} />
 
-              {isLoadingOrderContent ? (
-                <ContentLoading className="mt-10" />
-              ) : (
-                <UserDetailOrder
-                  orders={orders}
-                  setIsLoadingPage={setIsLoadingPage}
-                  setIsLoadingOrderContent={setIsLoadingOrderContent}
-                  totalPage={totalPage}
-                />
-              )}
+              <UserDetailOrder
+                orders={data?.data?.user.order}
+                setIsLoadingPage={setIsLoadingPage}
+                totalPage={data?.data?.totalPage}
+              />
             </React.Fragment>
           )}
         </div>

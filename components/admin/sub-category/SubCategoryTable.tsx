@@ -2,7 +2,13 @@
 
 import { MoreHorizontal } from "lucide-react";
 import React, { Dispatch, SetStateAction } from "react";
-import { SubCategoryType } from "@/types/CategoryType";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -11,15 +17,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { SubCategoryType } from "@/types/CategoryType";
 
 interface Props {
-  subCategories: SubCategoryType[];
+  subCategories: SubCategoryType[] | undefined;
   setEditData: Dispatch<SetStateAction<SubCategoryType>>;
 }
 
@@ -36,7 +37,7 @@ const SubCategoryTable: React.FC<Props> = ({ subCategories, setEditData }) => {
             <TableHead className="text-center">Aksi</TableHead>
           </TableRow>
         </TableHeader>
-        {subCategories.length > 0 ? (
+        {subCategories ? (
           <TableBody>
             {subCategories.map((subCategory, index) => (
               <TableRow key={subCategory.name}>

@@ -1,4 +1,11 @@
+"use client";
+
+import axios from "axios";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React from "react";
+import useSWR, { Fetcher } from "swr";
+
 import {
   Table,
   TableBody,
@@ -7,18 +14,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Image from "next/image";
 import { ProductMinStockType } from "@/types/ProductType";
-import { useRouter } from "next/navigation";
 
-interface Props {
-  productsMinStock: ProductMinStockType[];
-}
-
-const DashboardProductMinStock: React.FC<Props> = ({ productsMinStock }) => {
+const DashboardProductMinStock = () => {
   const router = useRouter();
 
-  if (productsMinStock.length > 0) {
+  const fetcher: Fetcher<{
+    data: ProductMinStockType[] | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
+
+  const { data } = useSWR("/api/admin/products/min-stock/get", fetcher);
+
+  if (data?.data) {
     return (
       <div className="w-full h-fit rounded-xl border shadow p-6 bg-white">
         <div className="font-medium mb-5">Sisa Stok Produk</div>
@@ -32,7 +40,7 @@ const DashboardProductMinStock: React.FC<Props> = ({ productsMinStock }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {productsMinStock.map((product, index) => (
+            {data.data.map((product, index) => (
               <TableRow key={index}>
                 <TableCell>
                   <Image

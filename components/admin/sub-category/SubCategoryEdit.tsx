@@ -1,16 +1,14 @@
 "use client";
 
-import { z } from "zod";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { handleSetSlug } from "@/utils/HandleSetSlug";
-import { zodResolver } from "@hookform/resolvers/zod";
-import ButtonLoading from "@/components/ButtonLoading";
-import { CategoryType, SubCategoryType } from "@/types/CategoryType";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
+import { z } from "zod";
+
+import ButtonLoading from "@/components/ButtonLoading";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -19,6 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -26,6 +25,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CategoryType, SubCategoryType } from "@/types/CategoryType";
+import { handleSetSlug } from "@/utils/HandleSetSlug";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
   name: z.string().min(3, "Nama sub kategori minimal 3 karakter"),
@@ -34,21 +36,21 @@ const formSchema = z.object({
 });
 
 interface Props {
-  getSubCategories: () => void;
   editData: SubCategoryType;
   setEditData: Dispatch<SetStateAction<SubCategoryType>>;
-  categories: CategoryType[];
+  categories: CategoryType[] | undefined;
 }
 
 const SubCategoryEdit: React.FC<Props> = ({
   editData,
-  getSubCategories,
   setEditData,
   categories,
 }) => {
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
   const [categorySlug, setCategorySlug] = useState<string>("");
+
+  const { mutate } = useSWRConfig();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -77,7 +79,7 @@ const SubCategoryEdit: React.FC<Props> = ({
         categorySlug,
       });
 
-      getSubCategories();
+      mutate("/api/admin/sub-categories/get");
 
       toast.success("Sub kategori berhasil diubah");
 
@@ -163,7 +165,7 @@ const SubCategoryEdit: React.FC<Props> = ({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {categories.map((category) => (
+                  {categories?.map((category) => (
                     <SelectItem
                       value={category.slug}
                       key={category.name}

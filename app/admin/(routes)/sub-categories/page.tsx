@@ -32,8 +32,7 @@ const SubCategories = () => {
     },
   });
 
-  const { subCategories, getSubCategories, isLoadingContent } =
-    useGetSubCategoryHook();
+  const { subCategories, isLoadingContent } = useGetSubCategoryHook();
 
   const { categories } = useGetCategoriesHook();
 
@@ -57,11 +56,10 @@ const SubCategories = () => {
                 <SubCategoryEdit
                   editData={editData}
                   setEditData={setEditData}
-                  getSubCategories={getSubCategories}
                   categories={categories}
                 />
               ) : (
-                <SubCategoryAdd getSubCategories={getSubCategories} />
+                <SubCategoryAdd />
               )}
 
               {isLoadingContent ? (
