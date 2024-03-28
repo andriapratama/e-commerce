@@ -1,26 +1,26 @@
 "use client";
 
+import Image from "next/image";
+import React from "react";
+
 import { PromoProductType, PromoType } from "@/types/PromoType";
 import { ConvertDateId } from "@/utils/ConvertDateId";
 import { ConvertIDR } from "@/utils/ConvertIDR";
-import Image from "next/image";
-import React from "react";
-import PromoDetailProductsTable from "./PromoDetailProductsTable";
+
 import PromoEditButton from "../promo-edit/PromoEditButton";
+import PromoDetailProductsTable from "./PromoDetailProductsTable";
 
 interface Props {
-  getPromo: () => void;
-  promo: PromoType;
-  provisions: PromoProductType[];
-  bonus: PromoProductType[];
+  promo: PromoType | undefined;
+  provisions: PromoProductType[] | undefined;
+  bonus: PromoProductType[] | undefined;
 }
 
-const PromoDetailContent: React.FC<Props> = ({
-  getPromo,
-  promo,
-  provisions,
-  bonus,
-}) => {
+const PromoDetailContent: React.FC<Props> = ({ promo, provisions, bonus }) => {
+  if (!promo) {
+    return null;
+  }
+
   return (
     <React.Fragment>
       <div className="w-full mb-5 flex justify-center">
@@ -36,7 +36,7 @@ const PromoDetailContent: React.FC<Props> = ({
 
       <div className="admin__card w-full h-max">
         <div className="w-full flex justify-end mb-5">
-          <PromoEditButton getPromo={getPromo} promo={promo} />
+          <PromoEditButton promo={promo} />
         </div>
 
         <div className="admin-promo-detail__group">

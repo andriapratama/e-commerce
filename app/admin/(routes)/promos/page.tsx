@@ -2,9 +2,10 @@
 
 import axios from "axios";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import useSWR, { Fetcher } from "swr";
 
 import ContentLoading from "@/components/ContentLoading";
 import PageLoading from "@/components/PageLoading";
@@ -15,23 +16,24 @@ const Title = dynamic(() => import("@/components/admin/Title"));
 const PromoTable = dynamic(() => import("@/components/admin/promo/PromoTable"));
 
 const Promos = () => {
-  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
-  const [promos, setPromos] = useState<PromoType[]>([]);
+  const [route, setRoute] = useState<string>("");
+
   const router = useRouter();
+
+  const searchParams = useSearchParams();
 
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
-  const getPromos = useCallback(async () => {
-    try {
-      const res = await axios.get(`/api/admin/promos/get?page=1`);
+  const pageParams = searchParams.get("page");
 
-      setPromos(res.data.data.promos);
-      setIsLoadingContent(false);
-    } catch (error: any) {
-      setIsLoadingContent(false);
-      toast.error(error.response.data.message);
-    }
-  }, []);
+  const pageNow = parseInt(pageParams ? pageParams : "1");
+
+  const fetcher: Fetcher<{
+    data: { promos: PromoType[]; totalPage: number } | undefined;
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
+
+  const { data, isLoading } = useSWR(route, fetcher);
 
   const handleAddPromos = () => {
     setIsLoadingPage(true);
@@ -39,8 +41,8 @@ const Promos = () => {
   };
 
   useEffect(() => {
-    getPromos();
-  }, [getPromos]);
+    setRoute(`/api/admin/promos/get?page=${pageNow}`);
+  }, [pageNow]);
 
   useEffect(() => {
     setIsLoadingPage(false);
@@ -60,14 +62,15 @@ const Promos = () => {
             handleClick={handleAddPromos}
           />
 
-          {isLoadingContent ? (
+          {isLoading ? (
             <ContentLoading />
           ) : (
             <div className="w-full flex justify-center">
               <div className="w-[80%]">
                 <PromoTable
-                  promos={promos}
+                  promos={data?.data?.promos}
                   setIsLoadingPage={setIsLoadingPage}
+                  totalPage={data?.data?.totalPage}
                 />
               </div>
             </div>

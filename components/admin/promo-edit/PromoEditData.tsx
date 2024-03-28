@@ -1,5 +1,7 @@
 "use client";
 
+import axios from "axios";
+import { useParams, useRouter } from "next/navigation";
 import React, {
   Dispatch,
   SetStateAction,
@@ -7,6 +9,12 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -22,16 +30,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { PromoType } from "@/types/PromoType";
-import { toast } from "react-toastify";
-import { handleSetSlug } from "@/utils/HandleSetSlug";
 import { Input } from "@/components/ui/input";
-import { handleSetNumber } from "@/utils/HandleSetNumber";
-import { Textarea } from "@/components/ui/textarea";
-import AutosizeTextArea from "@/utils/AutosizeTextArea";
 import {
   Select,
   SelectContent,
@@ -39,14 +38,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import ButtonLoading from "@/components/ButtonLoading";
+import { Textarea } from "@/components/ui/textarea";
+import { PromoType } from "@/types/PromoType";
+import AutosizeTextArea from "@/utils/AutosizeTextArea";
+import { handleSetNumber } from "@/utils/HandleSetNumber";
+import { handleSetSlug } from "@/utils/HandleSetSlug";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import WarningAlert from "../WarningAlert";
-import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
 
 interface Props {
-  getPromo: () => void;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   promo: PromoType;
@@ -73,12 +74,7 @@ const formSchema = z.object({
   description: z.string().optional(),
 });
 
-const PromoEditData: React.FC<Props> = ({
-  isOpen,
-  setIsOpen,
-  promo,
-  getPromo,
-}) => {
+const PromoEditData: React.FC<Props> = ({ isOpen, setIsOpen, promo }) => {
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
   const [firstPrice, setFirstPrice] = useState<string>("0");
@@ -96,9 +92,11 @@ const PromoEditData: React.FC<Props> = ({
 
   const params = useParams();
 
-  const paramsSlug = params.id;
+  const slugParams = params.id;
 
   const router = useRouter();
+
+  const { mutate } = useSWRConfig();
 
   useEffect(() => {
     setName(promo.name);
@@ -141,7 +139,7 @@ const PromoEditData: React.FC<Props> = ({
       setIsLoading(true);
 
       const res = await axios.patch(
-        `/api/admin/promos/${paramsSlug}/data/patch`,
+        `/api/admin/promos/${slugParams}/data/patch`,
         {
           name,
           slug,
@@ -154,10 +152,10 @@ const PromoEditData: React.FC<Props> = ({
 
       const resSlug: string = res.data.data.slug;
 
-      if (resSlug !== paramsSlug) {
+      if (resSlug !== slugParams) {
         router.push(`/admin/promos/${resSlug}`);
       } else {
-        getPromo();
+        mutate(`/api/admin/promos/${slugParams}/get`);
       }
 
       toast.success("Data promo berhasil disimpan");

@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import React from "react";
+
 import {
   Table,
   TableBody,
@@ -9,13 +11,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ConvertIDR } from "@/utils/ConvertIDR";
 import { PromoProductType } from "@/types/PromoType";
-import Image from "next/image";
+import { ConvertIDR } from "@/utils/ConvertIDR";
 
 interface Props {
   title: string;
-  products: PromoProductType[];
+  products: PromoProductType[] | undefined;
 }
 
 const PromoDetailProductsTable: React.FC<Props> = ({ products, title }) => {
@@ -34,7 +35,7 @@ const PromoDetailProductsTable: React.FC<Props> = ({ products, title }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products.length > 0 ? (
+          {products ? (
             products.map((product: PromoProductType, index) => (
               <TableRow key={index}>
                 <TableCell className="text-center">{index + 1}</TableCell>

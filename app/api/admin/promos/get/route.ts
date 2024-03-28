@@ -56,7 +56,7 @@ export const GET = async (req: NextRequest) => {
       });
     }
 
-    const totalData = await prismadb.product.count();
+    const totalData = await prismadb.promo.count();
 
     const totalPage = Math.ceil(totalData / take);
 

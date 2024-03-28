@@ -1,6 +1,8 @@
 "use client";
 
+import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,16 +11,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { PromoType } from "@/types/PromoType";
+
 import PromoEditData from "./PromoEditData";
 import PromoEditImage from "./PromoEditImage";
-import { useParams, useRouter } from "next/navigation";
 
 interface Props {
-  getPromo: () => void;
   promo: PromoType;
 }
 
-const PromoEditButton: React.FC<Props> = ({ getPromo, promo }) => {
+const PromoEditButton: React.FC<Props> = ({ promo }) => {
   const [isOpenEditData, setIsOpenEditData] = useState<boolean>(false);
   const [isOpenEditImage, setIsOpenEditImage] = useState<boolean>(false);
 
@@ -56,17 +57,12 @@ const PromoEditButton: React.FC<Props> = ({ getPromo, promo }) => {
       </DropdownMenu>
 
       <PromoEditData
-        getPromo={getPromo}
         promo={promo}
         isOpen={isOpenEditData}
         setIsOpen={setIsOpenEditData}
       />
 
-      <PromoEditImage
-        getPromo={getPromo}
-        isOpen={isOpenEditImage}
-        setIsOpen={setIsOpenEditImage}
-      />
+      <PromoEditImage isOpen={isOpenEditImage} setIsOpen={setIsOpenEditImage} />
     </React.Fragment>
   );
 };
