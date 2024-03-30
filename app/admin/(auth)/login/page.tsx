@@ -50,16 +50,16 @@ const AdminLogin = async () => {
     if (session?.user.role === "superAdmin" || session?.user.role === "admin") {
       isAutehncticated = true;
     }
-
-    return (
-      <div className="w-full h-screen flex justify-center items-center">
-        <LoginContent />
-      </div>
-    );
   } catch (error) {
   } finally {
     if (isAutehncticated === true) redirect("/admin/orders");
   }
+
+  return (
+    <div className="w-full h-screen flex justify-center items-center">
+      <LoginContent />
+    </div>
+  );
 };
 
 export default AdminLogin;
