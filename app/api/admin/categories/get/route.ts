@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 
+export const dynamic = "force-dynamic";
+
 export const GET = async (req: Request) => {
   try {
     const { validation } = await ApiAdminValidation();

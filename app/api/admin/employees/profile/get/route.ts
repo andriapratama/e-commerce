@@ -1,5 +1,8 @@
-import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 import { NextResponse } from "next/server";
+
+import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
+
+export const dynamic = "force-dynamic";
 
 export const GET = async (req: Request) => {
   try {

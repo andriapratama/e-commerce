@@ -1,3 +1,5 @@
+import axios from "axios";
+import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
@@ -8,6 +10,37 @@ import { authOptions } from "@/lib/auth";
 import AdminLoading from "./loading";
 
 const AdminNavbar = dynamic(() => import("@/components/admin/navbar/Navbar"));
+
+export async function generateMetadata(): Promise<Metadata> {
+  let logo: string = "";
+
+  try {
+    const res = await axios.get(`${process.env.WEB_URL}/api/setting/logo/get`);
+
+    logo = res.data.data.image;
+  } catch (error) {}
+
+  const desc =
+    "Kelola situs dengan mudah. Atur semua dari satu dashboard. Optimalisasi mudah dengan admin kami.";
+
+  const title = "Admin";
+
+  return {
+    title: title,
+    description: desc,
+    icons: {
+      icon: logo,
+    },
+    openGraph: {
+      type: "website",
+      url: process.env.WEB_URL,
+      title: title,
+      description: desc,
+      siteName: "Bottle Time",
+      images: [logo],
+    },
+  };
+}
 
 export default async function AdminLayout({
   children,

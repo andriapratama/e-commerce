@@ -18,8 +18,6 @@ const UserTable = dynamic(() => import("@/components/admin/user/UserTable"));
 const Users = () => {
   const [users, setUsers] = useState<AdminUserType[]>([]);
 
-  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true);
-
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
   const [totalPage, setTotalPage] = useState<number>(0);
@@ -55,8 +53,6 @@ const Users = () => {
       setUsers(res.data.data.users);
 
       setTotalPage(res.data.data.totalPage);
-
-      setIsLoadingContent(false);
     } catch (error: any) {
       toast.error(error.response.data.message);
     }
@@ -94,16 +90,11 @@ const Users = () => {
             <UserSearch />
           </div>
 
-          {isLoadingContent ? (
-            <ContentLoading className="mt-10" />
-          ) : (
-            <UserTable
-              users={users}
-              setIsLoadingPage={setIsLoadingPage}
-              setIsLoadingContent={setIsLoadingContent}
-              totalPage={totalPage}
-            />
-          )}
+          <UserTable
+            users={users}
+            setIsLoadingPage={setIsLoadingPage}
+            totalPage={totalPage}
+          />
         </div>
       </section>
     );

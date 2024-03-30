@@ -1,5 +1,6 @@
-import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
+
+import prismadb from "@/lib/prismadb";
 
 export const GET = async () => {
   try {
@@ -18,7 +19,7 @@ export const GET = async () => {
       { status: 200 }
     );
   } catch (error) {
-    console.log("[HERO_GET] " + error);
+    console.log("[CLIENT_HERO_GET] " + error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };

@@ -1,8 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import React, { Dispatch, SetStateAction } from "react";
 import { MoreHorizontal } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import React, { Dispatch, SetStateAction } from "react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,22 +20,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AdminUserType } from "@/types/UserType";
+
 import Pagination from "../Pagination";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface Props {
   users: AdminUserType[];
   totalPage: number;
   setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
-  setIsLoadingContent: Dispatch<SetStateAction<boolean>>;
 }
 
-const UserTable: React.FC<Props> = ({
-  users,
-  setIsLoadingPage,
-  setIsLoadingContent,
-  totalPage,
-}) => {
+const UserTable: React.FC<Props> = ({ users, setIsLoadingPage, totalPage }) => {
   const router = useRouter();
 
   const pathName = usePathname();
@@ -117,7 +113,6 @@ const UserTable: React.FC<Props> = ({
 
       <Pagination
         totalPage={totalPage}
-        setIsLoadingContent={setIsLoadingContent}
         pageParams={parseInt(pageParams ? pageParams : "1")}
         handleRouter={handleRouterPagination}
       />

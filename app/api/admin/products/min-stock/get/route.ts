@@ -1,7 +1,10 @@
+import { NextResponse } from "next/server";
+
 import prismadb from "@/lib/prismadb";
 import { ProductMinStockType } from "@/types/ProductType";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
-import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 export const GET = async (req: Request) => {
   try {

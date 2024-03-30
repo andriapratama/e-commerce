@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
   } catch (error) {}
 
   const desc =
-    "Treat yourself to top-tier beverages! Explore premium beer, spirits, and wine at [Store Name]. Fast delivery available.";
+    "Treat yourself to top-tier beverages! Explore premium beer, spirits, and wine at Bottle Time. Fast delivery available.";
 
   const title = "Home | Bottle Time";
 

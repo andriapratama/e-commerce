@@ -1,6 +1,9 @@
+import { NextResponse } from "next/server";
+
 import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
-import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 export const GET = async (req: Request) => {
   try {
@@ -32,7 +35,7 @@ export const GET = async (req: Request) => {
       { status: 200 }
     );
   } catch (error) {
-    console.log("[CATEGORY_GET]", error);
+    console.log("[EMPLOYEE_GET]", error);
     return new NextResponse("Server error", { status: 500 });
   }
 };
