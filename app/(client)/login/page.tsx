@@ -13,14 +13,6 @@ const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
 const LoginForm = dynamic(() => import("@/components/client/login/LoginForm"));
 
 export async function generateMetadata(): Promise<Metadata> {
-  let logo: string = "";
-
-  try {
-    const res = await axios.get(`${process.env.WEB_URL}/api/setting/logo/get`);
-
-    logo = res.data.data.image;
-  } catch (error) {}
-
   const desc =
     "Welcome back! Login to access your account and enjoy personalized perks. Let's get started.";
 
@@ -35,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: title,
       description: desc,
       siteName: "Bottle Time",
-      images: [logo],
+      images: ["/logo.png"],
     },
     keywords: ["bottle time", "bottle times", ...keywords],
   };

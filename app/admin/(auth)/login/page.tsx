@@ -12,14 +12,6 @@ const LoginContent = dynamic(
 );
 
 export async function generateMetadata(): Promise<Metadata> {
-  let logo: string = "";
-
-  try {
-    const res = await axios.get(`${process.env.WEB_URL}/api/setting/logo/get`);
-
-    logo = res.data.data.image;
-  } catch (error) {}
-
   const desc =
     "Login ke dashboard admin kami. Kelola situs dengan mudah dari satu titik.";
 
@@ -29,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: title,
     description: desc,
     icons: {
-      icon: logo,
+      icon: "/logo.png",
     },
     openGraph: {
       type: "website",
@@ -37,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: title,
       description: desc,
       siteName: "Bottle Time",
-      images: [logo],
+      images: ["/logo.png"],
     },
   };
 }

@@ -21,14 +21,6 @@ const CartLocalTable = dynamic(
 const CartTable = dynamic(() => import("@/components/client/cart/CartTable"));
 
 export async function generateMetadata(): Promise<Metadata> {
-  let logo: string = "";
-
-  try {
-    const res = await axios.get(`${process.env.WEB_URL}/api/setting/logo/get`);
-
-    logo = res.data.data.image;
-  } catch (error) {}
-
   const desc =
     "Your cart: where great tastes meet convenience. Shop now for a delightful experience.";
 
@@ -43,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: title,
       description: desc,
       siteName: "Bottle Time",
-      images: [logo],
+      images: ["/logo.png"],
     },
     keywords: ["bottle time", "bottle times", ...keywords],
   };

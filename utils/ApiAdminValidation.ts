@@ -24,19 +24,23 @@ export const ApiAdminValidation = async () => {
       (validation.status = 401);
   }
 
-  const usernameSession = session?.user.username;
+  if (session) {
+    const usernameSession = session?.user.username;
 
-  const findEmployee = await prismadb.employee.findUnique({
-    where: {
-      username: usernameSession,
-    },
-  });
+    const findEmployee = await prismadb.employee.findUnique({
+      where: {
+        username: usernameSession,
+      },
+    });
 
-  if (!findEmployee) {
-    (validation.error = true),
-      (validation.message = "Employee is not found"),
-      (validation.status = 404);
+    if (!findEmployee) {
+      (validation.error = true),
+        (validation.message = "Employee is not found"),
+        (validation.status = 404);
+    }
+
+    return { validation, findEmployee, usernameSession };
   }
 
-  return { validation, findEmployee, usernameSession };
+  return { validation };
 };

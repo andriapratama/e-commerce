@@ -17,14 +17,6 @@ const CollectionContent = dynamic(
 );
 
 export async function generateMetadata(): Promise<Metadata> {
-  let logo: string = "";
-
-  try {
-    const res = await axios.get(`${process.env.WEB_URL}/api/setting/logo/get`);
-
-    logo = res.data.data.image;
-  } catch (error) {}
-
   const desc =
     "Discover premium beverages: wines, beers, spirits. Elevate every occasion with us. Cheers!";
 
@@ -39,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: title,
       description: desc,
       siteName: "Bottle Time",
-      images: [logo],
+      images: ["/logo.png"],
     },
     keywords: ["bottle time", "bottle times", ...keywords],
   };

@@ -12,14 +12,6 @@ import AdminLoading from "./loading";
 const AdminNavbar = dynamic(() => import("@/components/admin/navbar/Navbar"));
 
 export async function generateMetadata(): Promise<Metadata> {
-  let logo: string = "";
-
-  try {
-    const res = await axios.get(`${process.env.WEB_URL}/api/setting/logo/get`);
-
-    logo = res.data.data.image;
-  } catch (error) {}
-
   const desc =
     "Kelola situs dengan mudah. Atur semua dari satu dashboard. Optimalisasi mudah dengan admin kami.";
 
@@ -29,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: title,
     description: desc,
     icons: {
-      icon: logo,
+      icon: "/logo.png",
     },
     openGraph: {
       type: "website",
@@ -37,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: title,
       description: desc,
       siteName: "Bottle Time",
-      images: [logo],
+      images: ["/logo.png"],
     },
   };
 }

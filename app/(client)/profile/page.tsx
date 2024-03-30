@@ -18,14 +18,6 @@ const ProfileContent = dynamic(
 );
 
 export async function generateMetadata(): Promise<Metadata> {
-  let logo: string = "";
-
-  try {
-    const res = await axios.get(`${process.env.WEB_URL}/api/setting/logo/get`);
-
-    logo = res.data.data.image;
-  } catch (error) {}
-
   const desc =
     "Manage your profile effortlessly. Personalize your experience and stay updated.";
 
@@ -40,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: title,
       description: desc,
       siteName: "Bottle Time",
-      images: [logo],
+      images: ["/logo.png"],
     },
     keywords: ["bottle time", "bottle times", ...keywords],
   };

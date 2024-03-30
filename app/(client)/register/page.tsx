@@ -15,14 +15,6 @@ const RegisterForm = dynamic(
 );
 
 export async function generateMetadata(): Promise<Metadata> {
-  let logo: string = "";
-
-  try {
-    const res = await axios.get(`${process.env.WEB_URL}/api/setting/logo/get`);
-
-    logo = res.data.data.image;
-  } catch (error) {}
-
   const desc =
     "Join us now! Register for exclusive perks and seamless shopping experience.";
 
@@ -37,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: title,
       description: desc,
       siteName: "Bottle Time",
-      images: [logo],
+      images: ["/logo.png"],
     },
     keywords: ["bottle time", "bottle times", ...keywords],
   };

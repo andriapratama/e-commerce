@@ -1,8 +1,10 @@
+import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
 
+import { keywords } from "@/constant/Keywords";
 import { useCountCartsHook } from "@/hooks/client/CartHook";
 import { useGetAllDataCheckoutByEmail } from "@/hooks/client/CheckoutHook";
 import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
@@ -18,6 +20,27 @@ const CheckoutLocalContent = dynamic(
 const CheckoutContent = dynamic(
   () => import("@/components/client/checkout/CheckoutContent")
 );
+
+export async function generateMetadata(): Promise<Metadata> {
+  const desc =
+    "Efficient, user-friendly checkout page for smooth transactions. Simplify the process, enhance user experience, and drive conversions!";
+
+  const title = "Checkout | Bottle Time";
+
+  return {
+    title: title,
+    description: desc,
+    openGraph: {
+      type: "website",
+      url: `${process.env.WEB_URL}/checkout`,
+      title: title,
+      description: desc,
+      siteName: "Bottle Time",
+      images: ["/logo.png"],
+    },
+    keywords: ["bottle time", "bottle times", ...keywords],
+  };
+}
 
 const Checkout = async () => {
   const session = await getServerSession(authOptions);

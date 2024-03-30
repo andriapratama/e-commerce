@@ -22,14 +22,6 @@ const Products = dynamic(() => import("@/components/client/home/Products"));
 const Promo = dynamic(() => import("@/components/client/home/Promo"));
 
 export async function generateMetadata(): Promise<Metadata> {
-  let logo: string = "";
-
-  try {
-    const res = await axios.get(`${process.env.WEB_URL}/api/setting/logo/get`);
-
-    logo = res.data.data.image;
-  } catch (error) {}
-
   const desc =
     "Treat yourself to top-tier beverages! Explore premium beer, spirits, and wine at Bottle Time. Fast delivery available.";
 
@@ -44,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: title,
       description: desc,
       siteName: "Bottle Time",
-      images: [logo],
+      images: ["/logo.png"],
     },
     keywords: ["bottle time", "bottle times", ...keywords],
   };
