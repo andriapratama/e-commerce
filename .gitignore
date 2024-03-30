@@ -27,7 +27,6 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
-gojek.svg
 hero-1.webp
 hero-2.webp
 loading.webp
