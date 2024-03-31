@@ -1,8 +1,10 @@
 "use client";
 
+import axios from "axios";
 import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
 import React, { useState } from "react";
+import useSWR, { Fetcher } from "swr";
 
 import {
   Carousel,
@@ -13,18 +15,22 @@ import {
 } from "@/components/ui/carousel";
 import { HeroClientType } from "@/types/HeroType";
 
-interface Props {
-  heros: HeroClientType[];
-}
-
-const Hero: React.FC<Props> = ({ heros }) => {
+const Hero = () => {
   const [isActive, setIsActive] = useState<boolean>(false);
+
+  const fetcher: Fetcher<{ data: HeroClientType[]; message: string }> = (
+    url: string
+  ) => axios.get(url).then((res) => res.data);
+
+  const { data } = useSWR("/api/hero/get", fetcher);
+
+  console.log(data);
 
   const plugin = React.useRef(
     Autoplay({ delay: 10000, stopOnInteraction: true })
   );
 
-  if (!heros) {
+  if (!data?.data || data.data.length < 1) {
     return null;
   }
 
@@ -45,7 +51,7 @@ const Hero: React.FC<Props> = ({ heros }) => {
       }}
     >
       <CarouselContent className="w-full !ml-0 h-[220px] md:h-[320px] lg:h-[650px] !relative">
-        {heros.map((hero, index) => (
+        {data.data.map((hero, index) => (
           <CarouselItem
             className="w-full h-full flex justify-center items-center !pl-0"
             key={index}

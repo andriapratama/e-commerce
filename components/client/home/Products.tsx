@@ -27,7 +27,7 @@ const Products: React.FC<ProductProps> = ({ title, products }) => {
 
   const { status } = useSession();
 
-  if (!products) return null;
+  if (products.length < 1) return null;
 
   return (
     <React.Fragment>

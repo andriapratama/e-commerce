@@ -30,11 +30,11 @@ const Promo = () => {
     message: string;
   }> = (url: string) => axios.get(url).then((res) => res.data);
 
-  const { data } = useSWR("/api/promo/get", fetcher);
+  const { data } = useSWR(`/api/promo/get`, fetcher);
 
   const promos = data?.data;
 
-  if (!promos) {
+  if (!promos || promos.length < 1) {
     return null;
   }
 

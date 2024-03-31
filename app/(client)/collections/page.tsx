@@ -62,8 +62,6 @@ const Collections = async ({ searchParams }: any) => {
 
     thisProducts = products;
     thisTotalPage = totalPage;
-
-    console.log(products);
   } catch (error) {}
 
   const session = await getServerSession(authOptions);

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
@@ -8,11 +7,9 @@ import { ToastContainer } from "react-toastify";
 
 import { keywords } from "@/constant/Keywords";
 import { useCountCartsHook } from "@/hooks/client/CartHook";
-import { useGetAllHerosData } from "@/hooks/client/HeroHook";
 import { useGetSpecialProductsHook } from "@/hooks/client/useGetSpecialProductsHook";
 import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
 import { authOptions } from "@/lib/auth";
-import { HeroClientType } from "@/types/HeroType";
 import { ClientProductType } from "@/types/ProductType";
 
 const Footer = dynamic(() => import("@/components/client/Footer"));
@@ -76,21 +73,17 @@ const Home = async () => {
     }
   }
 
-  let thisHeros: HeroClientType[] = [];
   let bestProducts: ClientProductType[] = [];
   let newProducts: ClientProductType[] = [];
   let saleProducts: ClientProductType[] = [];
 
   try {
-    const { heros } = await useGetAllHerosData();
-
     const { products: bestProduct } = await useGetSpecialProductsHook("best");
 
     const { products: newProduct } = await useGetSpecialProductsHook("new");
 
     const { products } = await useGetSpecialProductsHook("sale");
 
-    thisHeros = heros;
     bestProducts = bestProduct;
     newProducts = newProduct;
     saleProducts = products;
@@ -106,7 +99,7 @@ const Home = async () => {
         ) : (
           <Navbar />
         )}
-        <Hero heros={thisHeros} />
+        <Hero />
         <Products title="best seller" products={bestProducts} />
         <Products title="new" products={newProducts} />
         <Products title="sale" products={saleProducts} />
