@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
@@ -9,6 +8,7 @@ import { keywords } from "@/constant/Keywords";
 import { useCountCartsHook } from "@/hooks/client/CartHook";
 import { useGetAllProductsHook } from "@/hooks/client/ProductHook";
 import { authOptions } from "@/lib/auth";
+import { ClientProductType } from "@/types/ProductType";
 
 const Footer = dynamic(() => import("@/components/client/Footer"));
 const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
@@ -48,12 +48,23 @@ const Collections = async ({ searchParams }: any) => {
 
   let thisCountCarts: number = 0;
 
-  const { products, totalPage } = await useGetAllProductsHook(
-    categoryParams,
-    subCategoryParams,
-    statusParams,
-    pageParams
-  );
+  let thisProducts: ClientProductType[] = [];
+
+  let thisTotalPage: number = 0;
+
+  try {
+    const { products, totalPage } = await useGetAllProductsHook(
+      categoryParams,
+      subCategoryParams,
+      statusParams,
+      pageParams
+    );
+
+    thisProducts = products;
+    thisTotalPage = totalPage;
+
+    console.log(products);
+  } catch (error) {}
 
   const session = await getServerSession(authOptions);
 
@@ -78,7 +89,7 @@ const Collections = async ({ searchParams }: any) => {
       ) : (
         <Navbar />
       )}
-      <CollectionContent products={products} totalPage={totalPage} />
+      <CollectionContent products={thisProducts} totalPage={thisTotalPage} />
       <Footer />
     </section>
   );

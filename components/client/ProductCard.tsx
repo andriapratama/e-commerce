@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { ShoppingCart } from "lucide-react";
-import { Junge, Lugrasimo } from "next/font/google";
+import { Junge } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,13 +15,6 @@ import { ClientProductType } from "@/types/ProductType";
 import { ConvertIDR } from "@/utils/ConvertIDR";
 
 import LoadingGif from "../LoadingGif";
-
-const lugrasimo = Lugrasimo({
-  weight: "400",
-  style: "normal",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const junge = Junge({
   weight: "400",
@@ -125,7 +118,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, status }) => {
         </div>
 
         <div
-          className={`w-full text-center ${lugrasimo.className} lg:text-sm text-xs text-yellow-600 mt-4`}
+          className={`w-full text-center lg:text-sm text-xs text-yellow-600 mt-4 ${junge.className}`}
         >
           {product.category.name}
         </div>
