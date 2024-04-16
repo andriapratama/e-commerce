@@ -3,6 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 
+export const dynamic = "force-dynamic";
+export const dynamicParams = false;
+export const revalidate = 0;
+
 export const GET = async (
   req: NextRequest,
   { params }: { params: { id: string } }

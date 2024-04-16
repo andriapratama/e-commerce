@@ -1,12 +1,7 @@
 "use client";
 
 import React from "react";
-import CartLocalTotal from "./CartLocalTotal";
-import { ToastContainer } from "react-toastify";
-import { CartLocalType } from "@/types/CartType";
-import CartLocalTableData from "./CartLocalTableData";
-import { useCartContext } from "@/context/CartContext";
-import CartLocalMobileTableData from "./CartLocalMobileTableData";
+
 import {
   Table,
   TableBody,
@@ -15,14 +10,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useCartContext } from "@/context/CartContext";
+import { CartLocalType } from "@/types/CartType";
+
+import CartLocalMobileTableData from "./CartLocalMobileTableData";
+import CartLocalTableData from "./CartLocalTableData";
+import CartLocalTotal from "./CartLocalTotal";
 
 const CartLocalTable = () => {
   const { carts } = useCartContext();
 
   return (
     <div className="w-full lg:min-h-[calc(100vh-536px)] md:min-h-[calc(100vh-487px)]">
-      <ToastContainer />
-
       <div className="w-full lg:flex justify-center lg:mt-[150px] md:mt-[100px] font-serif hidden">
         <div className="w-[80%]">
           <Table className="bg-white rounded-md">

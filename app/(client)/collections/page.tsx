@@ -1,17 +1,11 @@
 import { Metadata } from "next";
-import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
-import { redirect } from "next/navigation";
 import React from "react";
 
 import { keywords } from "@/constant/Keywords";
-import { useCountCartsHook } from "@/hooks/client/CartHook";
 import { useGetAllProductsHook } from "@/hooks/client/ProductHook";
-import { authOptions } from "@/lib/auth";
 import { ClientProductType } from "@/types/ProductType";
 
-const Footer = dynamic(() => import("@/components/client/Footer"));
-const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
 const CollectionContent = dynamic(
   () => import("@/components/client/collection/CollectionContent")
 );
@@ -25,13 +19,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: title,
     description: desc,
+    metadataBase: new URL(`${process.env.WEB_URL}`),
     openGraph: {
       type: "website",
       url: `${process.env.WEB_URL}/collections`,
       title: title,
       description: desc,
       siteName: "Bottle Time",
-      images: ["/logo.png"],
+      images: [`/logo.png`],
     },
     keywords: ["bottle time", "bottle times", ...keywords],
   };
@@ -45,8 +40,6 @@ const Collections = async ({ searchParams }: any) => {
   const statusParams: string = searchParams.status;
 
   const pageParams: string = searchParams.page;
-
-  let thisCountCarts: number = 0;
 
   let thisProducts: ClientProductType[] = [];
 
@@ -64,32 +57,10 @@ const Collections = async ({ searchParams }: any) => {
     thisTotalPage = totalPage;
   } catch (error) {}
 
-  const session = await getServerSession(authOptions);
-
-  if (session?.user.role === "member") {
-    let isCountCarts404: boolean = false;
-
-    try {
-      const { countCarts } = await useCountCartsHook();
-
-      thisCountCarts = countCarts;
-    } catch (error: any) {
-      if (error.response.status === 404) isCountCarts404 = true;
-    } finally {
-      if (isCountCarts404) redirect("/denied");
-    }
-  }
-
   return (
-    <section className="w-full">
-      {session?.user.role === "member" ? (
-        <Navbar countCarts={thisCountCarts} role={session?.user.role} />
-      ) : (
-        <Navbar />
-      )}
+    <React.Fragment>
       <CollectionContent products={thisProducts} totalPage={thisTotalPage} />
-      <Footer />
-    </section>
+    </React.Fragment>
   );
 };
 

@@ -3,13 +3,15 @@ import axios from "axios";
 import { ClientProductType } from "@/types/ProductType";
 
 export const useGetProductDetailHook = async (id: string) => {
-  const productRes = await axios.get(
-    `${process.env.WEB_URL}/api/products/${id}`
-  );
+  try {
+    const res = await axios.get<{ message: string; data: ClientProductType }>(
+      `${process.env.WEB_URL}/api/products/${id}`
+    );
 
-  const product: ClientProductType = productRes.data.data;
+    const product: ClientProductType = res.data.data;
 
-  return { product };
+    return product;
+  } catch (error) {}
 };
 
 export const useGetAllProductsHook = async (

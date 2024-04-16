@@ -4,6 +4,10 @@ import prismadb from "@/lib/prismadb";
 import { AdminUserType } from "@/types/UserType";
 import { ApiAdminValidation } from "@/utils/ApiAdminValidation";
 
+export const dynamic = "force-dynamic";
+export const dynamicParams = false;
+export const revalidate = 0;
+
 export const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
 

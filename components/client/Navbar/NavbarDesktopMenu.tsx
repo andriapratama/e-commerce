@@ -2,8 +2,8 @@
 
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { CategoryFullType } from "@/types/CategoryType";
@@ -11,15 +11,14 @@ import { MenuType } from "@/types/MenuType";
 
 interface Props {
   menus: MenuType[];
-  setIsLoadingPage: Dispatch<SetStateAction<boolean>>;
 }
 
-const NavbarDesktopMenu: React.FC<Props> = ({ menus, setIsLoadingPage }) => {
+const NavbarDesktopMenu: React.FC<Props> = ({ menus }) => {
   const [isOpenCategories, setIsOpenCategories] = useState<boolean>(false);
 
-  const { data } = useGetAllCategoriesHook();
+  const router = useRouter();
 
-  const pathname = usePathname();
+  const { data } = useGetAllCategoriesHook();
 
   const CategoriesContent = () => {
     if (!data?.data) {
@@ -34,8 +33,6 @@ const NavbarDesktopMenu: React.FC<Props> = ({ menus, setIsLoadingPage }) => {
             href={`/collections?category=${category.name}&page=1`}
             onClick={() => {
               setIsOpenCategories(false);
-
-              if (pathname !== "/collections") setIsLoadingPage(true);
             }}
           >
             {category.name}
@@ -52,7 +49,6 @@ const NavbarDesktopMenu: React.FC<Props> = ({ menus, setIsLoadingPage }) => {
                       key={subCategory.name}
                       onClick={() => {
                         setIsOpenCategories(false);
-                        if (pathname !== "/collections") setIsLoadingPage(true);
                       }}
                     >
                       {subCategory.name}
@@ -82,9 +78,6 @@ const NavbarDesktopMenu: React.FC<Props> = ({ menus, setIsLoadingPage }) => {
                 <Link
                   href={menu.link}
                   className={`cursor-pointer hover:border-b-2 px-1 capitalize border-primary-color`}
-                  onClick={() => {
-                    if (pathname !== menu.link) setIsLoadingPage(true);
-                  }}
                 >
                   {menu.name}
                 </Link>
@@ -105,9 +98,11 @@ const NavbarDesktopMenu: React.FC<Props> = ({ menus, setIsLoadingPage }) => {
               <div
                 key={menu.name}
                 className={`cursor-pointer hover:border-b-2 px-1 capitalize border-primary-color`}
-                onClick={() => {
-                  signOut();
-                  setIsLoadingPage(true);
+                onClick={async () => {
+                  await signOut({
+                    redirect: false,
+                  });
+                  router.refresh();
                 }}
               >
                 {menu.name}
@@ -119,9 +114,6 @@ const NavbarDesktopMenu: React.FC<Props> = ({ menus, setIsLoadingPage }) => {
                 href={menu.link}
                 key={menu.name}
                 className={`cursor-pointer hover:border-b-2 px-1 capitalize border-primary-color`}
-                onClick={() => {
-                  if (pathname !== menu.link) setIsLoadingPage(true);
-                }}
               >
                 {menu.name}
               </Link>

@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { ClientProductType } from "@/types/ProductType";
 
+export const dynamic = "force-dynamic";
+
 export const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
 

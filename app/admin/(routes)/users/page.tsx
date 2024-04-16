@@ -1,19 +1,16 @@
 "use client";
 
 import axios from "axios";
-import dynamic from "next/dynamic";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
-import ContentLoading from "@/components/ContentLoading";
+import Title from "@/components/admin/Title";
+import UserSearch from "@/components/admin/user/UserSearch";
+import UserTable from "@/components/admin/user/UserTable";
 import PageLoading from "@/components/PageLoading";
 import { useLoadingPageContext } from "@/context/LoadingPageContext";
 import { AdminUserType } from "@/types/UserType";
-
-const Title = dynamic(() => import("@/components/admin/Title"));
-const UserSearch = dynamic(() => import("@/components/admin/user/UserSearch"));
-const UserTable = dynamic(() => import("@/components/admin/user/UserTable"));
 
 const Users = () => {
   const [users, setUsers] = useState<AdminUserType[]>([]);
@@ -24,11 +21,9 @@ const Users = () => {
 
   const router = useRouter();
 
-  const params = useParams();
-
-  const role = params.role;
-
   const searchParams = useSearchParams();
+
+  const roleParams = searchParams.get("role");
 
   const pageParams = searchParams.get("page");
 
@@ -38,7 +33,7 @@ const Users = () => {
 
   const getUsers = useCallback(async () => {
     try {
-      const pathName = `/api/admin/users/get?role=${role}`;
+      const pathName = `/api/admin/users/get?role=${roleParams}`;
 
       let route = "";
 
@@ -56,17 +51,17 @@ const Users = () => {
     } catch (error: any) {
       toast.error(error.response.data.message);
     }
-  }, [pageNow, searchValueParams, role]);
+  }, [pageNow, searchValueParams, roleParams]);
 
   useEffect(() => {
-    if (role === "member") {
+    if (roleParams === "member") {
       getUsers();
-    } else if (role === "guest") {
+    } else if (roleParams === "guest") {
       getUsers();
     } else {
       router.push("/404");
     }
-  }, [getUsers, role]);
+  }, [getUsers, roleParams]);
 
   useEffect(() => {
     setIsLoadingPage(false);
@@ -82,7 +77,11 @@ const Users = () => {
 
           <Title
             title={`${
-              role === "member" ? "Pelanggan" : role === "guest" ? "Tamu" : ""
+              roleParams === "member"
+                ? "Pelanggan"
+                : roleParams === "guest"
+                ? "Tamu"
+                : ""
             }`}
           />
 

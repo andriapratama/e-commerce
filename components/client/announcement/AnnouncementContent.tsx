@@ -1,6 +1,7 @@
 "use client";
 
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 interface AnnouncementContentProps {
@@ -10,8 +11,15 @@ interface AnnouncementContentProps {
 const AnnouncementContent: React.FC<AnnouncementContentProps> = ({
   active,
 }) => {
+  const router = useRouter();
+
   useEffect(() => {
-    active === false && signOut();
+    if (active === false) {
+      signOut({
+        redirect: false,
+      });
+      router.push(`${process.env.NEXT_PUBLIC_WEB_URL}`);
+    }
   }, [active]);
 
   return (

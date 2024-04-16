@@ -1,15 +1,17 @@
+import bcrypt from "bcryptjs";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import prismadb from "./prismadb";
-import bcrypt from "bcryptjs";
+
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+
+import prismadb from "./prismadb";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prismadb),
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
-    maxAge: 2 * 60 * 60,
+    maxAge: 30 * 24 * 60 * 60,
   },
   pages: {
     signIn: "/admin/login",

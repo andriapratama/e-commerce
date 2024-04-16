@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-import { CategoryFullType } from "@/types/CategoryType";
+import { useGetAllCategoriesHook } from "@/hooks/client/CategoriesHook";
 import { ClientProductType } from "@/types/ProductType";
 
 import Pagination from "../Pagination";
@@ -11,13 +11,11 @@ import CollectionProducts from "./CollectionProducts";
 import SearchByCategory from "./SearchByCategory";
 
 interface CollectionContentProps {
-  categories?: CategoryFullType[];
   products: ClientProductType[];
   totalPage: number;
 }
 
 const CollectionContent: React.FC<CollectionContentProps> = ({
-  categories,
   products,
   totalPage,
 }) => {
@@ -43,6 +41,8 @@ const CollectionContent: React.FC<CollectionContentProps> = ({
     }
   });
 
+  const { data } = useGetAllCategoriesHook();
+
   return (
     <React.Fragment>
       <div className="w-full lg:min-h-[calc(100vh-536px)] md:min-h-[calc(100vh-505px)]  min-h-[calc(100vh-126px)] flex justify-center mt-[80px] lg:mt-[150px]">
@@ -52,7 +52,7 @@ const CollectionContent: React.FC<CollectionContentProps> = ({
               {title}
             </div>
 
-            <SearchByCategory categories={categories} />
+            <SearchByCategory categories={data?.data} />
 
             {products.length < 1 ? (
               <div className="mt-20 w-full text-center">

@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import dynamic from "next/dynamic";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import useSWR, { Fetcher } from "swr";
@@ -25,16 +25,19 @@ interface Promo extends PromoType {
 const PromoDetail = () => {
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
-  const params = useParams();
+  const searchParams = useSearchParams();
 
-  const slug: string | string[] = params.id;
+  const slugParams = searchParams.get("slug");
 
   const fetcher: Fetcher<{
     data: Promo | undefined;
     message: string;
   }> = (url: string) => axios.get(url).then((res) => res.data);
 
-  const { data, isLoading } = useSWR(`/api/admin/promos/${slug}/get`, fetcher);
+  const { data, isLoading } = useSWR(
+    `/api/admin/promos/${slugParams}/get`,
+    fetcher
+  );
 
   useEffect(() => {
     setIsLoadingPage(false);

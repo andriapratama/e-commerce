@@ -1,19 +1,20 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { PromoType } from "@/types/PromoType";
-import { ConvertIDR } from "@/utils/ConvertIDR";
-import Image from "next/image";
-import React, { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import ButtonLoading from "@/components/ButtonLoading";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
+import { useParams, useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+
+import ButtonLoading from "@/components/ButtonLoading";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { useCartContext } from "@/context/CartContext";
 import { CartLocalType } from "@/types/CartType";
+import { PromoType } from "@/types/PromoType";
+import { ConvertIDR } from "@/utils/ConvertIDR";
 
 interface Props {
   promo: PromoType;
@@ -140,8 +141,6 @@ const PromoDetailContent: React.FC<Props> = ({ promo, totalStock }) => {
 
   return (
     <React.Fragment>
-      <ToastContainer />
-
       <div className="w-full flex justify-center mt-[80px] lg:mt-[150px]">
         <div className="md:w-[80%] w-[90%] lg:flex block gap-5">
           <div className="lg:w-[60%] w-full flex justify-center relative">

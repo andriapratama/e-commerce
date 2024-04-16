@@ -1,11 +1,11 @@
 "use client";
 
 import axios from "axios";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import useSWR, { useSWRConfig } from "swr";
+import { useSWRConfig } from "swr";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -76,9 +76,9 @@ const ProductEditData: React.FC<ProductEditDataProps> = ({
 
   const router = useRouter();
 
-  const params = useParams();
+  const searchParams = useSearchParams();
 
-  const slugParams = params.id;
+  const slugParams = searchParams.get("slug");
 
   const { mutate } = useSWRConfig();
 

@@ -1,6 +1,7 @@
-import prismadb from "@/lib/prismadb";
 import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
+
+import prismadb from "@/lib/prismadb";
 
 export const GET = async (
   req: Request,
@@ -20,9 +21,6 @@ export const GET = async (
       where: {
         activateAt: null,
         token: params.token,
-        createdAt: {
-          gt: new Date(Date.now() - 24 * 60 * 60 * 1000),
-        },
       },
     });
 

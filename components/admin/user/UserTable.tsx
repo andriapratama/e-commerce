@@ -38,8 +38,10 @@ const UserTable: React.FC<Props> = ({ users, setIsLoadingPage, totalPage }) => {
 
   const pageParams = searchParams.get("page");
 
+  const roleParams = searchParams.get("role");
+
   const handleRouterPagination = (page: number) => {
-    router.push(`${pathName}?page=${page}`);
+    router.push(`${pathName}?role=${roleParams}&page=${page}`);
   };
   return (
     <React.Fragment>
@@ -88,7 +90,9 @@ const UserTable: React.FC<Props> = ({ users, setIsLoadingPage, totalPage }) => {
                       <MoreHorizontal className="h-4 w-4 cursor-pointer" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <Link href={`${pathName}/${user.id}`}>
+                      <Link
+                        href={`${pathName}/detail?role=${roleParams}&id=${user.id}`}
+                      >
                         <DropdownMenuItem
                           className="cursor-pointer"
                           onClick={() => setIsLoadingPage(true)}

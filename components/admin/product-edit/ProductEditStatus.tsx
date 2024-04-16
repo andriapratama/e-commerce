@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -59,9 +59,9 @@ const ProductEditStatus: React.FC<ProductEditStatusProps> = ({
   const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const params = useParams();
+  const searchParams = useSearchParams();
 
-  const slugParams = params.id;
+  const slugParams = searchParams.get("slug");
 
   const { mutate } = useSWRConfig();
 

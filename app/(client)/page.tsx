@@ -3,17 +3,11 @@ import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
-import { ToastContainer } from "react-toastify";
 
 import { keywords } from "@/constant/Keywords";
-import { useCountCartsHook } from "@/hooks/client/CartHook";
-import { useGetSpecialProductsHook } from "@/hooks/client/useGetSpecialProductsHook";
 import { useGetUserByEmailHook } from "@/hooks/client/UserHook";
 import { authOptions } from "@/lib/auth";
-import { ClientProductType } from "@/types/ProductType";
 
-const Footer = dynamic(() => import("@/components/client/Footer"));
-const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
 const Hero = dynamic(() => import("@/components/client/home/Hero"));
 const Products = dynamic(() => import("@/components/client/home/Products"));
 const Promo = dynamic(() => import("@/components/client/home/Promo"));
@@ -27,13 +21,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: title,
     description: desc,
+    metadataBase: new URL(`${process.env.WEB_URL}`),
     openGraph: {
       type: "website",
       url: process.env.WEB_URL,
       title: title,
       description: desc,
       siteName: "Bottle Time",
-      images: ["/logo.png"],
+      images: [`/logo.png`],
     },
     keywords: ["bottle time", "bottle times", ...keywords],
   };
@@ -42,70 +37,28 @@ export async function generateMetadata(): Promise<Metadata> {
 const Home = async () => {
   const session = await getServerSession(authOptions);
 
-  let thisCountCarts: number = 0;
+  let isActive: boolean = false;
 
   if (session?.user.role === "member") {
-    let isUserActive: boolean = false;
-
-    let user404: boolean = false;
-
     try {
       const { user } = await useGetUserByEmailHook();
 
-      isUserActive = user.active;
-    } catch (error: any) {
-      if (error.response.status === 404) user404 = true;
+      isActive = user.active;
+    } catch (error) {
     } finally {
-      if (isUserActive === false) redirect("/announcement");
-      if (user404) redirect("/denied");
-    }
-
-    let isCountCarts404: boolean = false;
-
-    try {
-      const { countCarts } = await useCountCartsHook();
-
-      thisCountCarts = countCarts;
-    } catch (error: any) {
-      if (error.response.status === 404) isCountCarts404 = true;
-    } finally {
-      if (isCountCarts404) redirect("/denied");
+      if (isActive === false) {
+        redirect("/announcement");
+      }
     }
   }
 
-  let bestProducts: ClientProductType[] = [];
-  let newProducts: ClientProductType[] = [];
-  let saleProducts: ClientProductType[] = [];
-
-  try {
-    const { products: bestProduct } = await useGetSpecialProductsHook("best");
-
-    const { products: newProduct } = await useGetSpecialProductsHook("new");
-
-    const { products } = await useGetSpecialProductsHook("sale");
-
-    bestProducts = bestProduct;
-    newProducts = newProduct;
-    saleProducts = products;
-  } catch (error) {}
-
   return (
     <React.Fragment>
-      <ToastContainer />
-
-      <main className="min-h-screen !w-full overflow-x-hidden">
-        {session?.user.role === "member" ? (
-          <Navbar countCarts={thisCountCarts} role={session?.user.role} />
-        ) : (
-          <Navbar />
-        )}
-        <Hero />
-        <Products title="best seller" products={bestProducts} />
-        <Products title="new" products={newProducts} />
-        <Products title="sale" products={saleProducts} />
-        <Promo />
-        <Footer />
-      </main>
+      <Hero />
+      <Products title="best seller" status="best" />
+      <Products title="new" status="new" />
+      <Products title="sale" status="sale" />
+      <Promo />
     </React.Fragment>
   );
 };

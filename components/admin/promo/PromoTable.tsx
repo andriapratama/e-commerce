@@ -88,7 +88,7 @@ const PromoTable: React.FC<PromoTableProps> = ({
                       <MoreHorizontal className="h-4 w-4 cursor-pointer" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <Link href={`/admin/promos/${promo.slug}`}>
+                      <Link href={`/admin/promos/detail?slug=${promo.slug}`}>
                         <DropdownMenuItem
                           className="cursor-pointer"
                           onClick={() => setIsLoadingPage(true)}

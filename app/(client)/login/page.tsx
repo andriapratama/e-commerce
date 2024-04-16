@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
@@ -8,8 +7,6 @@ import React from "react";
 import { keywords } from "@/constant/Keywords";
 import { authOptions } from "@/lib/auth";
 
-const Footer = dynamic(() => import("@/components/client/Footer"));
-const Navbar = dynamic(() => import("@/components/client/Navbar/Navbar"));
 const LoginForm = dynamic(() => import("@/components/client/login/LoginForm"));
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,13 +18,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: title,
     description: desc,
+    metadataBase: new URL(`${process.env.WEB_URL}`),
     openGraph: {
       type: "website",
       url: `${process.env.WEB_URL}/login`,
       title: title,
       description: desc,
       siteName: "Bottle Time",
-      images: ["/logo.png"],
+      images: [`/logo.png`],
     },
     keywords: ["bottle time", "bottle times", ...keywords],
   };
@@ -41,12 +39,9 @@ const Login = async () => {
   }
 
   return (
-    <section className="w-full">
-      <Navbar />
+    <React.Fragment>
       <LoginForm />
-
-      <Footer />
-    </section>
+    </React.Fragment>
   );
 };
 

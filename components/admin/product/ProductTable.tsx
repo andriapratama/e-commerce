@@ -121,7 +121,9 @@ const ProductTable: React.FC<ProductTableProps> = ({
                       <MoreHorizontal className="h-4 w-4 cursor-pointer" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <Link href={`/admin/products/${product.slug}`}>
+                      <Link
+                        href={`/admin/products/detail?slug=${product.slug}`}
+                      >
                         <DropdownMenuItem
                           className="cursor-pointer"
                           onClick={() => setIsLoadingPage(true)}

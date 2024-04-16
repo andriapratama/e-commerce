@@ -5,7 +5,7 @@ import { Menu } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import useSWR, { Fetcher } from "swr";
 
@@ -42,6 +42,8 @@ const Navbar: React.FC<NavbarProps> = ({ name, role }) => {
 
   const pathname = usePathname();
 
+  const router = useRouter();
+
   const { setIsLoadingPage } = useLoadingPageContext();
 
   const checkRole = (menu: AdminMenuType) => {
@@ -76,6 +78,8 @@ const Navbar: React.FC<NavbarProps> = ({ name, role }) => {
     if (pathname !== link) setIsLoadingPage(true);
   };
 
+  console.log("masuk " + process.env.NEXT_PUBLIC_WEB_URL);
+
   return (
     <React.Fragment>
       <nav className="w-full flex justify-between px-5 items-center h-12 border-b-2 border-slate-300 fixed bg-white z-20 shadow-md">
@@ -103,7 +107,14 @@ const Navbar: React.FC<NavbarProps> = ({ name, role }) => {
             <DropdownMenuItem onClick={() => setIsOpenChangePassword(true)}>
               Ganti Password
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => signOut()}>
+            <DropdownMenuItem
+              onClick={() => {
+                signOut({
+                  redirect: false,
+                });
+                router.push(`${process.env.NEXT_PUBLIC_WEB_URL}/admin/login`);
+              }}
+            >
               Keluar
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -138,7 +149,15 @@ const Navbar: React.FC<NavbarProps> = ({ name, role }) => {
               >
                 Ganti Password
               </li>
-              <li className="nav-admin__link-mobile" onClick={() => signOut()}>
+              <li
+                className="nav-admin__link-mobile"
+                onClick={() => {
+                  signOut({
+                    redirect: false,
+                  });
+                  router.push(`${process.env.NEXT_PUBLIC_WEB_URL}/admin/login`);
+                }}
+              >
                 Keluar
               </li>
             </ul>

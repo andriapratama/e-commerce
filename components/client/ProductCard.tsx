@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { ShoppingCart } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { Junge } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,20 +26,23 @@ const junge = Junge({
 
 interface ProductCardProps {
   product: ClientProductType;
-  status: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, status }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { status } = useSession();
 
   const { carts, handleSetCarts } = useCartContext();
 
   const router = useRouter();
 
   const handleAddCart = async () => {
-    if (status === "unauthenticated") storeDataToLocalStorage();
-
-    if (status === "authenticated") storeDataToDB();
+    if (status === "unauthenticated") {
+      storeDataToLocalStorage();
+    } else if (status === "authenticated") {
+      storeDataToDB();
+    }
   };
 
   const storeDataToDB = async () => {
@@ -99,82 +103,80 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, status }) => {
   };
 
   return (
-    <React.Fragment>
-      <div className="w-full h-fit mb-6 hover:shadow">
-        <div
-          className="w-full flex justify-center h-fit relative cursor-pointer"
-          onClick={() => {
-            router.push(`/collections/${product.slug}`);
-          }}
-        >
-          <Image
-            src={product.image}
-            alt={product.name}
-            width={300}
-            height={300}
-            className="object-contain w-auto lg:h-[300px] md:h-[200px] h-[120px] rounded-md"
-            priority
-          />
-        </div>
-
-        <div
-          className={`w-full text-center lg:text-sm text-xs text-yellow-600 mt-4 ${junge.className}`}
-        >
-          {product.category.name}
-        </div>
-
-        <div
-          className={`text-sm md:text-base lg:text-xl font-serif w-full text-center mt-2 px-7 ${junge.className}`}
-        >
-          {product.name}
-        </div>
-
-        <div
-          className={` text-sm lg:text-base w-full flex justify-center mt-2 relative ${junge.className}`}
-        >
-          {product.status === "sale" ? (
-            <div className="block">
-              <div className="w-fit text-gray-600">
-                {ConvertIDR(product.price)}
-                <div className="border -mt-3 border-black z-20"></div>
-              </div>
-
-              <div className="mt-3 text-red-700">
-                {ConvertIDR(product.salePrice)}
-              </div>
-            </div>
-          ) : (
-            ConvertIDR(product.price)
-          )}
-        </div>
-
-        <div className="w-full flex justify-center items-center gap-5 my-3 lg:my-5 md:my-4">
-          {product.linkGojek ? (
-            <Link href={product.linkGojek} target="blank">
-              <Image
-                src="/gojek.svg"
-                alt="gojek"
-                width={35}
-                height={35}
-                className="object-contain cursor-pointer lg:w-[35px] lg:h-[35px] w-[25px] h-[25px]"
-              />
-            </Link>
-          ) : null}
-          {isLoading ? (
-            <div className="pb-2">
-              <LoadingGif />
-            </div>
-          ) : (
-            <ShoppingCart
-              width={30}
-              height={30}
-              className="cursor-pointer lg:w-[30px] lg:h-[30px] w-[20px] h-[20px]"
-              onClick={() => handleAddCart()}
-            />
-          )}
-        </div>
+    <div className="w-full h-fit mb-6 hover:shadow">
+      <div
+        className="w-full flex justify-center h-fit relative"
+        onClick={() => {
+          router.push(`/collections/detail?product=${product.slug}`);
+        }}
+      >
+        <Image
+          src={product.image}
+          alt={product.name}
+          width={300}
+          height={300}
+          className="object-contain w-auto lg:h-[300px] md:h-[200px] h-[120px] rounded-md cursor-pointer"
+          priority
+        />
       </div>
-    </React.Fragment>
+
+      <div
+        className={`w-full text-center lg:text-sm text-xs text-yellow-600 mt-4 ${junge.className}`}
+      >
+        {product.category.name}
+      </div>
+
+      <div
+        className={`text-sm md:text-base lg:text-xl font-serif w-full text-center mt-2 px-7 ${junge.className}`}
+      >
+        {product.name}
+      </div>
+
+      <div
+        className={` text-sm lg:text-base w-full flex justify-center mt-2 relative ${junge.className}`}
+      >
+        {product.status === "sale" ? (
+          <div className="block">
+            <div className="w-fit text-gray-600">
+              {ConvertIDR(product.price)}
+              <div className="border -mt-3 border-black z-20"></div>
+            </div>
+
+            <div className="mt-3 text-red-700">
+              {ConvertIDR(product.salePrice)}
+            </div>
+          </div>
+        ) : (
+          ConvertIDR(product.price)
+        )}
+      </div>
+
+      <div className="w-full flex justify-center items-center gap-5 my-3 lg:my-5 md:my-4">
+        {product.linkGojek ? (
+          <Link href={product.linkGojek} target="blank">
+            <Image
+              src="/gojek.svg"
+              alt="gojek"
+              width={35}
+              height={35}
+              className="object-contain cursor-pointer lg:w-[35px] lg:h-[35px] w-[25px] h-[25px]"
+            />
+          </Link>
+        ) : null}
+        {isLoading ? (
+          <div className="pb-2">
+            <LoadingGif />
+          </div>
+        ) : (
+          <ShoppingCart
+            width={30}
+            height={30}
+            className="cursor-pointer lg:w-[30px] lg:h-[30px] w-[20px] h-[20px]"
+            onClick={() => handleAddCart()}
+          />
+        )}
+      </div>
+    </div>
   );
 };
 

@@ -24,14 +24,12 @@ const Hero = () => {
 
   const { data } = useSWR("/api/hero/get", fetcher);
 
-  console.log(data);
-
   const plugin = React.useRef(
     Autoplay({ delay: 10000, stopOnInteraction: true })
   );
 
   if (!data?.data || data.data.length < 1) {
-    return null;
+    return <div className="w-full h-[100px]"></div>;
   }
 
   return (

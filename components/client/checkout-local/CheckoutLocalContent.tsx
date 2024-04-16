@@ -1,12 +1,14 @@
 "use client";
 
-import { Textarea } from "@/components/ui/textarea";
-import AutosizeTextArea from "@/utils/AutosizeTextArea";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import React, { useRef, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import CheckoutLocalTable from "./CheckoutLocalTable";
-import CheckoutLocalTotal from "./CheckoutLocalTotal";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { z } from "zod";
+
+import ButtonLoading from "@/components/ButtonLoading";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -16,18 +18,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import SelectInterCodePhone from "../SelectInterCodePhone";
-import { ValidatePhoneNumber } from "@/utils/ValidatePhoneNumber";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import ButtonLoading from "@/components/ButtonLoading";
-import { Button } from "@/components/ui/button";
-import Alert from "../Alert";
-import axios from "axios";
+import { Textarea } from "@/components/ui/textarea";
 import { cashDesc, transferDesc } from "@/constant/CheckoutPaymentDesc";
-import { useRouter } from "next/navigation";
 import { useCartContext } from "@/context/CartContext";
+import AutosizeTextArea from "@/utils/AutosizeTextArea";
+import { ValidatePhoneNumber } from "@/utils/ValidatePhoneNumber";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import Alert from "../Alert";
+import SelectInterCodePhone from "../SelectInterCodePhone";
+import CheckoutLocalTable from "./CheckoutLocalTable";
+import CheckoutLocalTotal from "./CheckoutLocalTotal";
 
 const formSchema = z.object({
   firstName: z
@@ -144,8 +146,6 @@ const CheckoutLocalContent = () => {
   };
   return (
     <React.Fragment>
-      <ToastContainer />
-
       <div className="w-full lg:min-h-[calc(100vh-536px)] md:min-h-[calc(100vh-488px)] lg:mt-[150px] md:mt-[100px] mt-[80px]">
         <div className="w-full text-center text-2xl font-serif font-semibold mb-3 capitalize">
           Checkout

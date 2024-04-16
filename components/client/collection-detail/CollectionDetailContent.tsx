@@ -1,20 +1,22 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { ClientProductType } from "@/types/ProductType";
-import { ConvertIDR } from "@/utils/ConvertIDR";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+
+import ButtonLoading from "@/components/ButtonLoading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import ShowImage from "../ShowImage";
-import StatusProduct from "../StatusProduct";
-import { ToastContainer, toast } from "react-toastify";
-import ButtonLoading from "@/components/ButtonLoading";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { useCartContext } from "@/context/CartContext";
 import { CartLocalType } from "@/types/CartType";
+import { ClientProductType } from "@/types/ProductType";
+import { ConvertIDR } from "@/utils/ConvertIDR";
+
+import ShowImage from "../ShowImage";
+import StatusProduct from "../StatusProduct";
 
 interface CollectionDetailContentProps {
   product: ClientProductType;
@@ -77,9 +79,11 @@ const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
     if (quantity < 1) {
       setMessage("Quantity cannot be 0");
     } else {
-      if (status === "unauthenticated") storeDataToLocalStorage();
-
-      if (status === "authenticated") storeDataToDB();
+      if (status === "unauthenticated") {
+        storeDataToLocalStorage();
+      } else if (status === "authenticated") {
+        storeDataToDB();
+      }
     }
   };
 
@@ -147,8 +151,6 @@ const CollectionDetailContent: React.FC<CollectionDetailContentProps> = ({
 
   return (
     <React.Fragment>
-      <ToastContainer />
-
       <div className="w-full lg:min-h-[calc(100vh-537px)] flex justify-center lg:mt-[150px] md:mt-[100px] mt-[80px] font-serif">
         <div className="md:w-[60%] sm:w-[80%] w-[90%] grid sm:grid-cols-2 grid-cols-1 gap-5">
           <div className="w-full flex justify-center relative">

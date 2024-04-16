@@ -3,7 +3,7 @@
 import axios from "axios";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import useSWR, { Fetcher } from "swr";
@@ -35,9 +35,9 @@ const ProductDetailStatusLog = dynamic(
 const ProductDetail = () => {
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
-  const params = useParams();
+  const searchParams = useSearchParams();
 
-  const slug = params.id;
+  const slugParams = searchParams.get("slug");
 
   const fetcher: Fetcher<{
     data: AdminProductType | undefined;
@@ -45,7 +45,7 @@ const ProductDetail = () => {
   }> = (url: string) => axios.get(url).then((res) => res.data);
 
   const { data, isLoading } = useSWR(
-    `/api/admin/products/${slug}/data/get`,
+    `/api/admin/products/${slugParams}/data/get`,
     fetcher
   );
 

@@ -30,13 +30,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: title,
     description: desc,
+    metadataBase: new URL(`${process.env.WEB_URL}`),
     openGraph: {
       type: "website",
       url: `${process.env.WEB_URL}/checkout`,
       title: title,
       description: desc,
       siteName: "Bottle Time",
-      images: ["/logo.png"],
+      images: [`/logo.png`],
     },
     keywords: ["bottle time", "bottle times", ...keywords],
   };
@@ -44,8 +45,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const Checkout = async () => {
   const session = await getServerSession(authOptions);
-
-  let thisCountCarts: number = 0;
 
   let thisCarts: CartType[] = [];
 
@@ -72,18 +71,6 @@ const Checkout = async () => {
       if (user404) redirect("/denied");
     }
 
-    let isCountCarts404: boolean = false;
-
-    try {
-      const { countCarts } = await useCountCartsHook();
-
-      thisCountCarts = countCarts;
-    } catch (error: any) {
-      if (error.response.status === 404) isCountCarts404 = true;
-    } finally {
-      if (isCountCarts404) redirect("/denied");
-    }
-
     let carts404: boolean = false;
 
     try {
@@ -100,22 +87,13 @@ const Checkout = async () => {
   }
 
   return (
-    <section className="w-full">
+    <React.Fragment>
       {session?.user.role === "member" ? (
-        <>
-          <Navbar countCarts={thisCountCarts} role={session?.user.role} />
-
-          <CheckoutContent carts={thisCarts} user={thisUser} />
-        </>
+        <CheckoutContent carts={thisCarts} user={thisUser} />
       ) : (
-        <>
-          <Navbar />
-
-          <CheckoutLocalContent />
-        </>
+        <CheckoutLocalContent />
       )}
-      <Footer />
-    </section>
+    </React.Fragment>
   );
 };
 

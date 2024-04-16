@@ -1,16 +1,16 @@
 "use client";
 
-import { CartType } from "@/types/CartType";
 import React, { useEffect, useRef, useState } from "react";
 
-import CheckoutPayment from "./CheckoutPayment";
-import CheckoutTotal from "./CheckoutTotal";
-import CheckoutTable from "./CheckoutTable";
 import { Textarea } from "@/components/ui/textarea";
-import { ToastContainer } from "react-toastify";
+import { CartType } from "@/types/CartType";
 import { UserType } from "@/types/UserType";
-import CheckoutWarning from "./CheckoutWarning";
 import AutosizeTextArea from "@/utils/AutosizeTextArea";
+
+import CheckoutPayment from "./CheckoutPayment";
+import CheckoutTable from "./CheckoutTable";
+import CheckoutTotal from "./CheckoutTotal";
+import CheckoutWarning from "./CheckoutWarning";
 
 interface CheckoutContentProps {
   carts?: CartType[];
@@ -39,8 +39,6 @@ const CheckoutContent: React.FC<CheckoutContentProps> = ({ carts, user }) => {
 
   return (
     <React.Fragment>
-      <ToastContainer />
-
       <div className="w-full lg:min-h-[calc(100vh-536px)] md:min-h-[calc(100vh-488px)] lg:mt-[150px] md:mt-[100px] mt-[80px]">
         <div className="w-full text-center text-2xl font-serif font-semibold mb-3 capitalize">
           Checkout

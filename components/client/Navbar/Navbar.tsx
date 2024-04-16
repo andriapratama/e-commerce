@@ -1,16 +1,12 @@
 "use client";
 
 import { ShoppingCart } from "lucide-react";
-import { useSession } from "next-auth/react";
 import { Kaushan_Script } from "next/font/google";
 import localFont from "next/font/local";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-import ClientPageLoading from "@/components/ClientPageLoading";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useCartContext } from "@/context/CartContext";
 import { MenuType } from "@/types/MenuType";
 
@@ -32,70 +28,27 @@ const prostestRiot = localFont({
 });
 
 interface NavbarProps {
-  role?: string;
-  countCarts?: number;
+  status: "authenticated" | "unauthenticated";
+  countCart: number | undefined;
+  menus: MenuType[];
 }
 
-const Navbar: React.FC<NavbarProps> = ({ countCarts, role }) => {
-  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false);
-
-  const pathname = usePathname();
-
-  const menus: MenuType[] = [
-    {
-      name: "home",
-      link: "/",
-      status: "active",
-    },
-    {
-      name: "categories",
-      link: "/collections",
-      status: "active",
-    },
-    {
-      name: "Promo",
-      link: "/promos",
-      status: "active",
-    },
-    {
-      name: "Register",
-      link: "/register",
-      status: role ? "" : "active",
-    },
-    {
-      name: "Login",
-      link: "/login",
-      status: role ? "" : "active",
-    },
-    {
-      name: "Profile",
-      link: "/profile",
-      status: role ? "active" : "",
-    },
-    {
-      name: "Logout",
-      link: "",
-      status: role ? "active" : "",
-    },
-  ];
-
-  const [totalCarts, setTotalCarts] = useState<number | undefined>(undefined);
-
-  const { status } = useSession();
+const Navbar: React.FC<NavbarProps> = ({ countCart, status, menus }) => {
+  const [totalCart, setTotalCart] = useState<number | undefined>(undefined);
 
   const { carts } = useCartContext();
 
   useEffect(() => {
     if (status === "unauthenticated") {
       if (!carts) {
-        setTotalCarts(undefined);
+        setTotalCart(undefined);
       } else {
-        setTotalCarts(carts.length);
+        setTotalCart(carts.length);
       }
     }
 
-    if (status === "authenticated") setTotalCarts(countCarts);
-  }, [status, carts, countCarts]);
+    if (status === "authenticated") setTotalCart(countCart);
+  }, [status, countCart, carts]);
 
   return (
     <React.Fragment>
@@ -105,13 +58,7 @@ const Navbar: React.FC<NavbarProps> = ({ countCarts, role }) => {
         <div className="w-[90%] h-[60px] lg:h-[100px] flex justify-between items-center font-serif shadow-sm">
           <NavbarMobileMenu menus={menus} />
 
-          <Link
-            href="/"
-            className="gap-3 h-full items-center flex"
-            onClick={() => {
-              if (pathname !== "/") setIsLoadingPage(true);
-            }}
-          >
+          <Link href="/" className="gap-3 h-full items-center flex">
             <Image
               src="/logo.png"
               alt="logo"
@@ -135,22 +82,13 @@ const Navbar: React.FC<NavbarProps> = ({ countCarts, role }) => {
 
           <NavbarMobileSearch />
 
-          <NavbarDesktopMenu
-            menus={menus}
-            setIsLoadingPage={setIsLoadingPage}
-          />
+          <NavbarDesktopMenu menus={menus} />
 
-          <Link
-            href="/cart"
-            className="relative"
-            onClick={() => {
-              if (pathname !== "/cart") setIsLoadingPage(true);
-            }}
-          >
+          <Link href="/cart" className="relative">
             <div className="relative h-fit w-fit">
-              {totalCarts ? (
+              {totalCart ? (
                 <div className="absolute w-5 h-5 flex justify-center items-center rounded-full bg-red-500 text-xs -right-2 -top-2 text-white">
-                  {totalCarts}
+                  {totalCart}
                 </div>
               ) : null}
               <ShoppingCart width={25} height={25} />
@@ -158,15 +96,6 @@ const Navbar: React.FC<NavbarProps> = ({ countCarts, role }) => {
           </Link>
         </div>
       </nav>
-
-      <Dialog open={isLoadingPage} onOpenChange={setIsLoadingPage}>
-        <DialogContent
-          className="!bg-white !max-w-full !h-screen flex justify-center items-center !outline-none !duration-0"
-          closeButton={false}
-        >
-          <ClientPageLoading />
-        </DialogContent>
-      </Dialog>
     </React.Fragment>
   );
 };

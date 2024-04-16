@@ -1,6 +1,10 @@
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
+
 import Provider from "@/components/Provider";
+
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
 
 export default function RootLayout({
   children,

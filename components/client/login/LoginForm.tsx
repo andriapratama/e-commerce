@@ -1,5 +1,12 @@
 "use client";
 
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { z } from "zod";
+
 import ButtonLoading from "@/components/ButtonLoading";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,12 +19,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { ToastContainer, toast } from "react-toastify";
-import { z } from "zod";
 
 const formSchema = z.object({
   email: z.string().min(1, "Email is required").email(),
@@ -65,8 +66,6 @@ const LoginForm = () => {
   };
   return (
     <Form {...form}>
-      <ToastContainer />
-
       <div className="w-full text-center lg:mt-[150px] md:mt-[100px] mt-[80px] text-2xl font-semibold">
         Login
       </div>

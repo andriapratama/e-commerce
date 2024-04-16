@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 import useSWR, { Fetcher } from "swr";
 
@@ -20,9 +20,9 @@ import { ConvertIDR } from "@/utils/ConvertIDR";
 import ProductDetailShowNote from "./ProductDetailShowNote";
 
 const ProductDetailFinanceLog = () => {
-  const params = useParams();
+  const searchParams = useSearchParams();
 
-  const slugParams = params.id;
+  const slugParams = searchParams.get("slug");
 
   const fetcher: Fetcher<{
     data: FinanceLogType[] | undefined;

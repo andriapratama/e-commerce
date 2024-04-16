@@ -1,8 +1,9 @@
 "use client";
 
+import axios from "axios";
 import Autoplay from "embla-carousel-autoplay";
-import { useSession } from "next-auth/react";
 import React from "react";
+import useSWR, { Fetcher } from "swr";
 
 import {
   Carousel,
@@ -17,17 +18,22 @@ import ProductCard from "../ProductCard";
 
 interface ProductProps {
   title: string;
-  products: ClientProductType[];
+  status: string;
 }
 
-const Products: React.FC<ProductProps> = ({ title, products }) => {
+const Products: React.FC<ProductProps> = ({ title, status }) => {
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   );
 
-  const { status } = useSession();
+  const fetcher: Fetcher<{
+    data: { products: ClientProductType[]; totalPage: number };
+    message: string;
+  }> = (url: string) => axios.get(url).then((res) => res.data);
 
-  if (products.length < 1) return null;
+  const { data } = useSWR(`/api/products/get?status=${status}`, fetcher);
+
+  if (!data?.data || data?.data.products.length < 1) return null;
 
   return (
     <React.Fragment>
@@ -50,37 +56,33 @@ const Products: React.FC<ProductProps> = ({ title, products }) => {
             onMouseLeave={plugin.current.play}
           >
             <CarouselContent className="-ml-1">
-              {products.map((product, index) => (
+              {data.data.products.map((product, index) => (
                 <CarouselItem
                   key={index}
                   className={`pl-1 ${
-                    products.length === 3
+                    data.data.products.length === 3
                       ? "lg:basis-1/3 md:basis-1/2"
-                      : products.length === 2
+                      : data.data.products.length === 2
                       ? "md:basis-1/2"
-                      : products.length === 1
+                      : data.data.products.length === 1
                       ? "md:basis-full"
                       : "lg:basis-1/4 md:basis-1/2"
                   }`}
                 >
                   <div className="p-1">
-                    <ProductCard
-                      product={product}
-                      key={product.slug}
-                      status={status}
-                    />
+                    <ProductCard product={product} key={product.slug} />
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
             <CarouselPrevious
               className={`invisible ${
-                products.length < 5 ? "lg:invisible" : "lg:visible"
+                data.data.products.length < 5 ? "lg:invisible" : "lg:visible"
               }`}
             />
             <CarouselNext
               className={`invisible ${
-                products.length < 5 ? "lg:invisible" : "lg:visible"
+                data.data.products.length < 5 ? "lg:invisible" : "lg:visible"
               }`}
             />
           </Carousel>

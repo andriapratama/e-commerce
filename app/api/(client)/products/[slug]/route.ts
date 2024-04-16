@@ -1,5 +1,10 @@
-import prismadb from "@/lib/prismadb";
+export const dynamic = "force-dynamic";
+export const dynamicParams = false;
+export const revalidate = 0;
+
 import { NextResponse } from "next/server";
+
+import prismadb from "@/lib/prismadb";
 
 export const GET = async (
   req: Request,

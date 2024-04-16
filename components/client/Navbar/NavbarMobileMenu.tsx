@@ -1,17 +1,20 @@
 "use client";
 
-import Link from "next/link";
 import { Menu } from "lucide-react";
+import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { MenuType } from "@/types/MenuType";
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { MenuType } from "@/types/MenuType";
+
 import MobileLogo from "../MobileLogo";
-import { signOut } from "next-auth/react";
 
 interface Props {
   menus: MenuType[];
@@ -19,6 +22,8 @@ interface Props {
 
 const NavbarMobileMenu: React.FC<Props> = ({ menus }) => {
   const [isShowMenu, setIsShowMenu] = useState<boolean>(false);
+
+  const router = useRouter();
 
   return (
     <React.Fragment>
@@ -47,7 +52,10 @@ const NavbarMobileMenu: React.FC<Props> = ({ menus }) => {
                       className="w-full text-center mb-3 uppercase"
                       key={menu.name}
                       onClick={() => {
-                        signOut();
+                        signOut({
+                          redirect: false,
+                        });
+                        router.push(`${process.env.NEXT_PUBLIC_WEB_URL}`);
                         setIsShowMenu(false);
                       }}
                     >

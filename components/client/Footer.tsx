@@ -1,10 +1,8 @@
 "use client";
 
-import axios from "axios";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import React from "react";
-import useSWR, { Fetcher } from "swr";
 
 import { SettingType } from "@/types/SettingType";
 
@@ -62,16 +60,11 @@ const menus = [
   },
 ];
 
-const Footer = () => {
-  const fetcher: Fetcher<{
-    data: SettingType | undefined;
-    message: string;
-  }> = (url: string) => axios.get(url).then((res) => res.data);
+interface Props {
+  settingValue: SettingType | undefined;
+}
 
-  const { data } = useSWR("/api/setting/get", fetcher);
-
-  const settingValue = data?.data;
-
+const Footer: React.FC<Props> = ({ settingValue }) => {
   return (
     <React.Fragment>
       <footer className="w-full mt-[50px] flex bg-gray-100 justify-center text-gray-600">

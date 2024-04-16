@@ -1,8 +1,8 @@
 "use client";
 
 import axios from "axios";
-import dynamic from "next/dynamic";
-import { useParams, useSearchParams } from "next/navigation";
+import { default as lazyLoading } from "next/dynamic";
+import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import useSWR, { Fetcher } from "swr";
@@ -12,11 +12,11 @@ import PageLoading from "@/components/PageLoading";
 import { useLoadingPageContext } from "@/context/LoadingPageContext";
 import { AdminUserOrderType, AdminUserType } from "@/types/UserType";
 
-const Title = dynamic(() => import("@/components/admin/Title"));
-const UserDetailData = dynamic(
+const Title = lazyLoading(() => import("@/components/admin/Title"));
+const UserDetailData = lazyLoading(
   () => import("@/components/admin/user-detail/UserDetailData")
 );
-const UserDetailOrder = dynamic(
+const UserDetailOrder = lazyLoading(
   () => import("@/components/admin/user-detail/UserDetailOrder")
 );
 
@@ -29,15 +29,13 @@ const UserDetail = () => {
 
   const { isLoadingPage, setIsLoadingPage } = useLoadingPageContext();
 
-  const params = useParams();
-
   const searchParams = useSearchParams();
 
   const pageParams = searchParams.get("page");
 
-  const role = params.role;
+  const roleParams = searchParams.get("role");
 
-  const id = params.id;
+  const idParams = searchParams.get("id");
 
   const pageNow = parseInt(pageParams ? pageParams : "1");
 
@@ -49,8 +47,8 @@ const UserDetail = () => {
   const { data, isLoading } = useSWR(route, fetcher);
 
   useEffect(() => {
-    setRoute(`/api/admin/users/${id}/get?page=${pageNow}`);
-  }, [id, pageNow]);
+    setRoute(`/api/admin/users/${idParams}/get?page=${pageNow}`);
+  }, [idParams, pageNow]);
 
   useEffect(() => {
     setIsLoadingPage(false);
@@ -66,9 +64,9 @@ const UserDetail = () => {
 
           <Title
             title={`${
-              role === "member"
+              roleParams === "member"
                 ? "Detail Pelanggan"
-                : role === "guest"
+                : roleParams === "guest"
                 ? "Detail Tamu"
                 : ""
             }`}

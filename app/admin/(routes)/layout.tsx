@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
@@ -21,15 +20,16 @@ export async function generateMetadata(): Promise<Metadata> {
     title: title,
     description: desc,
     icons: {
-      icon: "/logo.png",
+      icon: `/logo.png`,
     },
+    metadataBase: new URL(`${process.env.WEB_URL}`),
     openGraph: {
       type: "website",
       url: process.env.WEB_URL,
       title: title,
       description: desc,
       siteName: "Bottle Time",
-      images: ["/logo.png"],
+      images: [`/logo.png`],
     },
   };
 }

@@ -1,11 +1,7 @@
 "use client";
 
-import CartTotal from "./CartTotal";
-import { CartType } from "@/types/CartType";
-import CartTablePromo from "./CartTablePromo";
-import CartTableProduct from "./CartTableProduct";
 import React from "react";
-import { ToastContainer } from "react-toastify";
+
 import {
   Table,
   TableBody,
@@ -14,9 +10,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useCartHook } from "@/hooks/client/CartClientSideHook";
+import { CartType } from "@/types/CartType";
+
 import CartMobileTableProduct from "./CartMobileTableProduct";
 import CartMobileTablePromo from "./CartMobileTablePromo";
-import { useCartHook } from "@/hooks/client/CartClientSideHook";
+import CartTableProduct from "./CartTableProduct";
+import CartTablePromo from "./CartTablePromo";
+import CartTotal from "./CartTotal";
 
 interface CartTableProps {
   carts?: CartType[];
@@ -28,8 +29,6 @@ const CartTable: React.FC<CartTableProps> = ({ carts }) => {
 
   return (
     <div className="w-full lg:min-h-[calc(100vh-536px)] md:min-h-[calc(100vh-487px)]">
-      <ToastContainer />
-
       <div className="w-full lg:flex justify-center lg:mt-[150px] md:mt-[100px] font-serif hidden">
         <div className="w-[80%]">
           <Table className="bg-white rounded-md">

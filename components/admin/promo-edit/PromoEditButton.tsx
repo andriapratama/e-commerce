@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -25,9 +25,10 @@ const PromoEditButton: React.FC<Props> = ({ promo }) => {
 
   const router = useRouter();
 
-  const params: { id: string | string[] } = useParams();
+  const searchParams = useSearchParams();
 
-  const slug: string | string[] = params.id;
+  const slugParams = searchParams.get("slug");
+
   return (
     <React.Fragment>
       <DropdownMenu>
@@ -49,7 +50,7 @@ const PromoEditButton: React.FC<Props> = ({ promo }) => {
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() => router.push(`/admin/promos/${slug}/edit`)}
+            onClick={() => router.push(`/admin/promos/edit?slug=${slugParams}`)}
           >
             Produk
           </DropdownMenuItem>
